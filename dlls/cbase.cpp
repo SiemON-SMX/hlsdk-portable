@@ -22,11 +22,13 @@
 #include	"gamerules.h"
 #include	"game.h"
 
+bool g_fIsXash3D = false;
+
 void EntvarsKeyvalue( entvars_t *pev, KeyValueData *pkvd );
 
 extern "C" void PM_Move ( struct playermove_s *ppmove, int server );
 extern "C" void PM_Init ( struct playermove_s *ppmove  );
-extern "C" char PM_FindTextureType( char *name );
+extern "C" char PM_FindTextureType( const char *name );
 
 extern Vector VecBModelOrigin( entvars_t* pevBModel );
 extern DLL_GLOBAL Vector g_vecAttackDir;
@@ -98,7 +100,7 @@ static DLL_FUNCTIONS gFunctionTable =
 
 static void SetObjectCollisionBox( entvars_t *pev );
 
-#ifndef _WIN32
+#if !XASH_WIN32
 extern "C" {
 #endif
 int GetEntityAPI( DLL_FUNCTIONS *pFunctionTable, int interfaceVersion )
@@ -125,7 +127,12 @@ int GetEntityAPI2( DLL_FUNCTIONS *pFunctionTable, int *interfaceVersion )
 	return TRUE;
 }
 
-#ifndef _WIN32
+int Server_GetPhysicsInterface( int version, server_physics_api_t *api, physics_interface_t *interface )
+{
+	g_fIsXash3D = true;
+	return FALSE; // do not tell engine to init physics interface, as we're not using it
+}
+#if !XASH_WIN32
 }
 #endif
 
@@ -136,8 +143,8 @@ int DispatchSpawn( edict_t *pent )
 	if( pEntity )
 	{
 		// Initialize these or entities who don't link to the world won't have anything in here
-		pEntity->pev->absmin = pEntity->pev->origin - Vector( 1, 1, 1 );
-		pEntity->pev->absmax = pEntity->pev->origin + Vector( 1, 1, 1 );
+		pEntity->pev->absmin = pEntity->pev->origin - Vector( 1.0f, 1.0f, 1.0f );
+		pEntity->pev->absmax = pEntity->pev->origin + Vector( 1.0f, 1.0f, 1.0f );
 
 		pEntity->Spawn();
 
@@ -255,6 +262,8 @@ void DispatchSave( edict_t *pent, SAVERESTOREDATA *pSaveData )
 	{
 		ENTITYTABLE *pTable = &pSaveData->pTable[pSaveData->currentIndex];
 
+		gpGlobals->time = pSaveData->time;
+
 		if( pTable->pent != pent )
 			ALERT( at_error, "ENTITY TABLE OR INDEX IS WRONG!!!!\n" );
 
@@ -307,6 +316,9 @@ int DispatchRestore( edict_t *pent, SAVERESTOREDATA *pSaveData, int globalEntity
 		Vector oldOffset;
 
 		CRestore restoreHelper( pSaveData );
+
+		gpGlobals->time = pSaveData->time;
+
 		if( globalEntity )
 		{
 			CRestore tmpRestore( pSaveData );
@@ -441,9 +453,16 @@ edict_t *EHANDLE::Get( void )
 
 edict_t *EHANDLE::Set( edict_t *pent )
 {
-	m_pent = pent;  
-	if( pent ) 
-		m_serialnumber = m_pent->serialnumber; 
+	if( pent )
+	{
+		m_pent = pent;
+		m_serialnumber = m_pent->serialnumber;
+	}
+	else
+	{
+		m_pent = NULL;
+		m_serialnumber = 0;
+	}
 	return pent; 
 }
 
@@ -511,7 +530,7 @@ int CBaseEntity::TakeDamage( entvars_t *pevInflictor, entvars_t *pevAttacker, fl
 	// (that is, no actual entity projectile was involved in the attack so use the shooter's origin). 
 	if( pevAttacker == pevInflictor )	
 	{
-		vecTemp = pevInflictor->origin - VecBModelOrigin( pev );
+		vecTemp = pevAttacker->origin - VecBModelOrigin( pev );
 	}
 	else
 	// an actual missile was involved.
@@ -526,13 +545,13 @@ int CBaseEntity::TakeDamage( entvars_t *pevInflictor, entvars_t *pevAttacker, fl
 	// figure momentum add (don't let hurt brushes or other triggers move player)
 	if( ( !FNullEnt( pevInflictor ) ) && (pev->movetype == MOVETYPE_WALK || pev->movetype == MOVETYPE_STEP ) && ( pevAttacker->solid != SOLID_TRIGGER ) )
 	{
-		Vector vecDir = pev->origin - ( pevInflictor->absmin + pevInflictor->absmax ) * 0.5;
+		Vector vecDir = pev->origin - ( pevInflictor->absmin + pevInflictor->absmax ) * 0.5f;
 		vecDir = vecDir.Normalize();
 
-		float flForce = flDamage * ( ( 32 * 32 * 72.0 ) / ( pev->size.x * pev->size.y * pev->size.z ) ) * 5;
+		float flForce = flDamage * ( ( 32.0f * 32.0f * 72.0f ) / ( pev->size.x * pev->size.y * pev->size.z ) ) * 5.0f;
 
-		if( flForce > 1000.0 )
-			flForce = 1000.0;
+		if( flForce > 1000.0f )
+			flForce = 1000.0f;
 		pev->velocity = pev->velocity + vecDir * flForce;
 	}
 
@@ -598,7 +617,7 @@ int CBaseEntity::Restore( CRestore &restore )
 		mins = pev->mins;	// Set model is about to destroy these
 		maxs = pev->maxs;
 
-		PRECACHE_MODEL( (char *)STRING( pev->model ) );
+		PRECACHE_MODEL( STRING( pev->model ) );
 		SET_MODEL( ENT( pev ), STRING( pev->model ) );
 		UTIL_SetSize( pev, mins, maxs );	// Reset them
 	}
@@ -674,7 +693,7 @@ void CBaseEntity::MakeDormant( void )
 	// Don't draw
 	SetBits( pev->effects, EF_NODRAW );
 	// Don't think
-	pev->nextthink = 0;
+	pev->nextthink = 0.0f;
 	// Relink
 	UTIL_SetOrigin( pev, pev->origin );
 }
@@ -687,30 +706,30 @@ int CBaseEntity::IsDormant( void )
 BOOL CBaseEntity::IsInWorld( void )
 {
 	// position 
-	if( pev->origin.x >= 4096 )
+	if( pev->origin.x >= 4096.0f )
 		return FALSE;
-	if( pev->origin.y >= 4096 )
+	if( pev->origin.y >= 4096.0f )
 		return FALSE;
-	if( pev->origin.z >= 4096 )
+	if( pev->origin.z >= 4096.0f )
 		return FALSE;
-	if( pev->origin.x <= -4096 )
+	if( pev->origin.x <= -4096.0f )
 		return FALSE;
-	if( pev->origin.y <= -4096 )
+	if( pev->origin.y <= -4096.0f )
 		return FALSE;
-	if( pev->origin.z <= -4096 )
+	if( pev->origin.z <= -4096.0f )
 		return FALSE;
 	// speed
-	if( pev->velocity.x >= 2000 )
+	if( pev->velocity.x >= 2000.0f )
 		return FALSE;
-	if( pev->velocity.y >= 2000 )
+	if( pev->velocity.y >= 2000.0f )
 		return FALSE;
-	if( pev->velocity.z >= 2000 )
+	if( pev->velocity.z >= 2000.0f )
 		return FALSE;
-	if( pev->velocity.x <= -2000 )
+	if( pev->velocity.x <= -2000.0f )
 		return FALSE;
-	if( pev->velocity.y <= -2000 )
+	if( pev->velocity.y <= -2000.0f )
 		return FALSE;
-	if( pev->velocity.z <= -2000 )
+	if( pev->velocity.z <= -2000.0f )
 		return FALSE;
 
 	return TRUE;
@@ -739,7 +758,7 @@ int CBaseEntity::DamageDecal( int bitsDamageType )
 
 // NOTE: szName must be a pointer to constant memory, e.g. "monster_class" because the entity
 // will keep a pointer to it after this call.
-CBaseEntity *CBaseEntity::Create( char *szName, const Vector &vecOrigin, const Vector &vecAngles, edict_t *pentOwner )
+CBaseEntity *CBaseEntity::Create( const char *szName, const Vector &vecOrigin, const Vector &vecAngles, edict_t *pentOwner )
 {
 	edict_t	*pent;
 	CBaseEntity *pEntity;

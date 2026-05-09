@@ -15,8 +15,8 @@
 //=========================================================
 // Scheduling 
 //=========================================================
-
-#ifndef	SCHEDULE_H
+#pragma once
+#if !defined(SCHEDULE_H)
 #define	SCHEDULE_H
 
 #define	TASKSTATUS_NEW				0			// Just started

@@ -12,8 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-
-#ifndef PM_TRACE_H
+#pragma once
+#if !defined(PM_TRACE_H)
 #define PM_TRACE_H
 
 typedef struct

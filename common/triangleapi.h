@@ -12,8 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-
-#ifndef TRIANGLEAPI_H
+#pragma once
+#if !defined(TRIANGLEAPI_H)
 #define TRIANGLEAPI_H
 
 typedef enum 

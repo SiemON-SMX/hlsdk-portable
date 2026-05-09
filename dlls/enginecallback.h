@@ -12,11 +12,14 @@
 *   without written permission from Valve LLC.
 *
 ****/
-#ifndef ENGINECALLBACK_H
-#define ENGINECALLBACK_H
 #pragma once
+#if !defined(ENGINECALLBACK_H)
+#define ENGINECALLBACK_H
 
 #include "event_flags.h"
+
+// Fix warning in MSVC8
+#undef SERVER_EXECUTE
 
 // Must be provided by user of this code
 extern enginefuncs_t g_engfuncs;

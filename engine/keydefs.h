@@ -12,8 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-
-#ifndef KEYDEFS_H
+#pragma once
+#if !defined(KEYDEFS_H)
 #define KEYDEFS_H
 
 //

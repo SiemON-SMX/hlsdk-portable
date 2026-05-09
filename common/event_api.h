@@ -12,8 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-
-#ifndef EVENT_API_H
+#pragma once
+#if !defined(EVENT_API_H)
 #define EVENT_API_H
 
 #define EVENT_API_VERSION	1

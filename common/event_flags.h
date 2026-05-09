@@ -12,8 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-
-#ifndef EVENT_FLAGS_H
+#pragma once
+#if !defined(EVENT_FLAGS_H)
 #define EVENT_FLAGS_H
 
 // Skip local host for event send.

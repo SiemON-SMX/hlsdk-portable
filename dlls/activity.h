@@ -12,8 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-
-#ifndef	ACTIVITY_H
+#pragma once
+#if !defined(ACTIVITY_H)
 #define	ACTIVITY_H
 
 typedef enum {
@@ -99,7 +99,7 @@ typedef enum {
 typedef struct
 {
 	int type;
-	char *name;
+	const char *name;
 } activity_map_t;
 
 extern activity_map_t activity_map[];

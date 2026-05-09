@@ -12,8 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-
-#ifndef STUDIO_EVENT_H
+#pragma once
+#if !defined(STUDIO_EVENT_H)
 #define STUDIO_EVENT_H
 
 typedef struct mstudioevent_s

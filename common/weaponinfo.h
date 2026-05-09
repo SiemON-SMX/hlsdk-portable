@@ -12,8 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-
-#ifndef WEAPONINFO_H
+#pragma once
+#if !defined(WEAPONINFO_H)
 #define WEAPONINFO_H
 
 // Info about weapons player might have in his/her possession

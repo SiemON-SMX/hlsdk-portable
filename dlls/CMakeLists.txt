@@ -20,129 +20,246 @@
 # SOFTWARE.
 #
 
-cmake_minimum_required(VERSION 2.6.0)
+cmake_minimum_required(VERSION 3.9)
 project (SVDLL)
 
 set (SVDLL_LIBRARY server)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_LINUX -DCLIENT_WEAPONS -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -D_snprintf=snprintf -D_vsnprintf=vsnprintf -fno-exceptions -w")
-set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS}")
+if(NOT MSVC)
+        add_compile_options(-fno-exceptions) # GCC/Clang flag
+        add_compile_options(-fno-rtti) # GCC/Clang flag
+        add_compile_options(-Wno-invalid-offsetof) # GCC/Clang flag
+        add_compile_options(-fvisibility=hidden) # GCC/Clang flag
+        add_definitions(-D_LINUX) # It seems enough for all non-Win32 systems
+        add_definitions(-Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -D_snprintf=snprintf -D_vsnprintf=vsnprintf )
+        if(CMAKE_BUILD_TYPE MATCHES "Release"
+                OR (CMAKE_BUILD_TYPE MATCHES "RelWithDebInfo"
+                AND CMAKE_SYSTEM_NAME STREQUAL "Android"))
+                add_compile_options(-fno-unwind-tables -fno-asynchronous-unwind-tables) # GCC/Clang flag
+                add_compile_options(-fomit-frame-pointer) # GCC/Clang flag
+                add_compile_options(-ftree-vectorize) # GCC/Clang flag
+                add_compile_options(-funsafe-math-optimizations) # GCC/Clang flag
+        endif()
+else()
+        add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE)
+endif()
 
-set (SVDLL_SOURCES 
-	agrunt.cpp
-	airtank.cpp
-	aflock.cpp
-	animating.cpp
-	animation.cpp
-	apache.cpp
-	barnacle.cpp
-	barney.cpp
-	bigmomma.cpp
-	bloater.cpp
-	bmodels.cpp
-	bullsquid.cpp
-	buttons.cpp
-	cbase.cpp
-	client.cpp
-	combat.cpp
-	controller.cpp
-	crossbow.cpp
-	crowbar.cpp
-	defaultai.cpp
-	doors.cpp
-	effects.cpp
-	egon.cpp
-	explode.cpp
-	flyingmonster.cpp
-	func_break.cpp
-	func_tank.cpp
-	game.cpp
-	gamerules.cpp
-	gargantua.cpp
-	gauss.cpp
-	genericmonster.cpp
-	ggrenade.cpp
-	globals.cpp
-	glock.cpp
-	gman.cpp
-	h_ai.cpp
-	h_battery.cpp
-	h_cine.cpp
-	h_cycler.cpp
-	h_export.cpp
-	handgrenade.cpp
-	hassassin.cpp
-	headcrab.cpp
-	healthkit.cpp
-	hgrunt.cpp
-	hornet.cpp
-	hornetgun.cpp
-	houndeye.cpp
-	ichthyosaur.cpp
-	islave.cpp
-	items.cpp
-	leech.cpp
-	lights.cpp
-	maprules.cpp
-	monstermaker.cpp
-	monsters.cpp
-	monsterstate.cpp
-	mortar.cpp
-	mp5.cpp
-	multiplay_gamerules.cpp
-	nihilanth.cpp
-	nodes.cpp
-	osprey.cpp
-	pathcorner.cpp
-	plane.cpp
-	plats.cpp
-	player.cpp
-	python.cpp
-	rat.cpp
-	roach.cpp
-	rpg.cpp
-	satchel.cpp
-	schedule.cpp
-	scientist.cpp
-	scripted.cpp
-	shotgun.cpp
-	singleplay_gamerules.cpp
-	skill.cpp
-	sound.cpp
-	soundent.cpp
-	spectator.cpp
-	squadmonster.cpp
-	squeakgrenade.cpp
-	subs.cpp
-	talkmonster.cpp
-	teamplay_gamerules.cpp
-	tempmonster.cpp
-	tentacle.cpp
-	triggers.cpp
-	tripmine.cpp
-	turret.cpp
-	util.cpp
-	weapons.cpp
-	world.cpp
-	xen.cpp
-	zombie.cpp
-	../pm_shared/pm_debug.c
-	../pm_shared/pm_math.c
-	../pm_shared/pm_shared.c
+set (SVDLL_SOURCES
+        agrunt.cpp
+        airtank.cpp
+        aflock.cpp
+        animating.cpp
+        animation.cpp
+        apache.cpp
+        barnacle.cpp
+        barney.cpp
+        bigmomma.cpp
+        bloater.cpp
+        bmodels.cpp
+        bullsquid.cpp
+        buttons.cpp
+        cbase.cpp
+        client.cpp
+        combat.cpp
+        controller.cpp
+        crossbow.cpp
+        crowbar.cpp
+        defaultai.cpp
+        doors.cpp
+        effects.cpp
+        egon.cpp
+        explode.cpp
+        flyingmonster.cpp
+        func_break.cpp
+        func_tank.cpp
+        game.cpp
+        gamerules.cpp
+        gargantua.cpp
+        gauss.cpp
+        genericmonster.cpp
+        ggrenade.cpp
+        globals.cpp
+        glock.cpp
+        gman.cpp
+        h_ai.cpp
+        h_battery.cpp
+        h_cine.cpp
+        h_cycler.cpp
+        h_export.cpp
+        handgrenade.cpp
+        hassassin.cpp
+        headcrab.cpp
+        healthkit.cpp
+        hgrunt.cpp
+        hornet.cpp
+        hornetgun.cpp
+        houndeye.cpp
+        ichthyosaur.cpp
+        islave.cpp
+        items.cpp
+        leech.cpp
+        lights.cpp
+        maprules.cpp
+        monstermaker.cpp
+        monsters.cpp
+        monsterstate.cpp
+        mortar.cpp
+        mp5.cpp
+        multiplay_gamerules.cpp
+        nihilanth.cpp
+        nodes.cpp
+        observer.cpp
+        osprey.cpp
+        pathcorner.cpp
+        plane.cpp
+        plats.cpp
+        player.cpp
+        playermonster.cpp
+        python.cpp
+        rat.cpp
+        roach.cpp
+        rpg.cpp
+        satchel.cpp
+        schedule.cpp
+        scientist.cpp
+        scripted.cpp
+        shotgun.cpp
+        singleplay_gamerules.cpp
+        skill.cpp
+        sound.cpp
+        soundent.cpp
+        spectator.cpp
+        squadmonster.cpp
+        squeakgrenade.cpp
+        subs.cpp
+        talkmonster.cpp
+        teamplay_gamerules.cpp
+        tempmonster.cpp
+        tentacle.cpp
+        triggers.cpp
+        tripmine.cpp
+        turret.cpp
+        util.cpp
+        vehicle.cpp
+        weapons.cpp
+        world.cpp
+        xen.cpp
+        zombie.cpp
+        ../pm_shared/pm_debug.c
+        ../pm_shared/pm_math.c
+        ../pm_shared/pm_shared.c
+        ../public/safe_snprintf.c
+        wantedhl/grenade_cannonball.cpp
+        wantedhl/grenade_dynamite.cpp
+        wantedhl/weapon_beartrap.cpp
+        wantedhl/weapon_bow.cpp
+        wantedhl/weapon_buffalo.cpp
+        wantedhl/weapon_cannon.cpp
+        wantedhl/weapon_colts.cpp
+        wantedhl/weapon_dynamite.cpp
+        wantedhl/weapon_gattlinggun.cpp
+        wantedhl/weapon_knife.cpp
+        wantedhl/weapon_pick.cpp
+        wantedhl/weapon_pistol.cpp
+        wantedhl/weapon_scorpion.cpp
+        wantedhl/weapon_shotgun.cpp
+        wantedhl/weapon_winchester.cpp
+        wantedhl/projectile_bow.cpp
+        wantedhl/monster_annie.cpp
+        wantedhl/monster_bear.cpp
+        wantedhl/monster_beartrap.cpp
+        wantedhl/monster_bigminer.cpp
+        wantedhl/monster_chicken.cpp
+        wantedhl/monster_colonel.cpp
+        wantedhl/monster_cowboy.cpp
+        wantedhl/monster_crispen.cpp
+        wantedhl/monster_dave.cpp
+        wantedhl/monster_horse.cpp
+        wantedhl/monster_hoss.cpp
+        wantedhl/monster_kaiewi.cpp
+        wantedhl/monster_masala.cpp
+        wantedhl/monster_mexbandit.cpp
+        wantedhl/monster_nagatow.cpp
+        wantedhl/monster_puma.cpp
+        wantedhl/monster_ramone.cpp
+        wantedhl/monster_scorpion.cpp
+        wantedhl/monster_skelly.cpp
+        wantedhl/monster_smallminer.cpp
+        wantedhl/monster_snake.cpp
+        wantedhl/monster_townmex.cpp
+        wantedhl/wantedhl_props.cpp
+        wantedhl/wantedhl_misc.cpp
 )
-	
-include_directories (. wpn_shared ../common ../engine ../pm_shared ../game_shared ../public)
+
+if (HAVE_STRLCPY)
+        add_definitions(-DHAVE_STRLCPY)
+else()
+        list(APPEND SVDLL_SOURCES
+                ../external/openbsd/strlcpy.c)
+endif()
+
+if (HAVE_STRLCAT)
+        add_definitions(-DHAVE_STRLCAT)
+else()
+        list(APPEND SVDLL_SOURCES
+                ../external/openbsd/strlcat.c)
+endif()
+
+include_directories (. wpn_shared wantedhl ../common ../engine ../pm_shared ../game_shared ../public)
+
+if(MSVC)
+        set(SVDLL_SOURCES
+                ${SVDLL_SOURCES}
+                hl.def)
+endif()
 
 if(USE_VOICEMGR)
-	set(SVDLL_SOURCES
-		${SVDLL_SOURCES}
-		../game_shared/voice_gamemgr.cpp)
+        set(SVDLL_SOURCES
+                ${SVDLL_SOURCES}
+                ../game_shared/voice_gamemgr.cpp)
 else()
-	add_definitions(-DNO_VOICEGAMEMGR)
+        add_definitions(-DNO_VOICEGAMEMGR)
 endif()
 
 add_library (${SVDLL_LIBRARY} SHARED ${SVDLL_SOURCES})
+target_link_libraries(${SVDLL_LIBRARY} vcs_info)
 
-set_target_properties (${SVDLL_SHARED} PROPERTIES
-	POSITION_INDEPENDENT_CODE 1)
+set_target_properties (${SVDLL_LIBRARY} PROPERTIES POSITION_INDEPENDENT_CODE 1)
 
+if(APPLE AND NOT "${SERVER_LIBRARY_NAME_OSX}" STREQUAL "")
+        # on Apple platforms we always use gamedll_osx liblist/gameinfo key, if it's set
+        set(SVDLL_NAME "${SERVER_LIBRARY_NAME_OSX}")
+elseif(NOT WIN32 AND NOT "${SERVER_LIBRARY_NAME_LINUX}" STREQUAL "")
+        # on non-Windows platforms we use gamedll_linux liblist/gameinfo key, if it's set
+        set(SVDLL_NAME "${SERVER_LIBRARY_NAME_LINUX}")
+else()
+        # on Windows or if no gamedll_osx or gamedll_linux is set, use default gamedll key
+        set(SVDLL_NAME "${SERVER_LIBRARY_NAME}")
+endif()
+
+set_target_postfix_with_name(${SVDLL_LIBRARY} ${SVDLL_NAME})
+
+if(ANDROID)
+        target_link_libraries(${SVDLL_LIBRARY}
+                "-Wl,--whole-archive" "-l:libc++_static.a" "-Wl,--no-whole-archive"
+                "-l:libc++abi.a")
+endif()
+
+set_property(TARGET ${SVDLL_LIBRARY} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
+if(HAVE_LTO)
+        set_property(TARGET ${SVDLL_LIBRARY} PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
+endif()
+
+install(TARGETS ${SVDLL_LIBRARY}
+        RUNTIME DESTINATION "${GAMEDIR}/${SERVER_INSTALL_DIR}/"
+        LIBRARY DESTINATION "${GAMEDIR}/${SERVER_INSTALL_DIR}/"
+        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                GROUP_READ GROUP_EXECUTE
+                WORLD_READ WORLD_EXECUTE)
+
+if(CMAKE_BUILD_TYPE MATCHES "Release" AND NOT WIN32)
+        add_custom_command(TARGET ${SVDLL_LIBRARY}
+                        POST_BUILD DEPENDS ${SVDLL_LIBRARY}
+                        COMMAND ${CMAKE_STRIP} -s $<TARGET_FILE:${SVDLL_LIBRARY}>)
+endif()

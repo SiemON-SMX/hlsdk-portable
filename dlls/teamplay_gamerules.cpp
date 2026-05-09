@@ -44,7 +44,7 @@ CHalfLifeTeamplay::CHalfLifeTeamplay()
 	m_szTeamList[0] = 0;
 
 	// Cache this because the team code doesn't want to deal with changing this in the middle of a game
-	strncpy( m_szTeamList, teamlist.string, TEAMPLAY_TEAMLISTLENGTH );
+	strlcpy( m_szTeamList, teamlist.string, TEAMPLAY_TEAMLISTLENGTH );
 
 	edict_t *pWorld = INDEXENT( 0 );
 	if( pWorld && pWorld->v.team )
@@ -52,14 +52,12 @@ CHalfLifeTeamplay::CHalfLifeTeamplay()
 		if( teamoverride.value )
 		{
 			const char *pTeamList = STRING( pWorld->v.team );
-			if( pTeamList && strlen( pTeamList ) )
-			{
-				strncpy( m_szTeamList, pTeamList, TEAMPLAY_TEAMLISTLENGTH );
-			}
+			if( pTeamList && pTeamList[0] != '\0' )
+				strlcpy( m_szTeamList, pTeamList, TEAMPLAY_TEAMLISTLENGTH );
 		}
 	}
 	// Has the server set teams
-	if( strlen( m_szTeamList ) )
+	if( m_szTeamList[0] != '\0' )
 		m_teamLimit = TRUE;
 	else
 		m_teamLimit = FALSE;
@@ -69,7 +67,7 @@ CHalfLifeTeamplay::CHalfLifeTeamplay()
 
 extern cvar_t timeleft, fragsleft;
 
-#ifndef NO_VOICEGAMEMGR
+#if !NO_VOICEGAMEMGR
 #include "voice_gamemgr.h"
 extern CVoiceGameMgr g_VoiceGameMgr;
 #endif
@@ -82,7 +80,7 @@ void CHalfLifeTeamplay::Think( void )
 	int frags_remaining = 0;
 	int time_remaining = 0;
 
-#ifndef NO_VOICEGAMEMGR
+#if !NO_VOICEGAMEMGR
 	g_VoiceGameMgr.Update(gpGlobals->frametime);
 #endif
 	if( g_fGameOver )   // someone else quit the game already
@@ -116,7 +114,7 @@ void CHalfLifeTeamplay::Think( void )
 				return;
 			}
 
-			remain = flFragLimit - team_scores[i];
+			remain = (int)( flFragLimit - team_scores[i] );
 			if( remain < bestfrags )
 			{
 				bestfrags = remain;
@@ -148,7 +146,7 @@ void CHalfLifeTeamplay::Think( void )
 //=========================================================
 BOOL CHalfLifeTeamplay::ClientCommand( CBasePlayer *pPlayer, const char *pcmd )
 {
-#ifndef NO_VOICEGAMEMGR
+#if !NO_VOICEGAMEMGR
 	if( g_VoiceGameMgr.ClientCommand( pPlayer, pcmd ) )
 		return TRUE;
 #endif
@@ -157,7 +155,7 @@ BOOL CHalfLifeTeamplay::ClientCommand( CBasePlayer *pPlayer, const char *pcmd )
 		if( CMD_ARGC() < 2 )
 			return TRUE;
 
-		int slot = atoi( CMD_ARGV( 1 ) );
+		//int slot = atoi( CMD_ARGV( 1 ) );
 
 		// select the item from the current menu
 		return TRUE;
@@ -183,7 +181,7 @@ const char *CHalfLifeTeamplay::SetDefaultPlayerTeam( CBasePlayer *pPlayer )
 {
 	// copy out the team name from the model
 	char *mdls = g_engfuncs.pfnInfoKeyValue( g_engfuncs.pfnGetInfoKeyBuffer( pPlayer->edict() ), "model" );
-	strncpy( pPlayer->m_szTeamName, mdls, TEAM_NAME_LENGTH );
+	strlcpy( pPlayer->m_szTeamName, mdls, TEAM_NAME_LENGTH );
 
 	RecountTeams();
 
@@ -200,7 +198,7 @@ const char *CHalfLifeTeamplay::SetDefaultPlayerTeam( CBasePlayer *pPlayer )
 		{
 			pTeamName = TeamWithFewestPlayers();
 		}
-		strncpy( pPlayer->m_szTeamName, pTeamName, TEAM_NAME_LENGTH );
+		strlcpy( pPlayer->m_szTeamName, pTeamName, TEAM_NAME_LENGTH );
 	}
 
 	return pPlayer->m_szTeamName;
@@ -241,7 +239,7 @@ void CHalfLifeTeamplay::InitHUD( CBasePlayer *pPlayer )
 
 	ChangePlayerTeam( pPlayer, pPlayer->m_szTeamName, FALSE, FALSE );
 	UTIL_SayText( text, pPlayer );
-	int clientIndex = pPlayer->entindex();
+	//int clientIndex = pPlayer->entindex();
 	RecountTeams();
 	// update this player with all the other players team info
 	// loop through all active players and send their team info to the new client
@@ -287,8 +285,7 @@ void CHalfLifeTeamplay::ChangePlayerTeam( CBasePlayer *pPlayer, const char *pTea
 
 	// copy out the team name from the model
 	if( pPlayer->m_szTeamName != pTeamName )
-		strncpy( pPlayer->m_szTeamName, pTeamName, TEAM_NAME_LENGTH );
-
+		strlcpy( pPlayer->m_szTeamName, pTeamName, TEAM_NAME_LENGTH );
 	g_engfuncs.pfnSetClientKeyValue( clientIndex, g_engfuncs.pfnGetInfoKeyBuffer( pPlayer->edict() ), "model", pPlayer->m_szTeamName );
 	g_engfuncs.pfnSetClientKeyValue( clientIndex, g_engfuncs.pfnGetInfoKeyBuffer( pPlayer->edict() ), "team", pPlayer->m_szTeamName );
 
@@ -300,7 +297,7 @@ void CHalfLifeTeamplay::ChangePlayerTeam( CBasePlayer *pPlayer, const char *pTea
 
 	MESSAGE_BEGIN( MSG_ALL, gmsgScoreInfo );
 		WRITE_BYTE( clientIndex );
-		WRITE_SHORT( pPlayer->pev->frags );
+		WRITE_SHORT( (int)pPlayer->pev->frags );
 		WRITE_SHORT( pPlayer->m_iDeaths );
 		WRITE_SHORT( 0 );
 		WRITE_SHORT( g_pGameRules->GetTeamIndex( pPlayer->m_szTeamName ) + 1 );
@@ -357,6 +354,8 @@ void CHalfLifeTeamplay::ClientUserInfoChanged( CBasePlayer *pPlayer, char *infob
 
 	// recound stuff
 	RecountTeams( TRUE );
+
+	pPlayer->SetPrefsFromUserinfo( infobuffer );
 }
 
 extern int gmsgDeathMsg;
@@ -601,13 +600,13 @@ void CHalfLifeTeamplay::RecountTeams( bool bResendInfo )
 					tm = num_teams;
 					num_teams++;
 					team_scores[tm] = 0;
-					strncpy( team_names[tm], pTeamName, MAX_TEAMNAME_LENGTH );
+					strlcpy( team_names[tm], pTeamName, MAX_TEAMNAME_LENGTH );
 				}
 			}
 
 			if( tm >= 0 )
 			{
-				team_scores[tm] += plr->pev->frags;
+				team_scores[tm] += (int)plr->pev->frags;
 			}
 
 			if( bResendInfo ) //Someone's info changed, let's send the team info again.

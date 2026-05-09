@@ -12,9 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-
-
-#ifndef R_STUDIOINT_H
+#pragma once
+#if !defined(R_STUDIOINT_H)
 #define R_STUDIOINT_H
 
 #define STUDIO_INTERFACE_VERSION 1

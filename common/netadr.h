@@ -12,8 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-
-#ifndef NETADR_H
+#pragma once
+#if !defined(NETADR_H)
 #define NETADR_H
 
 typedef enum

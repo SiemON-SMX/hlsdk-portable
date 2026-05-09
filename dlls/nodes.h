@@ -15,7 +15,9 @@
 //=========================================================
 // nodes.h
 //=========================================================
-
+#pragma once
+#if !defined(NODES_H)
+#define NODES_H
 //=========================================================
 // DEFINE
 //=========================================================
@@ -103,7 +105,14 @@ typedef struct
 //=========================================================
 // CGraph 
 //=========================================================
-#define	GRAPH_VERSION	(int)16// !!!increment this whever graph/node/link classes change, to obsolesce older disk files.
+#define _GRAPH_VERSION_RETAIL 16 // Retail Half-Life graph version. Don't increment this
+#if XASH_64BIT
+#define	_GRAPH_VERSION	(16 * 10)
+#else
+#define	_GRAPH_VERSION	(16) // !!!increment this whenever graph/node/link classes change, to obsolesce older disk files.
+#endif
+#define GRAPH_VERSION (int)_GRAPH_VERSION
+#define GRAPH_VERSION_RETAIL (int)_GRAPH_VERSION_RETAIL
 
 class CGraph
 {
@@ -177,9 +186,9 @@ public:
 	void	InitGraph( void );
 	int		AllocNodes ( void );
 	
-	int		CheckNODFile(char *szMapName);
-	int		FLoadGraph(char *szMapName);
-	int		FSaveGraph(char *szMapName);
+	int		CheckNODFile(const char *szMapName);
+	int		FLoadGraph(const char *szMapName);
+	int		FSaveGraph(const char *szMapName);
 	int		FSetGraphPointers(void);
 	void	CheckNode(Vector vecOrigin, int iNode);
 
@@ -203,11 +212,16 @@ public:
 		return 0; 
 	}
 
+	void	ByteswapGraph();
+	void	ByteswapNodes();
+	void	ByteswapLinks();
+	void	ByteswapDistInfo();
+	void	ByteswapHashLinks();
 
 	inline	CNode &Node( int i )
 	{
-#ifdef _DEBUG
-		if ( !m_pNodes || i < 0 || i > m_cNodes )
+#if _DEBUG
+		if ( !m_pNodes || i < 0 || i >= m_cNodes )
 			ALERT( at_error, "Bad Node!\n" );
 #endif
 		return m_pNodes[i];
@@ -215,8 +229,8 @@ public:
 
 	inline	CLink &Link( int i )
 	{
-#ifdef _DEBUG
-		if ( !m_pLinkPool || i < 0 || i > m_cLinks )
+#if _DEBUG
+		if ( !m_pLinkPool || i < 0 || i >= m_cLinks )
 			ALERT( at_error, "Bad link!\n" );
 #endif
 		return m_pLinkPool[i];
@@ -370,3 +384,4 @@ enum
 };
 
 extern CGraph WorldGraph;
+#endif // NODES_H

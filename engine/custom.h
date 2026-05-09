@@ -12,11 +12,13 @@
 *   without written permission from Valve LLC.
 *
 ****/
-
-#ifndef CUSTOM_H
+#pragma once
+#if !defined(CUSTOM_H)
 #define CUSTOM_H
 
 #include "const.h"
+
+#define MAX_QPATH 64    // Must match value in quakedefs.h
 
 /////////////////
 // Customization

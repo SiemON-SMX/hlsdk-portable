@@ -16,8 +16,8 @@
 //  cdll_dll.h
 
 // this file is included by both the game-dll and the client-dll,
-
-#ifndef CDLL_DLL_H
+#pragma once
+#if !defined(CDLL_DLL_H)
 #define CDLL_DLL_H
 
 #define MAX_WEAPONS		32		// ???

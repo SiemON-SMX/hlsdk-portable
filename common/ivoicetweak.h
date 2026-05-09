@@ -12,8 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-
-#ifndef IVOICETWEAK_H
+#pragma once
+#if !defined(IVOICETWEAK_H)
 #define IVOICETWEAK_H
 
 // These provide access to the voice controls.

@@ -72,7 +72,7 @@ CGrenade *CCannonBall::ShootContact(entvars_t *pevOwner, Vector vecStart, Vector
 	// Explode on contact
 	pCannonBall->SetTouch(&CCannonBall::ExplodeTouch);
 
-	pCannonBall->pev->dmg = gSkillData.plrDmgM203Grenade;
+	pCannonBall->pev->dmg = gSkillData.plrDmgCannonBall;
 
 	SET_MODEL(ENT(pCannonBall->pev), "models/cannonball.mdl");
 

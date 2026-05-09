@@ -12,8 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-
-#ifndef PM_SHARED_H
+#pragma once
+#if !defined(PM_SHARED_H)
 #define PM_SHARED_H
 
 void PM_Init( struct playermove_s *ppmove );

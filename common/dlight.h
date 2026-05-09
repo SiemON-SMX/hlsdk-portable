@@ -12,8 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-
-#ifndef DLIGHT_H
+#pragma once
+#if !defined(DLIGHT_H)
 #define DLIGHT_H
 
 typedef struct dlight_s

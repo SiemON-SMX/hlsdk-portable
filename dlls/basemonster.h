@@ -12,8 +12,8 @@
 *   use or distribution of this code by or to any unlicensed person is illegal.
 *
 ****/
-
-#ifndef BASEMONSTER_H
+#pragma once
+#if !defined(BASEMONSTER_H)
 #define BASEMONSTER_H
 
 //
@@ -106,6 +106,8 @@ public:
 	SCRIPTSTATE m_scriptState;		// internal cinematic state
 	CCineMonster *m_pCine;
 
+	float m_flLastYawTime;
+
 	virtual int Save( CSave &save ); 
 	virtual int Restore( CRestore &restore );
 	static TYPEDESCRIPTION m_SaveData[];
@@ -128,7 +130,7 @@ public:
 	virtual BOOL ShouldFadeOnDeath( void );
 
 	// Basic Monster AI functions
-	virtual float ChangeYaw( int speed );
+	virtual float ChangeYaw( int yawSpeed );
 	float VecToYaw( Vector vecDir );
 	float FlYawDiff( void ); 
 
@@ -186,16 +188,19 @@ public:
 	virtual void ScheduleChange( void ) {}
 	// virtual int CanPlaySequence( void ) { return ((m_pCine == NULL) && (m_MonsterState == MONSTERSTATE_NONE || m_MonsterState == MONSTERSTATE_IDLE || m_IdealMonsterState == MONSTERSTATE_IDLE)); }
 	virtual int CanPlaySequence( BOOL fDisregardState, int interruptLevel );
+#if SPEAKABLE_TARGETS
+	virtual int CanPlaySentence( BOOL fDisregardState ) { return IsAllowedToSpeak(); }
+	virtual BOOL IsAllowedToSpeak( void ) { return IsAlive(); }
+#else
 	virtual int CanPlaySentence( BOOL fDisregardState ) { return IsAlive(); }
 	virtual void PlaySentence( const char *pszSentence, float duration, float volume, float attenuation );
 	virtual void PlayScriptedSentence( const char *pszSentence, float duration, float volume, float attenuation, BOOL bConcurrent, CBaseEntity *pListener );
-
 	virtual void SentenceStop( void );
-
+#endif
 	Task_t *GetTask( void );
 	virtual MONSTERSTATE GetIdealState( void );
 	virtual void SetActivity( Activity NewActivity );
-	void SetSequenceByName( char *szSequence );
+	void SetSequenceByName( const char *szSequence );
 	void SetState( MONSTERSTATE State );
 	virtual void ReportAIState( void );
 
@@ -327,6 +332,6 @@ public:
 	BOOL ExitScriptedSequence();
 	BOOL CineCleanup();
 
-	CBaseEntity* DropItem ( char *pszItemName, const Vector &vecPos, const Vector &vecAng );// drop an item.
+	CBaseEntity* DropItem( const char *pszItemName, const Vector &vecPos, const Vector &vecAng );// drop an item.
 };
 #endif // BASEMONSTER_H

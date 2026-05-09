@@ -12,8 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-
-#ifndef ENTITY_TYPES_H
+#pragma once
+#if !defined(ENTITY_TYPES_H)
 #define ENTITY_TYPES_H
 
 #define ET_NORMAL		0

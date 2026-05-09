@@ -12,7 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-#ifndef ENTITY_STATE_H
+#pragma once
+#if !defined(ENTITY_STATE_H)
 #define ENTITY_STATE_H
 
 // For entityType below

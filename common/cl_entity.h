@@ -12,8 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-
-#ifndef CL_ENTITY_H
+#pragma once
+#if !defined(CL_ENTITY_H)
 #define CL_ENTITY_H
 
 typedef struct efrag_s

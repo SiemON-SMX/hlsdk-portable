@@ -12,8 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-
-#ifndef QFONT_H
+#pragma once
+#if !defined(QFONT_H)
 #define QFONT_H
 
 // Font stuff

@@ -15,11 +15,13 @@
 //
 // cl_util.h
 //
-
+#if !defined(CL_UTIL_H)
+#define CL_UTIL_H
+#include <assert.h>
 #include "exportdef.h"
 #include "cvardef.h"
 
-#ifndef TRUE
+#if !defined(TRUE)
 #define TRUE 1
 #define FALSE 0
 #endif
@@ -70,6 +72,8 @@ inline struct cvar_s *CVAR_CREATE( const char *cv, const char *val, const int fl
 // Use this to set any co-ords in 640x480 space
 #define XRES(x)		( (int)( float(x) * ( (float)ScreenWidth / 640.0f ) + 0.5f ) )
 #define YRES(y)		( (int)( float(y) * ( (float)ScreenHeight / 480.0f ) + 0.5f ) )
+#define XRES_HD(x)      ( (int)( float(x) * Q_max(1.f, (float)ScreenWidth / 1280.f )))
+#define YRES_HD(y)	( (int)( float(y) * Q_max(1.f, (float)ScreenHeight / 720.f )))
 
 // use this to project world coordinates to screen coordinates
 #define XPROJECT(x)	( ( 1.0f + (x) ) * ScreenWidth * 0.5f )
@@ -94,8 +98,12 @@ inline void DrawSetTextColor( float r, float g, float b )
 inline int SPR_Height( HSPRITE x, int f )	{ return gEngfuncs.pfnSPR_Height(x, f); }
 inline int SPR_Width( HSPRITE x, int f )	{ return gEngfuncs.pfnSPR_Width(x, f); }
 
-inline 	client_textmessage_t	*TextMessageGet( const char *pName ) { return gEngfuncs.pfnTextMessageGet( pName ); }
-inline 	int						TextMessageDrawChar( int x, int y, int number, int r, int g, int b ) 
+inline client_textmessage_t *TextMessageGet( const char *pName )
+{
+	return gEngfuncs.pfnTextMessageGet( pName );
+}
+
+inline int TextMessageDrawChar( int x, int y, int number, int r, int g, int b ) 
 {
 	return gEngfuncs.pfnDrawCharacter( x, y, number, r, g, b ); 
 }
@@ -103,7 +111,8 @@ inline 	int						TextMessageDrawChar( int x, int y, int number, int r, int g, in
 inline int DrawConsoleString( int x, int y, const char *string )
 {
 	if( hud_textmode->value == 1 )
-		return gHUD.DrawHudString( x, y, 9999, (char*)string, 255 * g_hud_text_color[0], 255 * g_hud_text_color[1], 255 * g_hud_text_color[2] );
+		return gHUD.DrawHudString( x, y, 9999, (char*)string, (int)( (float)g_hud_text_color[0] * 255.0f ),
+			(int)( (float)g_hud_text_color[1] * 255.0f ), (int)( (float)g_hud_text_color[2] * 255.0f ) );
 	return gEngfuncs.pfnDrawConsoleString( x, y, (char*) string );
 }
 
@@ -114,6 +123,8 @@ inline void GetConsoleStringSize( const char *string, int *width, int *height )
 	else
 		gEngfuncs.pfnDrawConsoleStringLen( (char*)string, width, height );
 }
+
+int DrawUtfString( int xpos, int ypos, int iMaxX, const char *szIt, int r, int g, int b );
 
 inline int ConsoleStringLen( const char *string )
 {
@@ -138,12 +149,33 @@ inline void CenterPrint( const char *string )
 #define GetPlayerInfo ( *gEngfuncs.pfnGetPlayerInfo )
 
 // sound functions
-inline void PlaySound( char *szSound, float vol ) { gEngfuncs.pfnPlaySoundByName( szSound, vol ); }
+inline void PlaySound( const char *szSound, float vol ) { gEngfuncs.pfnPlaySoundByName( szSound, vol ); }
 inline void PlaySound( int iSound, float vol ) { gEngfuncs.pfnPlaySoundByIndex( iSound, vol ); }
 
-#define max(a, b)  (((a) > (b)) ? (a) : (b))
-#define min(a, b)  (((a) < (b)) ? (a) : (b))
+#define Q_max(a, b)  (((a) > (b)) ? (a) : (b))
+#define Q_min(a, b)  (((a) < (b)) ? (a) : (b))
 #define fabs(x)	   ((x) > 0 ? (x) : 0 - (x))
+
+inline int GetSpriteRes( int width, int height )
+{
+	int i;
+
+	if( width < 640 )
+		i = 320;
+	else if( width < 1280 || !gHUD.m_pAllowHD->value )
+		i = 640;
+	else
+	{
+		if( height <= 720 )
+			i = 640;
+		else if( width <= 2560 || height <= 1600 )
+			i = 1280;
+		else
+			i = 2560;
+	}
+
+	return Q_min( i, gHUD.m_iMaxRes );
+}
 
 void ScaleColors( int &r, int &g, int &b, int a );
 
@@ -158,7 +190,8 @@ void VectorScale( const float *in, float scale, float *out );
 float VectorNormalize( float *v );
 void VectorInverse( float *v );
 
-extern vec3_t vec3_origin;
+// extern vec3_t vec3_origin;
+extern float vec3_origin[3];
 
 // disable 'possible loss of data converting float to int' warning message
 #pragma warning( disable: 4244 )
@@ -173,3 +206,7 @@ inline void UnpackRGB( int &r, int &g, int &b, unsigned long ulRGB )\
 }
 
 HSPRITE LoadSprite( const char *pszName );
+
+bool HUD_MessageBox( const char *msg );
+bool IsXashFWGS();
+#endif

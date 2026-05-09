@@ -12,7 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-#ifndef ITEMS_H
+#pragma once
+#if !defined(ITEMS_H)
 #define ITEMS_H
 
 class CItem : public CBaseEntity

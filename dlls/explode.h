@@ -12,7 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-#ifndef EXPLODE_H
+#pragma once
+#if !defined(EXPLODE_H)
 #define EXPLODE_H
 
 #define	SF_ENVEXPLOSION_NODAMAGE	( 1 << 0 ) // when set, ENV_EXPLOSION will not actually inflict damage
@@ -26,4 +27,4 @@ extern DLL_GLOBAL short g_sModelIndexFireball;
 extern DLL_GLOBAL short g_sModelIndexSmoke;
 
 extern void ExplosionCreate( const Vector &center, const Vector &angles, edict_t *pOwner, int magnitude, BOOL doDamage );
-#endif			//EXPLODE_H
+#endif	// EXPLODE_H

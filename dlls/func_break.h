@@ -12,7 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-#ifndef FUNC_BREAK_H
+#pragma once
+#if !defined(FUNC_BREAK_H)
 #define FUNC_BREAK_H
 
 typedef enum
@@ -84,7 +85,7 @@ public:
 	Explosions m_Explosion;
 	int m_idShard;
 	float m_angle;
-	int m_iszGibModel;
-	int m_iszSpawnObject;
+	string_t m_iszGibModel;
+	string_t m_iszSpawnObject;
 };
 #endif	// FUNC_BREAK_H

@@ -1,21 +1,22 @@
-//========= Copyright © 1996-2002, Valve LLC, All rights reserved. ============
+//========= Copyright (c) 1996-2002, Valve LLC, All rights reserved. ============
 //
 // Purpose: 
 //
 // $NoKeywords: $
 //=============================================================================
-
-#if !defined( STUDIO_UTIL_H )
-#define STUDIO_UTIL_H
-#if defined( WIN32 )
 #pragma once
-#endif
+#if !defined(STUDIO_UTIL_H)
+#define STUDIO_UTIL_H
 
-#ifndef M_PI
+#if !defined(M_PI)
 #define M_PI		3.14159265358979323846	// matches value in gcc v2 math.h
 #endif
 
-#ifndef PITCH
+#if !defined(M_PI_F)
+#define M_PI_F          (float)M_PI
+#endif
+
+#if !defined(PITCH)
 // MOVEMENT INFO
 // up / down
 #define	PITCH	0
@@ -35,5 +36,6 @@ void	ConcatTransforms( float in1[3][4], float in2[3][4], float out[3][4] );
 void	MatrixCopy( float in[3][4], float out[3][4] );
 void	QuaternionMatrix( vec4_t quaternion, float (*matrix)[4] );
 void	QuaternionSlerp( vec4_t p, vec4_t q, float t, vec4_t qt );
+void	QuaternionSlerpX4( vec4_t p[4], vec4_t q[4], float t, vec4_t qt[4] );
 void	AngleQuaternion( float *angles, vec4_t quaternion );
 #endif // STUDIO_UTIL_H

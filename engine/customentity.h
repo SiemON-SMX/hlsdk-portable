@@ -12,8 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-
-#ifndef CUSTOMENTITY_H
+#pragma once
+#if !defined(CUSTOMENTITY_H)
 #define CUSTOMENTITY_H
 
 // Custom Entities

@@ -12,8 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-
-#ifndef PARTICLEDEF_H
+#pragma once
+#if !defined(PARTICLEDEF_H)
 #define PARTICLEDEF_H
 
 typedef enum

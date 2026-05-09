@@ -12,8 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-
-#ifndef SCREENFADE_H
+#pragma once
+#if !defined(SCREENFADE_H)
 #define SCREENFADE_H
 
 typedef struct screenfade_s

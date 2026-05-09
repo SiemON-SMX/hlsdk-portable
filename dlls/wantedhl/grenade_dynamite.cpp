@@ -26,6 +26,7 @@
 #include "nodes.h"
 #include "soundent.h"
 #include "decals.h"
+#include "skill.h"
 
 //===================dynamite
 
@@ -77,7 +78,7 @@ CGrenade * CDynamite::ShootTimed(entvars_t *pevOwner, Vector vecStart, Vector ve
 	pDynamite->pev->friction = 0.8;
 
 	SET_MODEL(ENT(pDynamite->pev), "models/w_dynamite.mdl");
-	pDynamite->pev->dmg = 100;
+	pDynamite->pev->dmg = gSkillData.plrDmgDynamite;
 
 	return pDynamite;
 }

@@ -12,10 +12,11 @@
 *   use or distribution of this code by or to any unlicensed person is illegal.
 *
 ****/
-#ifndef SCRIPTED_H
+#pragma once
+#if !defined(SCRIPTED_H)
 #define SCRIPTED_H
 
-#ifndef SCRIPTEVENT_H
+#if !defined(SCRIPTEVENT_H)
 #include "scriptevent.h"
 #endif
 
@@ -77,9 +78,9 @@ public:
 	void	AllowInterrupt( BOOL fAllow );
 	int		IgnoreConditions( void );
 
-	int	m_iszIdle;		// string index for idle animation
-	int	m_iszPlay;		// string index for scripted animation
-	int m_iszEntity;	// entity that is wanted for this script
+	string_t m_iszIdle;		// string index for idle animation
+	string_t m_iszPlay;		// string index for scripted animation
+	string_t m_iszEntity;	// entity that is wanted for this script
 	int m_fMoveTo;
 	int m_iFinishSchedule;
 	float m_flRadius;		// range to search

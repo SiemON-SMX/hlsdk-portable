@@ -12,7 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-#ifndef CLIENT_H
+#pragma once
+#if !defined(CLIENT_H)
 #define CLIENT_H
 
 extern void respawn( entvars_t *pev, BOOL fCopyCorpse );

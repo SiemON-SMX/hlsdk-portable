@@ -12,8 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-
-#ifndef EDICT_H
+#pragma once
+#if !defined(EDICT_H)
 #define EDICT_H
 
 #define MAX_ENT_LEAFS	48

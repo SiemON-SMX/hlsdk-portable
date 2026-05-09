@@ -230,7 +230,7 @@ void CBaseDelay::SUB_UseTargets( CBaseEntity *pActivator, USE_TYPE useType, floa
 		// Save the useType
 		pTemp->pev->button = (int)useType;
 		pTemp->m_iszKillTarget = m_iszKillTarget;
-		pTemp->m_flDelay = 0; // prevent "recursion"
+		pTemp->m_flDelay = 0.0f; // prevent "recursion"
 		pTemp->pev->target = pev->target;
 
 		// HACKHACK
@@ -415,6 +415,14 @@ After moving, set origin to exact final destination, call "move done" function
 */
 void CBaseToggle::LinearMoveDone( void )
 {
+	Vector delta = m_vecFinalDest - pev->origin;
+	float error = delta.Length();
+	if( error > 0.03125f )
+	{
+		LinearMove( m_vecFinalDest, 100 );
+		return;
+	}
+
 	UTIL_SetOrigin( pev, m_vecFinalDest );
 	pev->velocity = g_vecZero;
 	pev->nextthink = -1;
@@ -429,7 +437,28 @@ BOOL CBaseToggle::IsLockedByMaster( void )
 	else
 		return FALSE;
 }
+#if SPEAKABLE_TARGETS
+void CBaseToggle::PlaySentence( const char *pszSentence, float duration, float volume, float attenuation )
+{
+	if( pszSentence && IsAllowedToSpeak())
+	{
+		if( pszSentence[0] == '!' )
+			EMIT_SOUND_DYN( edict(), CHAN_VOICE, pszSentence, volume, attenuation, 0, PITCH_NORM );
+		else
+			SENTENCEG_PlayRndSz( edict(), pszSentence, volume, attenuation, 0, PITCH_NORM );
+	}
+}
 
+void CBaseToggle::PlayScriptedSentence( const char *pszSentence, float duration, float volume, float attenuation, BOOL bConcurrent, CBaseEntity *pListener )
+{
+	PlaySentence( pszSentence, duration, volume, attenuation );
+}
+
+void CBaseToggle::SentenceStop( void )
+{
+	EMIT_SOUND( edict(), CHAN_VOICE, "common/null.wav", 1.0, ATTN_IDLE );
+}
+#endif
 /*
 =============
 AngularMove

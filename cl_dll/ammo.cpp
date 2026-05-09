@@ -27,6 +27,9 @@
 #include <stdio.h>
 
 #include "ammohistory.h"
+#if USE_VGUI
+#include "vgui_TeamFortressViewport.h"
+#endif
 
 WEAPON *gpActiveSel;	// NULL means off, 1 means just the menu bar, otherwise
 						// this points to the active weapon menu item
@@ -72,12 +75,9 @@ void WeaponsResource::LoadWeaponSprites( WEAPON *pWeapon )
 {
 	int i, iRes;
 
-	if( ScreenWidth < 640 )
-		iRes = 320;
-	else
-		iRes = 640;
+	iRes = GetSpriteRes( ScreenWidth, ScreenHeight );
 
-	char sz[128];
+	char sz[256];
 
 	if( !pWeapon )
 		return;
@@ -152,7 +152,7 @@ void WeaponsResource::LoadWeaponSprites( WEAPON *pWeapon )
 		pWeapon->hInactive = SPR_Load( sz );
 		pWeapon->rcInactive = p->rc;
 
-		gHR.iHistoryGap = max( gHR.iHistoryGap, pWeapon->rcActive.bottom - pWeapon->rcActive.top );
+		gHR.iHistoryGap = Q_max( gHR.iHistoryGap, pWeapon->rcActive.bottom - pWeapon->rcActive.top );
 	}
 	else
 		pWeapon->hInactive = 0;
@@ -174,7 +174,7 @@ void WeaponsResource::LoadWeaponSprites( WEAPON *pWeapon )
 		pWeapon->hAmmo = SPR_Load( sz );
 		pWeapon->rcAmmo = p->rc;
 
-		gHR.iHistoryGap = max( gHR.iHistoryGap, pWeapon->rcActive.bottom - pWeapon->rcActive.top );
+		gHR.iHistoryGap = Q_max( gHR.iHistoryGap, pWeapon->rcActive.bottom - pWeapon->rcActive.top );
 	}
 	else
 		pWeapon->hAmmo = 0;
@@ -186,7 +186,7 @@ void WeaponsResource::LoadWeaponSprites( WEAPON *pWeapon )
 		pWeapon->hAmmo2 = SPR_Load( sz );
 		pWeapon->rcAmmo2 = p->rc;
 
-		gHR.iHistoryGap = max( gHR.iHistoryGap, pWeapon->rcActive.bottom - pWeapon->rcActive.top );
+		gHR.iHistoryGap = Q_max( gHR.iHistoryGap, pWeapon->rcActive.bottom - pWeapon->rcActive.top );
 	}
 	else
 		pWeapon->hAmmo2 = 0;
@@ -305,6 +305,9 @@ void CHudAmmo::Reset( void )
 	gHR.Reset();
 
 	//VidInit();
+	wrect_t nullrc = {0,};
+	SetCrosshair( 0, nullrc, 0, 0, 0 ); // reset crosshair
+	m_pWeapon = NULL; // reset last weapon
 }
 
 int CHudAmmo::VidInit( void )
@@ -317,21 +320,24 @@ int CHudAmmo::VidInit( void )
 	giBucketWidth = gHUD.GetSpriteRect( m_HUD_bucket0 ).right - gHUD.GetSpriteRect( m_HUD_bucket0 ).left;
 	giBucketHeight = gHUD.GetSpriteRect( m_HUD_bucket0 ).bottom - gHUD.GetSpriteRect( m_HUD_bucket0 ).top;
 
-	gHR.iHistoryGap = max( gHR.iHistoryGap, gHUD.GetSpriteRect( m_HUD_bucket0 ).bottom - gHUD.GetSpriteRect( m_HUD_bucket0 ).top );
+	gHR.iHistoryGap = gHUD.GetSpriteRect( m_HUD_bucket0 ).bottom - gHUD.GetSpriteRect( m_HUD_bucket0 ).top;
 
 	// If we've already loaded weapons, let's get new sprites
 	gWR.LoadAllWeaponSprites();
 
-	if( ScreenWidth >= 640 )
-	{
-		giABWidth = 20;
-		giABHeight = 4;
-	}
+	const int res = GetSpriteRes( ScreenWidth, ScreenHeight );
+	int factor;
+	if( res >= 2560 )
+		factor = 4;
+	else if( res >= 1280 )
+		factor = 3;
+	else if( res >= 640 )
+		factor = 2;
 	else
-	{
-		giABWidth = 10;
-		giABHeight = 2;
-	}
+		factor = 1;
+
+	giABWidth = 10 * factor;
+	giABHeight = 2 * factor;
 
 	return 1;
 }
@@ -353,7 +359,7 @@ void CHudAmmo::Think( void )
 		{
 			WEAPON *p = gWR.GetWeapon( i );
 
-			if( p )
+			if( p && p->iId )
 			{
 				if( gHUD.m_iWeaponBits & ( 1 << p->iId ) )
 					gWR.PickupWeapon( p );
@@ -536,13 +542,13 @@ int CHudAmmo::MsgFunc_HideWeapon( const char *pszName, int iSize, void *pbuf )
 
 	if( gHUD.m_iHideHUDDisplay & ( HIDEHUD_WEAPONS | HIDEHUD_ALL ) )
 	{
-		static wrect_t nullrc;
+		wrect_t nullrc = {0,};
 		gpActiveSel = NULL;
 		SetCrosshair( 0, nullrc, 0, 0, 0 );
 	}
 	else
 	{
-		if ( m_pWeapon )
+		if( m_pWeapon )
 			SetCrosshair( m_pWeapon->hCrosshair, m_pWeapon->rcCrosshair, 255, 255, 255 );
 	}
 
@@ -556,7 +562,7 @@ int CHudAmmo::MsgFunc_HideWeapon( const char *pszName, int iSize, void *pbuf )
 //
 int CHudAmmo::MsgFunc_CurWeapon( const char *pszName, int iSize, void *pbuf )
 {
-	static wrect_t nullrc;
+	wrect_t nullrc = {0,};
 	int fOnTarget = FALSE;
 
 	BEGIN_READ( pbuf, iSize );
@@ -574,6 +580,8 @@ int CHudAmmo::MsgFunc_CurWeapon( const char *pszName, int iSize, void *pbuf )
 	if( iId < 1 )
 	{
 		SetCrosshair( 0, nullrc, 0, 0, 0 );
+		// Clear out the weapon so we don't keep drawing the last active weapon's ammo. - Solokiller
+		m_pWeapon = 0;
 		return 0;
 	}
 
@@ -604,22 +612,24 @@ int CHudAmmo::MsgFunc_CurWeapon( const char *pszName, int iSize, void *pbuf )
 
 	m_pWeapon = pWeapon;
 
-	if( gHUD.m_iFOV >= 90 )
+	if( !( gHUD.m_iHideHUDDisplay & ( HIDEHUD_WEAPONS | HIDEHUD_ALL ) ) )
 	{
-		// normal crosshairs
-		if( fOnTarget && m_pWeapon->hAutoaim )
-			SetCrosshair( m_pWeapon->hAutoaim, m_pWeapon->rcAutoaim, 255, 255, 255 );
+		if( gHUD.m_iFOV >= 90 )
+		{
+			// normal crosshairs
+			if( fOnTarget && m_pWeapon->hAutoaim )
+				SetCrosshair( m_pWeapon->hAutoaim, m_pWeapon->rcAutoaim, 255, 255, 255 );
+			else
+				SetCrosshair( m_pWeapon->hCrosshair, m_pWeapon->rcCrosshair, 255, 255, 255 );
+		}
 		else
-			SetCrosshair( m_pWeapon->hCrosshair, m_pWeapon->rcCrosshair, 255, 255, 255 );
-	}
-	else
-	{
-		// zoomed crosshairs
-		if( fOnTarget && m_pWeapon->hZoomedAutoaim )
-			SetCrosshair( m_pWeapon->hZoomedAutoaim, m_pWeapon->rcZoomedAutoaim, 255, 255, 255 );
-		else
-			SetCrosshair( m_pWeapon->hZoomedCrosshair, m_pWeapon->rcZoomedCrosshair, 255, 255, 255 );
-
+		{
+			// zoomed crosshairs
+			if( fOnTarget && m_pWeapon->hZoomedAutoaim )
+				SetCrosshair( m_pWeapon->hZoomedAutoaim, m_pWeapon->rcZoomedAutoaim, 255, 255, 255 );
+			else
+				SetCrosshair( m_pWeapon->hZoomedCrosshair, m_pWeapon->rcZoomedCrosshair, 255, 255, 255 );
+		}
 	}
 
 	m_fFade = 200.0f; //!!!
@@ -637,7 +647,8 @@ int CHudAmmo::MsgFunc_WeaponList( const char *pszName, int iSize, void *pbuf )
 	
 	WEAPON Weapon;
 
-	strcpy( Weapon.szName, READ_STRING() );
+	strlcpy( Weapon.szName, READ_STRING(), sizeof( Weapon.szName ));
+
 	Weapon.iAmmoType = (int)READ_CHAR();	
 	
 	Weapon.iMax1 = READ_BYTE();
@@ -655,6 +666,21 @@ int CHudAmmo::MsgFunc_WeaponList( const char *pszName, int iSize, void *pbuf )
 	Weapon.iFlags = READ_BYTE();
 	Weapon.iClip = 0;
 
+	if( Weapon.iId < 0 || Weapon.iId >= MAX_WEAPONS )
+		return 0;
+	if( Weapon.iSlot < 0 || Weapon.iSlot >= MAX_WEAPON_SLOTS + 1 )
+		return 0;
+	if( Weapon.iSlotPos < 0 || Weapon.iSlotPos >= MAX_WEAPON_POSITIONS + 1 )
+		return 0;
+	if( Weapon.iAmmoType < -1 || Weapon.iAmmoType >= MAX_AMMO_TYPES )
+		return 0;
+	if( Weapon.iAmmo2Type < -1 || Weapon.iAmmo2Type >= MAX_AMMO_TYPES )
+		return 0;
+	if( Weapon.iAmmoType >= 0 && Weapon.iMax1 == 0 )
+		return 0;
+	if( Weapon.iAmmo2Type >= 0 && Weapon.iMax2 == 0 )
+		return 0;
+
 	gWR.AddWeapon( &Weapon );
 
 	return 1;
@@ -666,10 +692,11 @@ int CHudAmmo::MsgFunc_WeaponList( const char *pszName, int iSize, void *pbuf )
 // Slot button pressed
 void CHudAmmo::SlotInput( int iSlot )
 {
+#if USE_VGUI
 	// Let the Viewport use it first, for menus
-//	if( gViewPort && gViewPort->SlotInput( iSlot ) )
-//		return;
-
+	if( gViewPort && gViewPort->SlotInput( iSlot ) )
+		return;
+#endif
 	gWR.SelectSlot(iSlot, FALSE, 1);
 }
 
@@ -854,10 +881,10 @@ int CHudAmmo::Draw( float flTime )
 
 	AmmoWidth = gHUD.GetSpriteRect( gHUD.m_HUD_number_0 ).right - gHUD.GetSpriteRect( gHUD.m_HUD_number_0 ).left;
 
-	a = (int)max( MIN_ALPHA, m_fFade );
+	a = (int)Q_max( MIN_ALPHA, m_fFade );
 
 	if( m_fFade > 0 )
-		m_fFade -= ( gHUD.m_flTimeDelta * 20 );
+		m_fFade -= ( (float)gHUD.m_flTimeDelta * 20.0f );
 
 	UnpackRGB( r, g, b, RGB_YELLOWISH );
 
@@ -865,6 +892,7 @@ int CHudAmmo::Draw( float flTime )
 
 	// Does this weapon have a clip?
 	y = ScreenHeight - gHUD.m_iFontHeight - gHUD.m_iFontHeight / 2;
+	y += gHUD.m_iHudNumbersYOffset; // a1ba: fix HL25 HUD vertical inconsistensy
 
 	// Does weapon have any ammo at all?
 	if( m_pWeapon->iAmmoType > 0 )
@@ -877,11 +905,11 @@ int CHudAmmo::Draw( float flTime )
 			x = ScreenWidth - ( 8 * AmmoWidth ) - iIconWidth;
 			x = gHUD.DrawHudNumber( x, y, iFlags | DHN_3DIGITS, pw->iClip, r, g, b );
 
-			wrect_t rc;
+			/*wrect_t rc;
 			rc.top = 0;
 			rc.left = 0;
 			rc.right = AmmoWidth;
-			rc.bottom = 100;
+			rc.bottom = 100;*/
 
 			int iBarWidth =  AmmoWidth / 10;
 
@@ -1163,7 +1191,7 @@ client_sprite_t *GetSpriteList( client_sprite_t *pList, const char *psz, int iRe
 
 	while( i-- )
 	{
-		if( ( !strcmp( psz, p->szName ) ) && ( p->iRes == iRes ) )
+		if( p->iRes == iRes && !strcmp( psz, p->szName ))
 			return p;
 		p++;
 	}

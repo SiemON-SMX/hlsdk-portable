@@ -12,7 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-#ifndef DOORS_H
+#pragma once
+#if !defined(DOORS_H)
 #define DOORS_H
 
 // doors

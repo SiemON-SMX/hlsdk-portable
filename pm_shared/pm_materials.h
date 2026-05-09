@@ -12,7 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-#ifndef PM_MATERIALS_H
+#pragma once
+#if !defined(PM_MATERIALS_H)
 #define PM_MATERIALS_H
 
 #define CBTEXTURENAMEMAX		13 		// only load first n chars of name
@@ -28,4 +29,5 @@
 #define CHAR_TEX_COMPUTER		'P'
 #define CHAR_TEX_GLASS		'Y'
 #define CHAR_TEX_FLESH		'F'
+#define CHAR_TEX_SNOW		'N'
 #endif//PM_MATERIALS_H

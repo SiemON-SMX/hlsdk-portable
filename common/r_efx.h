@@ -12,8 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-
-#ifndef R_EFX_H
+#pragma once
+#if !defined(R_EFX_H)
 #define R_EFX_H
 
 // particle_t

@@ -12,8 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-
-#ifndef PROGDEFS_H
+#pragma once
+#if !defined(PROGDEFS_H)
 #define PROGDEFS_H
 
 typedef struct

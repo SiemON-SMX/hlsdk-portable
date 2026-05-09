@@ -12,8 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-
-#ifndef WADFILE_H
+#pragma once
+#if !defined(WADFILE_H)
 #define WADFILE_H
 
 /*

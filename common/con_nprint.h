@@ -12,7 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-#ifndef CON_NPRINT_H
+#pragma once
+#if !defined(CON_NPRINT_H)
 #define CON_NPRINT_H
 
 typedef struct con_nprint_s

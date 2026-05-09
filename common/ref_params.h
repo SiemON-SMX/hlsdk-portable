@@ -12,8 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-
-#ifndef REF_PARAMS_H
+#pragma once
+#if !defined(REF_PARAMS_H)
 #define REF_PARAMS_H
 
 typedef struct ref_params_s

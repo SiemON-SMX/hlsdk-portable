@@ -12,8 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-
-#ifndef BEAMDEF_H
+#pragma once
+#if !defined(BEAMDEF_H)
 #define BEAMDEF_H
 
 #define FBEAM_STARTENTITY		0x00000001

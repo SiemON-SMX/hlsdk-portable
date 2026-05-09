@@ -12,7 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-#ifndef PM_INFO_H
+#pragma once
+#if !defined(PM_INFO_H)
 #define PM_INFO_H
 
 #define MAX_PHYSINFO_STRING		256

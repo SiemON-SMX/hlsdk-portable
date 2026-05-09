@@ -12,8 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-
-#ifndef DEMO_API_H
+#pragma once
+#if !defined(DEMO_API_H)
 #define DEMO_API_H
 
 typedef struct demo_api_s

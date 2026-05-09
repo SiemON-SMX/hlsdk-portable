@@ -12,7 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-#ifndef EVENT_ARGS_H
+#pragma once
+#if !defined(EVENT_ARGS_H)
 #define EVENT_ARGS_H
 
 // Event was invoked with stated origin

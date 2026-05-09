@@ -42,7 +42,7 @@ void CBaseMonster::SetState( MONSTERSTATE State )
 
 	// Drop enemy pointers when going to idle
 	case MONSTERSTATE_IDLE:
-		if( m_hEnemy != NULL )
+		if( m_hEnemy != 0 )
 		{
 			m_hEnemy = NULL;// not allowed to have an enemy anymore.
 			ALERT( at_aiconsole, "Stripped\n" );
@@ -66,7 +66,7 @@ void CBaseMonster::RunAI( void )
 
 	// IDLE sound permitted in ALERT state is because monsters were silent in ALERT state. Only play IDLE sound in IDLE state
 	// once we have sounds for that state.
-	if( ( m_MonsterState == MONSTERSTATE_IDLE || m_MonsterState == MONSTERSTATE_ALERT ) && RANDOM_LONG( 0, 99 ) == 0 && !( pev->flags & SF_MONSTER_GAG ) )
+	if( ( m_MonsterState == MONSTERSTATE_IDLE || m_MonsterState == MONSTERSTATE_ALERT ) && RANDOM_LONG( 0, 99 ) == 0 && !( pev->spawnflags & SF_MONSTER_GAG ) )
 	{
 		IdleSound();
 	}
@@ -92,7 +92,7 @@ void CBaseMonster::RunAI( void )
 		}
 
 		// do these calculations if monster has an enemy.
-		if( m_hEnemy != NULL )
+		if( m_hEnemy != 0 )
 		{
 			CheckEnemy( m_hEnemy );
 		}
@@ -198,7 +198,7 @@ MONSTERSTATE CBaseMonster::GetIdealState( void )
 		COMBAT goes to ALERT upon death of enemy
 		*/
 		{
-			if( m_hEnemy == NULL )
+			if( m_hEnemy == 0 )
 			{
 				m_IdealMonsterState = MONSTERSTATE_ALERT;
 				// pev->effects = EF_BRIGHTFIELD;

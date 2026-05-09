@@ -12,7 +12,8 @@
 *   use or distribution of this code by or to any unlicensed person is illegal.
 *
 ****/
-#ifndef MONSTERS_H
+#pragma once
+#if !defined(MONSTERS_H)
 #include "skill.h"
 #define MONSTERS_H
 

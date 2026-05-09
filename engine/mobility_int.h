@@ -2,21 +2,35 @@
 mobility_int.h - interface between engine and client for mobile platforms
 Copyright (C) 2015 a1batross
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+This is free and unencumbered software released into the public domain.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+Anyone is free to copy, modify, publish, use, compile, sell, or
+distribute this software, either in source code form or as a compiled
+binary, for any purpose, commercial or non-commercial, and by any
+means.
+
+In jurisdictions that recognize copyright laws, the author or authors
+of this software dedicate any and all copyright interest in the
+software to the public domain. We make this dedication for the benefit
+of the public at large and to the detriment of our heirs and
+successors. We intend this dedication to be an overt act of
+relinquishment in perpetuity of all present and future rights to this
+software under copyright law.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+For more information, please refer to <http://unlicense.org/>
 */
-
 #pragma once
-#ifndef MOBILITY_INT_H
+#if !defined(MOBILITY_INT_H)
 #define MOBILITY_INT_H
-#ifdef __cplusplus
+#if __cplusplus
 extern "C" {
 #endif
 
@@ -34,7 +48,7 @@ extern "C" {
 #define TOUCH_FL_DEF_HIDE		(1U << 6)
 #define TOUCH_FL_DRAW_ADDITIVE	(1U << 7)
 #define TOUCH_FL_STROKE			(1U << 8)
-#define TOUCH_FL_PRECISION			(1U << 9)
+#define TOUCH_FL_PRECISION		(1U << 9)
 
 typedef struct mobile_engfuncs_s
 {
@@ -65,18 +79,26 @@ typedef struct mobile_engfuncs_s
 	void (*pfnTouchSetClientOnly)( unsigned char state );
 
 	// Clean defaults list
-	void (*pfnTouchResetDefaultButtons)();
+	void (*pfnTouchResetDefaultButtons)( void );
 
+	// Draw scaled font for client
+	int (*pfnDrawScaledCharacter)( int x, int y, int number, int r, int g, int b, float scale );
+
+	void (*pfnSys_Warn)( const char *format, ... );
+
+	// Get native object for current platform.
+	// Pass NULL to arguments to receive an array of available objects or NULL if nothing
+	void *(*pfnGetNativeObject)( const char *obj );
+
+	void (*pfnSetCustomClientID)( const char *id );
 	// To be continued...
 } mobile_engfuncs_t;
-
-extern mobile_engfuncs_t *gMobileEngfuncs;
 
 // function exported from client
 // returns 0 on no error otherwise error
 typedef int (*pfnMobilityInterface)( mobile_engfuncs_t *gMobileEngfuncs );
 
-#ifdef __cplusplus
+#if __cplusplus
 }
 #endif
 #endif

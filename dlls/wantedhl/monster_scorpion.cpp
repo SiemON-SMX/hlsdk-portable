@@ -68,15 +68,15 @@ void CScorpion::Spawn(void)
 	SetTouch(&CScorpion::ScorpTouch);
 	SetThink(&CScorpion::HuntThink);
 	pev->nextthink = gpGlobals->time + 0.1;
-	m_flNextHunt = gpGlobals->time + 1E6;
+	m_flNextHunt = gpGlobals->time + 0.5;
 
 	pev->flags |= FL_MONSTER;
 	pev->takedamage = DAMAGE_AIM;
-	pev->health = gSkillData.snarkHealth;
+	pev->health = gSkillData.scorpionHealth;
 	pev->gravity = 0.5;
 	pev->friction = 0.5;
 
-	pev->dmg = gSkillData.snarkDmgPop;
+	pev->dmg = gSkillData.scorpionDmgSting;
 
 	m_flDie = 0;
 
@@ -155,7 +155,7 @@ void CScorpion::HuntThink(void)
 		pev->velocity = pev->velocity * 0.9;
 		pev->velocity.z += 8.0;
 	}
-	else if (pev->movetype = MOVETYPE_FLY)
+	else if (pev->movetype == MOVETYPE_FLY)
 	{
 		pev->movetype = MOVETYPE_BOUNCE;
 	}
@@ -245,13 +245,13 @@ void CScorpion::ScorpTouch(CBaseEntity *pOther)
 			{
 				// ALERT( at_console, "hit enemy\n");
 				ClearMultiDamage();
-				pOther->TraceAttack(pev, gSkillData.snarkDmgBite, gpGlobals->v_forward, &tr, DMG_POISON);
+				pOther->TraceAttack(pev, gSkillData.scorpionDmgSting, gpGlobals->v_forward, &tr, DMG_POISON);
 				if (m_hOwner != NULL)
 					ApplyMultiDamage(pev, m_hOwner->pev);
 				else
 					ApplyMultiDamage(pev, pev);
 
-				pev->dmg += gSkillData.snarkDmgPop; // add more explosion damage
+				pev->dmg += gSkillData.scorpionDmgSting; // add more explosion damage
 				// m_flDie += 2.0; // add more life
 
 				// make bite sound

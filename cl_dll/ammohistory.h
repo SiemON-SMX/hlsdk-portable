@@ -15,6 +15,9 @@
 //
 // ammohistory.h
 //
+#pragma once
+#if !defined(AMMOHISTORY_H)
+#define AMMOHISTORY_H
 
 // this is the max number of items in each bucket
 #define MAX_WEAPON_POSITIONS		MAX_WEAPON_SLOTS
@@ -124,6 +127,7 @@ public:
 	void Reset( void )
 	{
 		memset( rgAmmoHistory, 0, sizeof rgAmmoHistory );
+		iCurrentHistorySlot = 0;
 	}
 
 	int iHistoryGap;
@@ -137,3 +141,4 @@ public:
 };
 
 extern HistoryResource gHR;
+#endif // AMMOHISTORY_H

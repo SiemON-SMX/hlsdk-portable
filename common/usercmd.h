@@ -12,8 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
-
-#ifndef USERCMD_H
+#pragma once
+#if !defined(USERCMD_H)
 #define USERCMD_H
 
 typedef struct usercmd_s
