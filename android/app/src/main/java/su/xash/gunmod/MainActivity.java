@@ -104,7 +104,7 @@ public class MainActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         int id = menuItem.getItemId();
         if (id == R.id.action_github) {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/SiemON-SMX/hlsdk-portable/tree/gunmod")));
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/SiemON-SMX/hlsdk-portable/tree/gunmod-updated")));
             return true;
         }
         if (id == R.id.action_discord) {
