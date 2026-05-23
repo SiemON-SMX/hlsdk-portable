@@ -448,7 +448,7 @@ BOOL CHGrunt::CheckRangeAttack1( float flDot, float flDist )
 	{
 		TraceResult tr;
 
-		if( !m_hEnemy->IsPlayer() && flDist <= 64 )
+		if( m_hEnemy != 0 && !m_hEnemy->IsPlayer() && flDist <= 64 )
 		{
 			// kick nonclients, but don't shoot at them.
 			return FALSE;
@@ -489,6 +489,12 @@ BOOL CHGrunt::CheckRangeAttack2( float flDot, float flDist )
 	// assume things haven't changed too much since last time
 	if( gpGlobals->time < m_flNextGrenadeCheck )
 	{
+		return m_fThrowGrenade;
+	}
+
+	if( m_hEnemy == 0 )
+	{
+		m_fThrowGrenade = FALSE;
 		return m_fThrowGrenade;
 	}
 
@@ -2300,7 +2306,7 @@ Schedule_t *CHGrunt::GetScheduleOfType( int Type )
 		}
 	case SCHED_GRUNT_SUPPRESS:
 		{
-			if( m_hEnemy->IsPlayer() && m_fFirstEncounter )
+			if( m_hEnemy != 0 && m_hEnemy->IsPlayer() && m_fFirstEncounter )
 			{
 				m_fFirstEncounter = FALSE;// after first encounter, leader won't issue handsigns anymore when he has a new enemy
 				return &slGruntSignalSuppress[0];
