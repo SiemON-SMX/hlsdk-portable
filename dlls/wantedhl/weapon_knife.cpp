@@ -201,6 +201,8 @@ int CKnife::Swing(int fFirst)
 
                 ClearMultiDamage();
 
+                if( pEntity )
+                {
                 if ((m_flNextPrimaryAttack + 1 < UTIL_WeaponTimeBase()) || g_pGameRules->IsMultiplayer())
                 {
                         // first swing does full damage
@@ -210,6 +212,7 @@ int CKnife::Swing(int fFirst)
                 {
                         // subsequent swings do half
                         pEntity->TraceAttack(m_pPlayer->pev, gSkillData.plrDmgKnife / 2, gpGlobals->v_forward, &tr, DMG_SLASH);
+                }
                 }
                 ApplyMultiDamage(m_pPlayer->pev, m_pPlayer->pev);
 
@@ -336,6 +339,9 @@ void CFlyingKnife::BubbleThink( void )
 
 void CFlyingKnife::SpinTouch( CBaseEntity *pOther )
 {
+        if( !pOther )
+                return;
+
         // Don't hit the original thrower during the first 0.25 s window.
         if( ENT( pOther->pev ) == pev->owner )
                 return;

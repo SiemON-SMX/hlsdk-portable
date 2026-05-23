@@ -193,6 +193,8 @@ int CPick::Swing(int fFirst)
 
                 ClearMultiDamage();
 
+                if( pEntity )
+                {
                 if ((m_flNextPrimaryAttack + 1 < UTIL_WeaponTimeBase()) || g_pGameRules->IsMultiplayer())
                 {
                         // first swing does full damage
@@ -202,6 +204,7 @@ int CPick::Swing(int fFirst)
                 {
                         // subsequent swings do half
                         pEntity->TraceAttack(m_pPlayer->pev, gSkillData.plrDmgPick / 2, gpGlobals->v_forward, &tr, DMG_CLUB);
+                }
                 }
                 ApplyMultiDamage(m_pPlayer->pev, m_pPlayer->pev);
 
