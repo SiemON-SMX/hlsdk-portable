@@ -23,7 +23,7 @@
 cmake_minimum_required(VERSION 2.6.0)
 project (SVDLL)
 
-set (SVDLL_LIBRARY server)
+set (SVDLL_LIBRARY hl)
 
 add_definitions(-DCLIENT_WEAPONS)
 
@@ -217,6 +217,10 @@ endif()
 
 add_library (${SVDLL_LIBRARY} SHARED ${SVDLL_SOURCES})
 target_link_libraries(${SVDLL_LIBRARY} vcs_info)
+
+if(ANDROID)
+        set_target_postfix(${SVDLL_LIBRARY})
+endif()
 
 if(CMAKE_BUILD_TYPE MATCHES "Release" AND NOT WIN32)
         add_custom_command(TARGET ${SVDLL_LIBRARY}
