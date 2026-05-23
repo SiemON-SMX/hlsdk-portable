@@ -91,7 +91,7 @@ void CGib::SpawnStickyGibs( entvars_t *pevVictim, Vector vecOrigin, int cGibs )
 			pGib->pev->avelocity.y = RANDOM_FLOAT( 250.0f, 400.0f );
 
 			// copy owner's blood color
-			pGib->m_bloodColor = ( CBaseEntity::Instance( pevVictim ) )->BloodColor();
+			{ CBaseEntity *pVictimEnt = CBaseEntity::Instance( pevVictim ); pGib->m_bloodColor = pVictimEnt ? pVictimEnt->BloodColor() : BLOOD_COLOR_RED; }
 
 			if( pevVictim->health > -50 )
 			{
@@ -147,7 +147,7 @@ void CGib::SpawnHeadGib( entvars_t *pevVictim )
 		pGib->pev->avelocity.y = RANDOM_FLOAT( 100.0f, 300.0f );
 
 		// copy owner's blood color
-		pGib->m_bloodColor = ( CBaseEntity::Instance( pevVictim ) )->BloodColor();
+		{ CBaseEntity *pVictimEnt = CBaseEntity::Instance( pevVictim ); pGib->m_bloodColor = pVictimEnt ? pVictimEnt->BloodColor() : BLOOD_COLOR_RED; }
 
 		if( pevVictim->health > -50 )
 		{
@@ -207,7 +207,7 @@ void CGib::SpawnRandomGibs( entvars_t *pevVictim, int cGibs, int human )
 			pGib->pev->avelocity.y = RANDOM_FLOAT( 100.0f, 300.0f );
 
 			// copy owner's blood color
-			pGib->m_bloodColor = ( CBaseEntity::Instance( pevVictim ) )->BloodColor();
+			{ CBaseEntity *pVictimEnt = CBaseEntity::Instance( pevVictim ); pGib->m_bloodColor = pVictimEnt ? pVictimEnt->BloodColor() : BLOOD_COLOR_RED; }
 
 			if( pevVictim->health > -50 )
 			{
