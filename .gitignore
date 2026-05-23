@@ -9,26 +9,33 @@
 *.dll
 *.pdb
 build/
-CMakeLists.txt.user
+CMakeLists.txt.*
 cmake_install.cmake
-Makefile
 *.orig
 *.cbp
 *.dsw
 *.vsxproj
 *.vsproj
 *.sln
-*.apk
-*.bin
+.waf-*
+waf-*
+.waf3-*
+waf3-*
+.lock*
+*.pyc
+.vscode/
+.vs/
+CMakeSettings.json
+CMakeFiles
+CMakeCache.txt
+Makefile
 
-android/libs/*
-android/obj
-android/bin
-android/gen
-
-# Private info
-android/local.properties
-
-# Generated
-android/assets/extras.pak
-
+# Android Studio/Gradle
+.gradle/
+.externalNativeBuild
+.cxx/
+.idea/
+local.properties
+.project
+.classpath
+.settings
