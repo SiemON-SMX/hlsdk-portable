@@ -1,70 +1,69 @@
 name: build
-  "on": [push, pull_request]
+"on": [push, pull_request]
 
-  jobs:
-    android:
-      name: Android (${{ matrix.abi }})
-      runs-on: ubuntu-latest
-      strategy:
-        fail-fast: false
-        matrix:
-          abi: [armeabi-v7a, arm64-v8a, x86, x86_64]
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-          with:
-            submodules: recursive
+jobs:
+  android:
+    name: Android (${{ matrix.abi }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        abi: [armeabi-v7a, arm64-v8a, x86, x86_64]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
-        - name: Set up Android NDK r25c
-          uses: nttld/setup-ndk@v1
-          id: setup-ndk
-          with:
-            ndk-version: r25c
-            add-to-path: true
+      - name: Set up Android NDK r25c
+        uses: nttld/setup-ndk@v1
+        id: setup-ndk
+        with:
+          ndk-version: r25c
+          add-to-path: true
 
-        - name: Configure (${{ matrix.abi }})
-          run: |
-            cmake -S . -B build-${{ matrix.abi }} \
-              -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup-ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake \
-              -DANDROID_ABI=${{ matrix.abi }} \
-              -DANDROID_PLATFORM=android-21 \
-              -DANDROID_STL=c++_static \
-              -DCMAKE_BUILD_TYPE=Release \
-              -DANDROID_APK=ON \
-              -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/dist/${{ matrix.abi }}"
+      - name: Configure (${{ matrix.abi }})
+        run: |
+          cmake -S . -B build-${{ matrix.abi }} \
+            -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup-ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake \
+            -DANDROID_ABI=${{ matrix.abi }} \
+            -DANDROID_PLATFORM=android-21 \
+            -DANDROID_STL=c++_static \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DANDROID_APK=ON \
+            -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/dist/${{ matrix.abi }}"
 
-        - name: Build (${{ matrix.abi }})
-          run: cmake --build build-${{ matrix.abi }} --parallel $(nproc)
+      - name: Build (${{ matrix.abi }})
+        run: cmake --build build-${{ matrix.abi }} --parallel $(nproc)
 
-        - name: Install (${{ matrix.abi }})
-          run: cmake --install build-${{ matrix.abi }}
+      - name: Install (${{ matrix.abi }})
+        run: cmake --install build-${{ matrix.abi }}
 
-        - name: Upload ${{ matrix.abi }}
-          uses: actions/upload-artifact@v4
-          with:
-            name: gunmod-android-${{ matrix.abi }}
-            path: dist/${{ matrix.abi }}/
-            if-no-files-found: error
+      - name: Upload ${{ matrix.abi }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: gunmod-android-${{ matrix.abi }}
+          path: dist/${{ matrix.abi }}/
+          if-no-files-found: error
 
-    android-package:
-      name: Package Android (all ABIs)
-      needs: android
-      runs-on: ubuntu-latest
-      steps:
-        - name: Download all ABI artifacts
-          uses: actions/download-artifact@v4
-          with:
-            pattern: gunmod-android-*
-            merge-multiple: false
-            path: out/
+  android-package:
+    name: Package Android (all ABIs)
+    needs: android
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all ABI artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: gunmod-android-*
+          merge-multiple: false
+          path: out/
 
-        - name: Zip combined package
-          run: cd out && zip -r ../gunmod-android-all-abis.zip .
+      - name: Zip combined package
+        run: cd out && zip -r ../gunmod-android-all-abis.zip .
 
-        - name: Upload combined package
-          uses: actions/upload-artifact@v4
-          with:
-            name: gunmod-android-all-abis
-            path: gunmod-android-all-abis.zip
-            if-no-files-found: error
-  
+      - name: Upload combined package
+        uses: actions/upload-artifact@v4
+        with:
+          name: gunmod-android-all-abis
+          path: gunmod-android-all-abis.zip
+          if-no-files-found: error
