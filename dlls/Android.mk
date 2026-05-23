@@ -104,7 +104,7 @@ LOCAL_SRC_FILES := agrunt.cpp airtank.cpp \
            roach.cpp \
            rpg.cpp \
 	   satchel.cpp \
-           schedule.cpp \
+           AI_BaseNPC_Schedule.cpp \
            scientist.cpp \
            scripted.cpp \
            shotgun.cpp \
@@ -113,6 +113,7 @@ LOCAL_SRC_FILES := agrunt.cpp airtank.cpp \
            sound.cpp \
            soundent.cpp \
            spectator.cpp \
+           sniperrifle.cpp \
            squadmonster.cpp \
            squeakgrenade.cpp \
            subs.cpp \
@@ -141,11 +142,15 @@ LOCAL_SRC_FILES := agrunt.cpp airtank.cpp \
 	   gravgunmod.cpp \
 	   shock.cpp \
 	   shockrifle.cpp \
+	   vehicle.cpp \
 	   displacer.cpp \
 	   m249.cpp \
+	   admin.cpp \
 	   gunmod.cpp \
 	   BMOD_flyingcrowbar.cpp \
+	   BMOD_player.cpp \
 	   bottle.cpp \
+	   knife.cpp \
 	   grapple.cpp \
 	   sporegrenade.cpp \
 	   sporelauncher.cpp \
@@ -156,7 +161,8 @@ LOCAL_SRC_FILES := agrunt.cpp airtank.cpp \
 	   portal_creator.cpp \
 	   prop_portal.cpp \
 	   santahat.cpp \
-	   xtree.cpp
+	   xtree.cpp \
+	   stats.cpp
 #	   ../game_shared/voice_gamemgr.cpp
 
 LOCAL_LDLIBS := -llog
