@@ -522,7 +522,7 @@ int CBarney::TakeDamage( entvars_t *pevInflictor, entvars_t *pevAttacker, float 
 				Remember( bits_MEMORY_SUSPICIOUS );
 			}
 		}
-		else if( !( m_hEnemy->IsPlayer()) && pev->deadflag == DEAD_NO )
+		else if( m_hEnemy != 0 && !( m_hEnemy->IsPlayer()) && pev->deadflag == DEAD_NO )
 		{
 			PlaySentence( "BA_SHOT", 4, VOL_NORM, ATTN_NORM );
 		}
