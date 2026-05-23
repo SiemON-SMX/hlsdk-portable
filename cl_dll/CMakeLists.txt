@@ -129,6 +129,10 @@ endif()
 add_library (${CLDLL_LIBRARY} SHARED ${CLDLL_SOURCES})
 target_link_libraries(${CLDLL_LIBRARY} vcs_info)
 
+if(ANDROID)
+	set_target_postfix(${CLDLL_LIBRARY})
+endif()
+
 if(CMAKE_BUILD_TYPE MATCHES "Release" AND NOT WIN32)
         add_custom_command(TARGET ${CLDLL_LIBRARY}
                 POST_BUILD DEPENDS ${CLDLL_LIBRARY}
