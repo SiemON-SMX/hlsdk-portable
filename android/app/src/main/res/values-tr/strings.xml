@@ -14,6 +14,6 @@
 • Orijinal repo Troll338cz tarafından Old Engine için yapıldı (eski): https://github.com/Troll338cz/gunmod
 
 • gunmod.pk3 dosyasını /xash/valve klasörüne kopyalamayı unutmayın!!"</string>
-	<string name="download_pk3">gunmod.pk3'ü indir</string>
+	<string name="download_pk3">"gunmod.pk3'ü indir"</string>
 	<string name="ok">OK</string>
 </resources>
