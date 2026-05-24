@@ -9,7 +9,11 @@
 	<string name="no">No</string>
 	
 	<string name="about">About</string>
-	<string name="about_msg">FAK U</string>
-	<string name="download_pk3">Download Files</string>
+	<string name="about_msg">"• Gunmod updated by SiemON for New Engine: https://github.com/SiemON-SMX/hlsdk-portable/tree/gunmod-updated
+
+• Original repo by Troll338cz (outdated) for Old Engine: https://github.com/Troll338cz/gunmod
+
+• Don't forget download gunmod.pk3 and paste it to /xash/valve folder!!"</string>
+	<string name="download_pk3">Download gunmod.pk3</string>
 	<string name="ok">OK</string>
 </resources>

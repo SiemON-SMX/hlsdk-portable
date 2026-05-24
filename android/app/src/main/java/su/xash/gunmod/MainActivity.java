@@ -126,7 +126,7 @@ public class MainActivity extends Activity {
 				.setMessage(R.string.about_msg) 
 				.setPositiveButton(R.string.ok, null) 
 				.setNegativeButton(R.string.download_pk3, (d, which) -> {
-					startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://raw.githubusercontent.com/SiemON-SMX/hlsdk-portable/refs/heads/gunmod-updated/pak/gunmod.pk3")));
+					startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://raw.githubusercontent.com/SiemON-SMX/hlsdk-portable/refs/heads/gunmod-updated/pak/.packaged/gunmod.pk3")));
 				})
 				.create();
 

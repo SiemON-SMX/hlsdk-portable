@@ -2,8 +2,18 @@
 <resources>
 	<string name="launch_button">Oyunu başlat!</string>
 	<string name="cmd_args_text">Komut satırı argümanları</string>
+	
 	<string name="engine_not_found_title">Motor bulunamadı!</string>
 	<string name="engine_not_found_msg">Xash3D FWGS cihazınızda yüklü değil. GitHub\'dan indirmek ister misiniz?</string>
 	<string name="yes">Evet</string>
 	<string name="no">Hayır</string>
+	
+	<string name="about">Hakkında</string>
+	<string name="about_msg">"• Gunmod SiemON tarafından New Engine için güncellendi: https://github.com/SiemON-SMX/hlsdk-portable/tree/gunmod-updated
+
+• Orijinal repo Troll338cz tarafından Old Engine için yapıldı (eski): https://github.com/Troll338cz/gunmod
+
+• gunmod.pk3 dosyasını /xash/valve klasörüne kopyalamayı unutmayın!!"</string>
+	<string name="download_pk3">gunmod.pk3'ü indir</string>
+	<string name="ok">OK</string>
 </resources>
