@@ -221,14 +221,6 @@ if(NOT BUILD_SERVER AND NOT BUILD_CLIENT)
         message(FATAL_ERROR "Nothing to build")
 endif()
 
-# Install event scripts (.sc files) needed by PRECACHE_EVENT.
-# Without these files on disk the engine silently returns event id 0 and
-# PLAYBACK_EVENT_FULL becomes a no-op — no shoot sounds, no muzzle flash.
-install(FILES
-        ${CMAKE_CURRENT_SOURCE_DIR}/events/gattlinggun.sc
-        ${CMAKE_CURRENT_SOURCE_DIR}/events/buffalo.sc
-        DESTINATION "${GAMEDIR}/events/"
-        PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
 
 if(POLLY)
         if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
