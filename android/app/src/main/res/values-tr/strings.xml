@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="launch_button">Oyunu başlat!</string>
+	<string name="cmd_args_text">Komut satırı argümanları</string>
+	
+	<string name="engine_not_found_title">Motor bulunamadı!</string>
+	<string name="engine_not_found_msg">Xash3D FWGS cihazınızda yüklü değil. GitHub\'dan indirmek ister misiniz?</string>
+	<string name="yes">Evet</string>
+	<string name="no">Hayır</string>
+	
+	<string name="about">Hakkında</string>
+	<string name="about_msg">"Half Payne SiemON tarafından New Engine'a uyarlandı: https://github.com/SiemON-SMX/hlsdk-portable/tree/half_payne"</string>
+	<string name="ok">OK</string>
+</resources>

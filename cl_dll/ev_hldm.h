@@ -1,0 +1,128 @@
+//========= Copyright (c) 1996-2002, Valve LLC, All rights reserved. ============
+//
+// Purpose: 
+//
+// $NoKeywords: $
+//=============================================================================
+
+#pragma once
+#if !defined ( EV_HLDMH )
+#define EV_HLDMH
+
+// bullet types
+typedef enum
+{
+        BULLET_NONE = 0,
+        BULLET_PLAYER_9MM, // glock
+        BULLET_PLAYER_MP5, // mp5
+        BULLET_PLAYER_357, // python
+        BULLET_PLAYER_BUCKSHOT, // shotgun
+        BULLET_PLAYER_CROWBAR, // crowbar swipe
+
+        BULLET_MONSTER_9MM,
+        BULLET_MONSTER_MP5,
+        BULLET_MONSTER_12MM
+}Bullet;
+
+// Sequence indices for v_9mmhandgun.mdl (must match dlls/glock.cpp).
+enum glock_e
+{
+        GLOCK_IDLE1 = 0,
+        GLOCK_IDLE_NOSHOT,
+        GLOCK_IDLE3,
+        GLOCK_SHOOT,
+        GLOCK_SHOOT_THEN_EMPTY,
+        GLOCK_RELOAD,
+        GLOCK_RELOAD_FAST,
+        GLOCK_RELOAD_NOSHOT,
+        GLOCK_RELOAD_NOSHOT_FAST,
+        GLOCK_DRAW,
+        GLOCK_DRAW_FAST,
+        GLOCK_DRAW_NOSHOT,
+        GLOCK_DRAW_NOSHOT_FAST,
+        GLOCK_HOLSTER,
+        GLOCK_DRAW_FROM_TWIN,
+        GLOCK_DRAW_FROM_TWIN_FAST,
+        GLOCK_DRAW_FROM_TWIN_NOSHOT_BOTH,
+        GLOCK_DRAW_FROM_TWIN_NOSHOT_BOTH_FAST,
+        GLOCK_DRAW_FROM_TWIN_NOSHOT_LEFT,
+        GLOCK_DRAW_FROM_TWIN_NOSHOT_LEFT_FAST,
+        GLOCK_DRAW_FROM_TWIN_NOSHOT_RIGHT,
+        GLOCK_DRAW_FROM_TWIN_NOSHOT_RIGHT_FAST
+};
+
+enum shotgun_e
+{
+        SHOTGUN_IDLE = 0,
+        SHOTGUN_FIRE,
+        SHOTGUN_FIRE2,
+        SHOTGUN_RELOAD,
+        SHOTGUN_PUMP,
+        SHOTGUN_START_RELOAD,
+        SHOTGUN_DRAW,
+        SHOTGUN_HOLSTER,
+        SHOTGUN_IDLE4,
+        SHOTGUN_IDLE_DEEP
+};
+
+enum mp5_e
+{
+        MP5_LONGIDLE = 0,
+        MP5_IDLE1,
+        MP5_LAUNCH,
+        MP5_RELOAD,
+        MP5_RELOAD_FAST,
+        MP5_DEPLOY,
+        MP5_HOLSTER,
+        MP5_FIRE1,
+        MP5_FIRE2,
+        MP5_FIRE3
+};
+
+// New v_357.mdl with 14 sequences (order MUST match the model file).
+enum python_e
+{
+        PYTHON_IDLE = 0,
+        PYTHON_IDLE_NOSHOT,
+        PYTHON_IDLE_MOVING,
+        PYTHON_SHOOT,
+        PYTHON_SHOOT_NOSHOT,
+        PYTHON_RELOAD,
+        PYTHON_RELOAD_FAST,
+        PYTHON_RELOAD_NOSHOT,
+        PYTHON_RELOAD_NOSHOT_FAST,
+        PYTHON_HOLSTER,
+        PYTHON_DRAW,
+        PYTHON_DRAW_FAST,
+        PYTHON_DRAW_NOSHOT,
+        PYTHON_DRAW_NOSHOT_FAST,
+
+        // legacy aliases so any other code that still uses old names keeps compiling
+        PYTHON_IDLE1   = PYTHON_IDLE,
+        PYTHON_IDLE2   = PYTHON_IDLE_MOVING,
+        PYTHON_IDLE3   = PYTHON_IDLE,
+        PYTHON_FIDGET  = PYTHON_IDLE_NOSHOT,
+        PYTHON_FIRE1   = PYTHON_SHOOT
+};
+
+#define GAUSS_PRIMARY_CHARGE_VOLUME     256// how loud gauss is while charging
+#define GAUSS_PRIMARY_FIRE_VOLUME       450// how loud gauss is when discharged
+
+enum gauss_e
+{
+        GAUSS_IDLE = 0,
+        GAUSS_IDLE2,
+        GAUSS_FIDGET,
+        GAUSS_SPINUP,
+        GAUSS_SPIN,
+        GAUSS_FIRE,
+        GAUSS_FIRE2,
+        GAUSS_HOLSTER,
+        GAUSS_DRAW
+};
+
+void EV_HLDM_GunshotDecalTrace( pmtrace_t *pTrace, char *decalName );
+void EV_HLDM_DecalGunshot( pmtrace_t *pTrace, int iBulletType );
+int EV_HLDM_CheckTracer( int idx, float *vecSrc, float *end, float *forward, float *right, int iBulletType, int iTracerFreq, int *tracerCount );
+void EV_HLDM_FireBullets( int idx, float *forward, float *right, float *up, int cShots, float *vecSrc, float *vecDirShooting, float flDistance, int iBulletType, int iTracerFreq, int *tracerCount, float flSpreadX, float flSpreadY );
+#endif // EV_HLDMH
