@@ -636,6 +636,8 @@ public:
         // animation variant is chosen.
         int GetClipLeft( void ) const { return m_iClipLeft; }
 
+        static TYPEDESCRIPTION m_SaveData[];
+
 private:
         int m_iShell;
         int m_iClipLeft;          // ammo in the LEFT pistol; m_iClip is the RIGHT pistol

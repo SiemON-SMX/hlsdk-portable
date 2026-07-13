@@ -89,6 +89,16 @@ enum ingram_twin_seq_e
 
 LINK_ENTITY_TO_CLASS( weapon_ingram_twin, CIngramTwin )
 
+// Save m_iClipLeft so the left-gun clip survives save/restore.
+// Without this the field is uninitialised after loading a save, which
+// corrupts ammo state and can cause a null-pointer crash on the first
+// weapon switch after load.
+TYPEDESCRIPTION CIngramTwin::m_SaveData[] =
+{
+        DEFINE_FIELD( CIngramTwin, m_iClipLeft, FIELD_INTEGER ),
+};
+IMPLEMENT_SAVERESTORE( CIngramTwin, CBasePlayerWeapon )
+
 void CIngramTwin::Spawn( void )
 {
         pev->classname = MAKE_STRING( "weapon_ingram_twin" );
@@ -206,7 +216,9 @@ BOOL CIngramTwin::Deploy( void )
 void CIngramTwin::Holster( int skiplocal )
 {
         m_fInReload = FALSE;
-        m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.5f;
+
+        if( m_pPlayer )
+                m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.5f;
 
         m_flNextPrimaryAttack   = UTIL_WeaponTimeBase();
         m_flNextSecondaryAttack = UTIL_WeaponTimeBase();

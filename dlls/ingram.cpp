@@ -243,7 +243,9 @@ BOOL CIngram::Deploy( void )
 void CIngram::Holster( int skiplocal )
 {
         m_fInReload = FALSE;
-        m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.5f;
+
+        if( m_pPlayer )
+                m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.5f;
 
         m_flNextPrimaryAttack   = UTIL_WeaponTimeBase();
         m_flNextSecondaryAttack = UTIL_WeaponTimeBase();
