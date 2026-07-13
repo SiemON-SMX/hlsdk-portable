@@ -98,6 +98,7 @@ void CIngramTwin::Spawn( void )
 
         m_iDefaultAmmo = INGRAM_TWIN_DEFAULT_GIVE;
         m_iClipLeft = 0;
+        m_iLastSentClipLeft = -1;
 
         FallInit();
 }
@@ -370,10 +371,12 @@ void CIngramTwin::ItemPostFrame( void )
 #ifndef CLIENT_DLL
         if( m_pPlayer )
         {
-                static int s_iLastSent = -1;
-                if( m_iClipLeft != s_iLastSent && gmsgTwinClip )
+                // Use a per-instance member instead of a static local so that
+                // multiple CIngramTwin instances (e.g. multiplayer or after
+                // respawn) each track their own last-sent value independently.
+                if( m_iClipLeft != m_iLastSentClipLeft && gmsgTwinClip )
                 {
-                        s_iLastSent = m_iClipLeft;
+                        m_iLastSentClipLeft = m_iClipLeft;
                         MESSAGE_BEGIN( MSG_ONE, gmsgTwinClip, NULL, m_pPlayer->pev );
                                 WRITE_BYTE( m_iClipLeft );
                         MESSAGE_END();

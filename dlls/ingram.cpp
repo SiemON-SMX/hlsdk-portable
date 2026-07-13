@@ -204,17 +204,35 @@ BOOL CIngram::Deploy( void )
 {
         int iAnim = ( m_iClip <= 0 ) ? ING_DRAW_NOSHOT : ING_DRAW;
 
-        bool bFromTwin = false;
-        if( m_pPlayer && m_pPlayer->m_pLastItem )
+        // Check whether we are switching from the twin.
+        // FNullEnt guards against a dangling m_pLastItem pointer that can occur
+        // during client-side prediction resyncs on Android (causes a crash when
+        // pev->classname is accessed on a freed entity).
+        CIngramTwin *pTwin = NULL;
+        if( m_pPlayer && m_pPlayer->m_pLastItem &&
+            !FNullEnt( m_pPlayer->m_pLastItem->pev ) )
         {
                 entvars_t *pPrevPev = m_pPlayer->m_pLastItem->pev;
-                if( pPrevPev && pPrevPev->classname )
-                        bFromTwin = FClassnameIs( pPrevPev, "weapon_ingram_twin" );
+                if( pPrevPev->classname && FClassnameIs( pPrevPev, "weapon_ingram_twin" ) )
+                        pTwin = static_cast<CIngramTwin *>( m_pPlayer->m_pLastItem );
         }
 
-        if( bFromTwin )
+        if( pTwin )
         {
-                iAnim = ( m_iClip <= 0 ) ? ING_DRAW_FROM_TWIN_NOSHOT_RIGHT : ING_DRAW_FROM_TWIN;
+                // Pick the correct draw-from-twin animation based on both clip states.
+                // m_iClip  = right gun (tracked on this weapon via twin's m_iClip).
+                // GetClipLeft() = left gun (only the twin knows this value).
+                const bool bRightEmpty = ( m_iClip             <= 0 );
+                const bool bLeftEmpty  = ( pTwin->GetClipLeft() <= 0 );
+
+                if( bRightEmpty && bLeftEmpty )
+                        iAnim = ING_DRAW_FROM_TWIN_NOSHOT_BOTH;
+                else if( bLeftEmpty )
+                        iAnim = ING_DRAW_FROM_TWIN;               // right loaded, left empty: standard draw
+                else if( bRightEmpty )
+                        iAnim = ING_DRAW_FROM_TWIN_NOSHOT_RIGHT;
+                else
+                        iAnim = ING_DRAW_FROM_TWIN;
         }
         // else iAnim already set above (ING_DRAW or ING_DRAW_NOSHOT)
 

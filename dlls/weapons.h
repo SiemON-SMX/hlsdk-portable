@@ -631,9 +631,15 @@ public:
 #endif
         }
 
+        // Accessor used by CIngram::Deploy() to read left-clip state when
+        // transitioning from twin to single so the correct draw_from_twin
+        // animation variant is chosen.
+        int GetClipLeft( void ) const { return m_iClipLeft; }
+
 private:
         int m_iShell;
-        int m_iClipLeft;       // ammo in the LEFT pistol; m_iClip is the RIGHT pistol
+        int m_iClipLeft;          // ammo in the LEFT pistol; m_iClip is the RIGHT pistol
+        int m_iLastSentClipLeft;  // last value sent via gmsgTwinClip (per-instance, replaces static)
 
         unsigned short m_usFireIngramTwin;
         unsigned short m_usFireIngramTwinTracer;
