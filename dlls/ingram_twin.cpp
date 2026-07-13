@@ -93,11 +93,16 @@ LINK_ENTITY_TO_CLASS( weapon_ingram_twin, CIngramTwin )
 // Without this the field is uninitialised after loading a save, which
 // corrupts ammo state and can cause a null-pointer crash on the first
 // weapon switch after load.
+// Guard is required: the client DLL's stripped base classes do not
+// declare Save()/Restore(), so IMPLEMENT_SAVERESTORE must not appear
+// in CLIENT_DLL translation units.
+#ifndef CLIENT_DLL
 TYPEDESCRIPTION CIngramTwin::m_SaveData[] =
 {
         DEFINE_FIELD( CIngramTwin, m_iClipLeft, FIELD_INTEGER ),
 };
 IMPLEMENT_SAVERESTORE( CIngramTwin, CBasePlayerWeapon )
+#endif
 
 void CIngramTwin::Spawn( void )
 {

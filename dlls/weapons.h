@@ -636,7 +636,9 @@ public:
         // animation variant is chosen.
         int GetClipLeft( void ) const { return m_iClipLeft; }
 
+#ifndef CLIENT_DLL
         static TYPEDESCRIPTION m_SaveData[];
+#endif
 
 private:
         int m_iShell;
