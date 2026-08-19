@@ -1,13 +1,6 @@
 /***
 *
 *       M249 SAW
-*
-*       Ported from FWGS hlsdk-portable opfor branch (dlls/gearbox/m249.cpp).
-*       Adapted to the HalfPayne / hlsdk-portable Half-Life code base:
-*       fall back to the standard "models/shell.mdl" for both shell and link
-*       (the original opfor saw_shell.mdl / saw_link.mdl are not part of the
-*       base Half-Life game).
-*
 ****/
 
 #include "extdll.h"
