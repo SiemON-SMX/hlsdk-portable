@@ -147,7 +147,6 @@ BOOL CGlock::Deploy()
                 if( pPrevPev && pPrevPev->classname && FClassnameIs( pPrevPev, "weapon_9mmhandgun_twin" ) )
                 {
                         bFromTwin = true;
-                        // Read both clip states from the twin so we can pick the correct
                         // draw_from_twin animation variant (noshot_left / noshot_right /
                         // noshot_both) instead of always assuming both are empty.
                         CGlockTwin *pTwin = static_cast<CGlockTwin *>( m_pPlayer->m_pLastItem );

@@ -360,7 +360,6 @@ void CMultiManager::ManagerThink( void )
         time = gpGlobals->time - m_startTime;
         while( m_index < m_cTargets && m_flTargetDelay[m_index] <= time )
         {
-                // c5a1 desperation system: intercept start_loser_mm to begin the finale sequence
                 if( strcmp( STRING( gpGlobals->mapname ), "c5a1" ) == 0 &&
                     FStrEq( STRING( m_iTargetName[m_index] ), "start_loser_mm" ) )
                 {
@@ -1122,7 +1121,6 @@ void CBaseTrigger::ActivateMultiTrigger( CBaseEntity *pActivator )
         m_hActivator = pActivator;
         SUB_UseTargets( m_hActivator, USE_TOGGLE, 0 );
 
-        // Commentary hook: fire when player walks through this trigger
         if ( pActivator && pActivator->IsPlayer() )
                 HalfPayneHookModelIndex( ENT( pev ) );
 
@@ -1727,7 +1725,6 @@ void CTriggerPush::Spawn()
         if( pev->speed == 0 )
                 pev->speed = 100;
 
-        // this flag was changed and flying barrels on c2a5 stay broken
         if( FStrEq( STRING( gpGlobals->mapname ), "c2a5" ) && pev->spawnflags & 4 )
                 pev->spawnflags |= SF_TRIG_PUSH_ONCE;
 
@@ -1787,7 +1784,6 @@ void CBaseTrigger::TeleportTouch( CBaseEntity *pOther )
         if( !FBitSet( pevToucher->flags, FL_CLIENT | FL_MONSTER ) )
                 return;
 
-        // c5a1 desperation system: "backtrain" teleport triggers ALL_FOR_REVENGE
         if( pOther->IsPlayer() &&
             FStrEq( STRING( gpGlobals->mapname ), "c5a1" ) &&
             !FStringNull( pev->target ) &&

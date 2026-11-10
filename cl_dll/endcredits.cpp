@@ -144,7 +144,7 @@ int CHudEndCredits::MsgFunc_EndCredits( const char *pszName, int iSize, void *pb
         BEGIN_READ( pbuf, iSize );
 
         ended = true;
-        timeStart = -1.0f;  // set on first Draw call
+        timeStart = -1.0f;
         m_iFlags |= HUD_ACTIVE;
 
         return 1;

@@ -60,31 +60,27 @@ void CKerotan::Spawn( void )
 void CKerotan::Precache( void )
 {
         PRECACHE_MODEL( "models/kerotan.mdl" );
-        PRECACHE_SOUND( "var/kerotan.wav"       );  // normal ribbit
-        PRECACHE_SOUND( "var/kerotan_alert.wav" );  // hit reaction
-        PRECACHE_SOUND( "var/kerotan_broke.wav" );  // death rattle
-        PRECACHE_SOUND( "var/kerotan_short.wav" );  // final shortened ribbit
+        PRECACHE_SOUND( "var/kerotan.wav"       );
+        PRECACHE_SOUND( "var/kerotan_alert.wav" );
+        PRECACHE_SOUND( "var/kerotan_broke.wav" );
+        PRECACHE_SOUND( "var/kerotan_short.wav" );
 }
 
 int CKerotan::TakeDamage( entvars_t *pevInflictor, entvars_t *pevAttacker,
                           float flDamage, int bitsDamageType )
 {
-        // Only physical damage counts — ignore fire, radiation, drown, etc.
         if( !( bitsDamageType & ( DMG_BULLET | DMG_BLAST | DMG_CLUB | DMG_SLASH ) ) )
                 return 1;
 
-        // Spin in a random direction.
         rotationLeft      = RANDOM_FLOAT( 40.0f, 70.0f );
         rotationDirection = RANDOM_LONG( 0, 1 ) ? 1 : -1;
 
-        // Start a wobble roll if not already wobbling.
         if( !rollAmplitude )
         {
                 rollAmplitude = RANDOM_FLOAT( 10.0f, 30.0f );
                 rollDirection = RANDOM_LONG( 0, 1 ) ? 1 : -1;
         }
 
-        // Mark as found on the first hit.
         hasBeenFound = TRUE;
 
         if( hitsReceived >= 5 )
@@ -99,7 +95,6 @@ int CKerotan::TakeDamage( entvars_t *pevInflictor, entvars_t *pevAttacker,
         EMIT_SOUND_DYN( ENT( pev ), CHAN_STATIC,
                 "var/kerotan_alert.wav", 1, ATTN_NORM, 0, 100 );
 
-        // Schedule 10 ribbit sounds spaced ~1.3 s apart.
         if( !soundsLeft )
         {
                 soundsLeft = 10;
@@ -111,7 +106,6 @@ int CKerotan::TakeDamage( entvars_t *pevInflictor, entvars_t *pevAttacker,
 
 void CKerotan::OnThink( void )
 {
-        // Play scheduled ribbit sounds with pitch degrading on each hit.
         if( nextSound > 0.0f && gpGlobals->time >= nextSound )
         {
                 soundsLeft--;
@@ -122,7 +116,6 @@ void CKerotan::OnThink( void )
 
                 if( hitsReceived >= 5 && soundsLeft <= 0 )
                 {
-                        // Final broken ribbit.
                         EMIT_SOUND_DYN( ENT( pev ), CHAN_STATIC,
                                 "var/kerotan_short.wav", 1, ATTN_NORM, 0, pitch );
                         EMIT_SOUND( ENT( pev ), CHAN_STATIC,
@@ -139,7 +132,6 @@ void CKerotan::OnThink( void )
                         : 0.0f;
         }
 
-        // Rotate on the Y axis (yaw spin).
         if( rotationLeft > 0.0f )
         {
                 float step = ( rotationLeft < 5.0f ) ? rotationLeft : 5.0f;
@@ -147,7 +139,6 @@ void CKerotan::OnThink( void )
                 rotationLeft  -= step;
         }
 
-        // Wobble roll that decays over time.
         pev->angles.z  = rollDirection * rollAmplitude * (float)sin( gpGlobals->time * 16.0 );
         rollAmplitude -= 0.5f;
         if( rollAmplitude < 0.0f )

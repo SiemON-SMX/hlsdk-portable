@@ -113,7 +113,7 @@ public:
 // weapon clip/carry ammo capacities
 #define URANIUM_MAX_CARRY               100
 #define _9MM_MAX_CARRY                  250
-#define INGRAM_AMMO_MAX_CARRY   400     // dedicated reserve pool for both ingram variants
+#define INGRAM_AMMO_MAX_CARRY   400
 #define _357_MAX_CARRY                  36
 #define BUCKSHOT_MAX_CARRY              125
 #define BOLT_MAX_CARRY                  50
@@ -151,10 +151,10 @@ public:
 // the default amount of ammo that comes with each gun when it spawns
 #define GLOCK_DEFAULT_GIVE                      17
 #define GLOCK_TWIN_DEFAULT_GIVE                 34      // enough to fill both clips
-#define INGRAM_DEFAULT_GIVE                     50      // single ingram first clip
+#define INGRAM_DEFAULT_GIVE                     50
 #define INGRAM_RESERVE_GIVE                     200     // spare rounds added on first single pickup (50 clip + 200 reserve = 250 total)
 #define INGRAM_TWIN_DEFAULT_GIVE                100     // right-side first clip; left clip is filled in AddToPlayer
-#define INGRAM_TWIN_RESERVE_GIVE                200     // spare rounds added on first twin pickup (capped by INGRAM_AMMO_MAX_CARRY)
+#define INGRAM_TWIN_RESERVE_GIVE                200
 #define PYTHON_DEFAULT_GIVE                     6
 #define MP5_DEFAULT_GIVE                        25
 #define MP5_DEFAULT_GIVE_MP                     MP5_MAX_CLIP
@@ -536,9 +536,6 @@ public:
         void FireOne( float flSpread, float flCycleTime, BOOL fUseAutoAim );
         BOOL Deploy( void );
         void Holster( int skiplocal = 0 );
-        // Twin model has no real holster animation, so any non-zero hold time
-        // simply leaves the player frozen on the twin viewmodel for that duration
-        // and desyncs client/server prediction (visible "freeze" on switch).
         // Switch instantly like the single-pistol variant does.
         float GetHolsterDuration( void ) { return 0.0f; }
         void ItemPostFrame( void );
@@ -547,7 +544,6 @@ public:
         int  PickIdleAnim( void );
 
         // Accessor used by CGlock::Deploy() to read left-clip state when
-        // transitioning from twin back to single so the correct draw_from_twin
         // animation variant is chosen.
         int GetClipLeft( void ) const { return m_iClipLeft; }
 
@@ -563,7 +559,7 @@ public:
 private:
         int m_iShell;
         int m_iClipLeft;          // ammo in the LEFT pistol; m_iClip is the RIGHT pistol
-        int m_iLastSentClipLeft;  // last m_iClipLeft value sent via gmsgTwinClip (per-instance, not static)
+        int m_iLastSentClipLeft;
         BOOL m_bFireLeftNext;     // alternating-fire selector: TRUE = next shot is from LEFT pistol
 
         unsigned short m_usFireGlockTwin;
@@ -614,8 +610,6 @@ public:
         void SecondaryAttack( void );
         BOOL Deploy( void );
         void Holster( int skiplocal = 0 );
-        // See CGlockTwin: deferring the switch with a non-zero holster time
-        // freezes the twin viewmodel on screen and desyncs prediction.
         float GetHolsterDuration( void ) { return 0.0f; }
         void ItemPostFrame( void );
         void Reload( void );
@@ -631,19 +625,18 @@ public:
 #endif
         }
 
-        // Accessor used by CIngram::Deploy() to read left-clip state when
-        // transitioning from twin to single so the correct draw_from_twin
-        // animation variant is chosen.
         int GetClipLeft( void ) const { return m_iClipLeft; }
 
 #ifndef CLIENT_DLL
+        virtual int Save( CSave &save );
+        virtual int Restore( CRestore &restore );
         static TYPEDESCRIPTION m_SaveData[];
 #endif
 
 private:
         int m_iShell;
         int m_iClipLeft;          // ammo in the LEFT pistol; m_iClip is the RIGHT pistol
-        int m_iLastSentClipLeft;  // last value sent via gmsgTwinClip (per-instance, replaces static)
+        int m_iLastSentClipLeft;
 
         unsigned short m_usFireIngramTwin;
         unsigned short m_usFireIngramTwinTracer;

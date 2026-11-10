@@ -1,12 +1,3 @@
-/***
-*
-*       Twin Ingrams (akimbo MAC-10s)
-*
-*       Companion to ingram.cpp. Tracks two independent clips (right + left)
-*       and fires from BOTH guns simultaneously per trigger pull, mirroring the
-*       HalfPayne behavior. Animation enum lives in cl_dll/ev_hldm.h.
-*
-****/
 
 #include "extdll.h"
 #include "util.h"
@@ -21,7 +12,6 @@ extern int gmsgWeapPickup;
 extern int gmsgTwinClip;
 #endif
 
-// Sequence indices for v_ingram.mdl (mirrored from ingram.cpp).
 enum ingram_twin_seq_e
 {
         ITWIN_IDLE = 0,
@@ -89,13 +79,7 @@ enum ingram_twin_seq_e
 
 LINK_ENTITY_TO_CLASS( weapon_ingram_twin, CIngramTwin )
 
-// Save m_iClipLeft so the left-gun clip survives save/restore.
-// Without this the field is uninitialised after loading a save, which
-// corrupts ammo state and can cause a null-pointer crash on the first
-// weapon switch after load.
 // Guard is required: the client DLL's stripped base classes do not
-// declare Save()/Restore(), so IMPLEMENT_SAVERESTORE must not appear
-// in CLIENT_DLL translation units.
 #ifndef CLIENT_DLL
 TYPEDESCRIPTION CIngramTwin::m_SaveData[] =
 {
@@ -144,7 +128,7 @@ int CIngramTwin::GetItemInfo( ItemInfo *p )
         p->iMaxAmmo1 = INGRAM_AMMO_MAX_CARRY;
         p->pszAmmo2 = NULL;
         p->iMaxAmmo2 = -1;
-        p->iMaxClip = INGRAM_TWIN_MAX_CLIP;   // right; left tracked via m_iClipLeft
+        p->iMaxClip = INGRAM_TWIN_MAX_CLIP;
         p->iSlot = 2;
         p->iPosition = 4;
         p->iFlags = 0;
@@ -245,7 +229,6 @@ void CIngramTwin::PrimaryAttack( void )
                 return;
         }
 
-        // Both pistols fire on the same trigger pull when loaded.
         if( bRightHasAmmo )
                 m_iClip--;
         if( bLeftHasAmmo )
@@ -283,7 +266,6 @@ void CIngramTwin::PrimaryAttack( void )
         const int iSide = ( bRightHasAmmo && bLeftHasAmmo ) ? 2
                         : ( bLeftHasAmmo ? 1 : 0 );
 
-        // iparam1 packs per-side post-shot empty state: bit0=right empty, bit1=left empty.
         int iEmptyFlags = 0;
         if( m_iClip     == 0 ) iEmptyFlags |= 1;
         if( m_iClipLeft == 0 ) iEmptyFlags |= 2;
@@ -366,7 +348,6 @@ void CIngramTwin::Reload( void )
                 { iAnim = ITWIN_RELOAD_ONLY_RIGHT;             flDuration = 1.900f; }
         }
 
-        // Manual ammo move (DefaultReload only refills one clip).
         int iAvailable = m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType];
         int iGiveRight = ( iNeedRight > 0 ) ? ( iNeedRight < iAvailable ? iNeedRight : iAvailable ) : 0;
         iAvailable -= iGiveRight;
@@ -388,9 +369,6 @@ void CIngramTwin::ItemPostFrame( void )
 #ifndef CLIENT_DLL
         if( m_pPlayer )
         {
-                // Use a per-instance member instead of a static local so that
-                // multiple CIngramTwin instances (e.g. multiplayer or after
-                // respawn) each track their own last-sent value independently.
                 if( m_iClipLeft != m_iLastSentClipLeft && gmsgTwinClip )
                 {
                         m_iLastSentClipLeft = m_iClipLeft;

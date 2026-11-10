@@ -43,7 +43,7 @@ int gmsgEndStat    = 0;
 struct MapCommentaryEntry
 {
         char    mapName[64];
-        bool    useClassMatcher;        // true → match by className or targetName
+        bool    useClassMatcher;
         char    classMatcher[64];       // used when useClassMatcher == true
         int     modelIndexMatcher;      // used when useClassMatcher == false; -1 = map start
         char    soundPath[256];
@@ -179,7 +179,6 @@ void CHalfLifeRules::HookModelIndex( int modelIndex, const char *className, cons
 void CHalfLifeRules::OnHookedModelIndex( CBasePlayer *pPlayer, int modelIndex,
         const char *className, const char *targetName, bool firstTime )
 {
-        // Commentary sounds fire only on the first encounter
         if ( !firstTime )
                 return;
 
@@ -251,7 +250,6 @@ void CHalfLifeRules::OnEnd( CBasePlayer *pPlayer )
         MESSAGE_BEGIN( MSG_ONE, gmsgEndCredits, NULL, pPlayer->pev );
         MESSAGE_END();
 
-        // End stats screen — title
         MESSAGE_BEGIN( MSG_ONE, gmsgEndTitle, NULL, pPlayer->pev );
         WRITE_STRING( "LEVEL COMPLETE" );
         MESSAGE_END();

@@ -1,13 +1,3 @@
-/***
-*
-*       Ingram MAC-10 (single)
-*
-*       Server side. Companion file is ingram_twin.cpp.
-*       Animation sequence layout matches the v_ingram.mdl from HalfPayne
-*       (https://github.com/suXinjke/HalfPayne) - the matching enum lives
-*       in cl_dll/ev_hldm.h so both server and client stay in lockstep.
-*
-****/
 
 #include "extdll.h"
 #include "util.h"
@@ -204,9 +194,6 @@ BOOL CIngram::Deploy( void )
 {
         int iAnim = ( m_iClip <= 0 ) ? ING_DRAW_NOSHOT : ING_DRAW;
 
-        // Check whether we are switching from the twin.
-        // FNullEnt guards against a dangling m_pLastItem pointer that can occur
-        // during client-side prediction resyncs on Android (causes a crash when
         // pev->classname is accessed on a freed entity).
         CIngramTwin *pTwin = NULL;
         if( m_pPlayer && m_pPlayer->m_pLastItem &&
@@ -219,16 +206,14 @@ BOOL CIngram::Deploy( void )
 
         if( pTwin )
         {
-                // Pick the correct draw-from-twin animation based on both clip states.
                 // m_iClip  = right gun (tracked on this weapon via twin's m_iClip).
-                // GetClipLeft() = left gun (only the twin knows this value).
                 const bool bRightEmpty = ( m_iClip             <= 0 );
                 const bool bLeftEmpty  = ( pTwin->GetClipLeft() <= 0 );
 
                 if( bRightEmpty && bLeftEmpty )
                         iAnim = ING_DRAW_FROM_TWIN_NOSHOT_BOTH;
                 else if( bLeftEmpty )
-                        iAnim = ING_DRAW_FROM_TWIN;               // right loaded, left empty: standard draw
+                        iAnim = ING_DRAW_FROM_TWIN;
                 else if( bRightEmpty )
                         iAnim = ING_DRAW_FROM_TWIN_NOSHOT_RIGHT;
                 else
@@ -293,7 +278,6 @@ void CIngram::PrimaryAttack( void )
                 vecDir.x, vecDir.y, 0, 0,
                 ( m_iClip == 0 ) ? 1 : 0, 0 );
 
-        // Cycle ~625 RPM (Ingram MAC-10 territory).
         m_flNextPrimaryAttack = m_flNextSecondaryAttack = GetNextAttackDelay( 0.06f );
 
         if( !m_iClip && m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] <= 0 )

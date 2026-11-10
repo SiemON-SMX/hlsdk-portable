@@ -460,7 +460,6 @@ void CHud::Init( void )
         ClientCmd( "richpresence_gamemode\n" );
         ClientCmd( "richpresence_update\n" );
 
-        // Subtitle system
         Subtitles_Init();
 }
 

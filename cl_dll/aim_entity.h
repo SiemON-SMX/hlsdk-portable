@@ -25,4 +25,4 @@ extern int         entityFlags;
 extern int         entityDeadFlags;
 extern int         entitySpawnFlags;
 
-#endif // AIM_ENTITY_H
+#endif

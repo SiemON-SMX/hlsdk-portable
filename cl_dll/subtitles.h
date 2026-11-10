@@ -19,20 +19,18 @@ struct Subtitle
 
 struct SubtitleOutput
 {
-	float startTime;           // absolute client time when to start showing
-	float endTime;             // absolute client time when to stop
+	float startTime;
+	float endTime;
 	int   ignoreLongDistances;
 	Vector color;
-	Vector pos;                // world origin of the speaker
+	Vector pos;
 	std::string text;
 };
 
-// Lifecycle
 void Subtitles_Init();
 void Subtitles_ParseSubtitles( const std::string &filePath, const std::string &language );
 void Subtitles_Draw();
 
-// Network message handlers (hooked in Subtitles_Init)
 int Subtitles_OnSound  ( const char *pszName, int iSize, void *pbuf );
 int Subtitles_SubtClear( const char *pszName, int iSize, void *pbuf );
 int Subtitles_SubtRemove( const char *pszName, int iSize, void *pbuf );

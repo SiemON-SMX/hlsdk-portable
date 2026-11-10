@@ -14,7 +14,6 @@
 #include "soundent.h"
 #include "player.h"
 
-// Forward declaration (defined in crowbar.cpp)
 void FindHullIntersection( const Vector &vecSrc, TraceResult &tr, float *mins, float *maxs, edict_t *pEntity );
 #include "gamerules.h"
 
@@ -82,7 +81,7 @@ int CChicken::Restore( CRestore &restore )
         if( !CBasePlayerWeapon::Restore( restore ) )
                 return 0;
         int result = restore.ReadFields( "CChicken", this, m_SaveData, ARRAYSIZE( m_SaveData ) );
-        pev->fuser1 = 0.2f;  // trigger idle anim on restore
+        pev->fuser1 = 0.2f;
         return result;
 }
 

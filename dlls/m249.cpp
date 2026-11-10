@@ -1,7 +1,3 @@
-/***
-*
-*       M249 SAW
-****/
 
 #include "extdll.h"
 #include "util.h"
@@ -17,10 +13,10 @@ enum m249_e
 {
         M249_SLOWIDLE = 0,
         M249_IDLE2,
-        M249_RELOAD1,           // reload1_1: open belt cover, insert new belt
-        M249_RELOAD2,           // reload1_2: close cover, charge bolt
+        M249_RELOAD1,
+        M249_RELOAD2,
         M249_HOLSTER,
-        M249_DRAW,              // draw / deploy
+        M249_DRAW,
         M249_SHOOT1,
         M249_SHOOT2,
         M249_SHOOT3,

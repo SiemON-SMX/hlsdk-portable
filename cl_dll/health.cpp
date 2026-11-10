@@ -403,7 +403,6 @@ int CHudHealth::DrawDamage( float flTime )
                 {
                         pdmg = &m_dmg[i];
 
-                        // Draw all the items — offset to sit beside the health bar
                         SPR_Set( gHUD.GetSprite( m_HUD_dmg_bio + i ), r, g, b );
                         SPR_DrawAdditive( 0, pdmg->x + CORNER_OFFSET / 2, pdmg->y - (int)( HEALTH_SPRITE_HEIGHT / 1.5f ), &gHUD.GetSpriteRect( m_HUD_dmg_bio + i ) );
 

@@ -281,7 +281,6 @@ void CPython::WeaponIdle( void )
 
         if( bEmpty )
         {
-                // Cylinder open / no rounds — single noshot idle (2 frames @ 24fps loops, schedule a long hold).
                 iAnim = PYTHON_IDLE_NOSHOT;
                 m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 5.0f;
         }
@@ -293,7 +292,6 @@ void CPython::WeaponIdle( void )
         }
         else
         {
-                // Stationary, loaded — use the standard idle.
                 iAnim = PYTHON_IDLE;
                 m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 5.0f;
         }

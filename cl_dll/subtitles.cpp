@@ -179,7 +179,6 @@ void Subtitles_Init()
 	gEngfuncs.pfnHookUserMsg( "SubtClear", Subtitles_SubtClear );
 	gEngfuncs.pfnHookUserMsg( "SubtRemove", Subtitles_SubtRemove );
 
-	// Register cvars
 	s_cvSubtitles     = gEngfuncs.pfnRegisterVariable( "subtitles",             "2", FCVAR_ARCHIVE );
 	s_cvLanguage      = gEngfuncs.pfnRegisterVariable( "subtitles_language",    "en", FCVAR_ARCHIVE );
 	s_cvFontScale     = gEngfuncs.pfnRegisterVariable( "subtitles_font_scale",  "1", FCVAR_ARCHIVE );
@@ -235,7 +234,7 @@ static void Subtitles_PushEntry( const std::string &key, const std::string &text
 	for( size_t i = 0; i < lines.size(); i++ )
 	{
 		std::string actualKey = key + "_ln" + std::to_string( i );
-		float startTime = now + delay + (float)i * 0.0f; // same start; each line is a sibling
+		float startTime = now + delay + (float)i * 0.0f;
 		s_subtitlesToDraw[actualKey] = {
 			startTime,
 			startTime + duration,
@@ -285,7 +284,6 @@ void Subtitles_Draw()
 
 	float time = gEngfuncs.GetClientTime();
 
-	// 1. Expire old entries and collect visible ones
 	struct DrawEntry { std::string text; Vector color; };
 	std::vector<DrawEntry> visible;
 
@@ -305,7 +303,6 @@ void Subtitles_Draw()
 
 	if( visible.empty() ) return;
 
-	// 2. Measure – find widest line and per-line height
 	int charW = 0, charH = 0;
 	gEngfuncs.pfnDrawConsoleStringLen( "A", &charW, &charH );
 	if( charH <= 0 ) charH = 12;
@@ -324,14 +321,11 @@ void Subtitles_Draw()
 	int boxW     = maxTextW + padding * 2;
 	int boxH     = totalH + padding * 2;
 
-	// Position: horizontally centred, ~77 % down the screen
 	int boxX = ( ScreenWidth  - boxW ) / 2;
 	int boxY = (int)( ScreenHeight / 1.3f ) - boxH / 2;
 
-	// 3. Semi-transparent dark background
 	gEngfuncs.pfnFillRGBABlend( boxX, boxY, boxW, boxH, 0, 0, 0, 160 );
 
-	// 4. Draw each subtitle line with its colour
 	int drawY = boxY + padding;
 	for( auto &e : visible )
 	{
@@ -339,7 +333,6 @@ void Subtitles_Draw()
 		gEngfuncs.pfnDrawConsoleStringLen( (char*)e.text.c_str(), &w, &h );
 		int drawX = ( ScreenWidth - w ) / 2;
 
-		// Clamp colour channels to [0,1] and convert to [0,255]
 		int r = (int)( e.color[0] * 255.0f );
 		int g = (int)( e.color[1] * 255.0f );
 		int b = (int)( e.color[2] * 255.0f );
@@ -367,7 +360,6 @@ int Subtitles_OnSound( const char *pszName, int iSize, void *pbuf )
 	if( s_cvLogCandidates && s_cvLogCandidates->value >= 1.0f )
 		gEngfuncs.Con_DPrintf( "SUBTITLE CANDIDATE: %s\n", key.c_str() );
 
-	// Special case: Grunt cutscene player is far from the sound origin
 	if( key.find( "!HG_DRAG" ) == 0 )
 		ignoreLong = 1;
 

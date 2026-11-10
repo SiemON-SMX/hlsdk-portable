@@ -51,11 +51,9 @@ int CHudSlowMotion::Draw( float flTime )
         int x = XRES( CORNER_OFFSET ) + HEALTH_SPRITE_WIDTH + BOTTOM_LEFT_SPACING;
         int y = ScreenHeight - hourglassRectHeight - YRES( CORNER_OFFSET );
 
-        // Dim background (empty portion)
         SPR_Set( gHUD.GetSprite( hourglassStrokeSprite ), 20, 20, 20 );
         SPR_DrawAdditive( 0, x, y, &hourglassRect );
 
-        // Bright fill (remaining charge, drawn from current top downward)
         float slowmotionPercent     = slowMotionCharge / 100.0f;
         float slowmotionLackPercent = 1.0f - slowmotionPercent;
 

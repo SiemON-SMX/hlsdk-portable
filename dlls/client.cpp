@@ -237,7 +237,6 @@ struct MapMusicEntry
 
 static const MapMusicEntry g_mapMusicTable[] =
 {
-        // Train intro sequence — plays once (no looping flag in config)
         { "c0a0",    "sound/music/c0a0_1.mp3",                       false },
         { "c0a0a",   "sound/music/c0a0_2.mp3",                       false },
         { "c0a0b",   "sound/music/c0a0_3.mp3",                       false },
@@ -257,7 +256,6 @@ static const MapMusicEntry g_mapMusicTable[] =
         { "c1a4g",   "sound/music/payne3/no_garg.mp3",               true  },
         { "c1a4i",   "sound/music/payne3/ambient3.mp3",              true  },
 
-        // Chapter 2 — On A Rail / Apprehension / Residue Processing
         { "c2a1a",   "sound/music/payne3/power.mp3",                 true  },
         { "c2a2",    "sound/music/payne3/no_garg.mp3",               true  },
         { "c2a2a",   "sound/music/payne3/train_calm.mp3",            true  },
@@ -283,13 +281,11 @@ static const MapMusicEntry g_mapMusicTable[] =
         { "c2a5e",   "sound/music/payne3/dead.mp3",                  true  },
         { "c2a5f",   "sound/music/payne3/dead.mp3",                  true  },
 
-        // Chapter 3 — Forget About Freeman / Lambda Core
         { "c3a2",    "sound/music/payne3/future.mp3",                true  },
         { "c3a2a",   "sound/music/payne3/future.mp3",                true  },
         { "c3a2b",   "sound/music/payne3/future.mp3",                true  },
         { "c3a2c",   "sound/music/payne3/future.mp3",                true  },
 
-        // Chapter 4 — Xen
         { "c4a1",    "sound/music/payne3/ambient4.mp3",              false },
         { "c4a1a",   "sound/music/payne3/ambient5.mp3",              true  },
         { "c4a1b",   "sound/music/payne3/ambient5.mp3",              true  },
@@ -345,14 +341,12 @@ struct KerotanEntry
 
 static const KerotanEntry g_kerotanTable[] =
 {
-        // --- Chapter 1: Unforeseen Consequences ---
         { "c1a0",   -814.38f,   587.13f,   -99.80f, -90.0f },
         { "c1a0a",   546.13f,   700.75f,   192.00f, 141.0f },
         { "c1a0b",   527.75f,   468.63f,  -143.88f,-131.0f },
         { "c1a0c",   527.75f,   468.63f,  -143.88f,-131.0f },
         { "c1a0d", -3350.63f,  1463.25f,  -212.00f,  25.0f },
 
-        // --- Chapter 2: We've Got Hostiles ---
         { "c1a1",    546.13f,   700.75f,   192.00f, 141.0f },
         { "c1a1a", -3350.63f,  1466.25f,  -212.00f,  25.0f },
         { "c1a1b",  1678.00f, -1039.00f,  -147.88f, 180.0f },
@@ -360,21 +354,18 @@ static const KerotanEntry g_kerotanTable[] =
         { "c1a1d",  1288.75f,   693.25f,    16.00f, -74.0f },
         { "c1a1f",  -814.38f,   587.13f,   -99.80f, -90.0f },
 
-        // --- Chapter 3: Office Complex ---
         { "c1a2",    198.88f,  -867.13f,  -375.88f, 127.0f },
         { "c1a2a",    87.25f,  -935.63f,  -219.88f, 110.0f },
         { "c1a2b",  1053.50f,  -738.63f,   220.00f,  33.0f },
         { "c1a2c", -1746.25f, -1655.13f,  -231.88f, 180.0f },
         { "c1a2d",   625.38f, -2351.50f,  -357.88f,  90.0f },
 
-        // --- Chapter 4: "Forget About Freeman!" ---
         { "c1a3",    313.38f,  1681.13f,   146.00f, -90.0f },
         { "c1a3a", -1242.38f, -2829.38f,    32.00f,-161.0f },
         { "c1a3b", -1468.88f, -1634.13f,   980.00f,  45.0f },
         { "c1a3c",  -594.00f, -1529.88f,   224.00f, 150.0f },
         { "c1a3d",  1421.25f,  -256.13f,   876.00f,   0.0f },
 
-        // --- Chapter 5: Lambda Core ---
         { "c1a4",  -1136.63f, -3105.25f, -3077.88f,  24.0f },
         { "c1a4b",  -591.63f,  -508.38f, -1266.88f,  80.0f },
         { "c1a4d",  1304.50f,   911.38f, -1255.88f,  90.0f },
@@ -385,12 +376,10 @@ static const KerotanEntry g_kerotanTable[] =
         { "c1a4j",   757.25f, -2112.50f,   181.75f,  60.0f },
         { "c1a4k", -2440.50f, -1701.63f, -3259.88f, 120.0f },
 
-        // --- Chapter 6: Residue Processing ---
         { "c2a1",   -800.38f,   241.75f,   272.00f, -90.0f },
         { "c2a1a",   379.88f,  2552.13f,   528.00f,  90.0f },
         { "c2a1b",  1214.13f,  1315.38f,     0.00f, -48.0f },
 
-        // --- Chapter 7: Questionable Ethics ---
         { "c2a2",  -1778.63f, -3280.50f, -1175.88f, -90.0f },
         { "c2a2a", -1904.13f,   763.75f,   124.00f,-120.0f },
         { "c2a2b1",-3599.25f,  -729.75f,   364.00f, -90.0f },
@@ -402,7 +391,6 @@ static const KerotanEntry g_kerotanTable[] =
         { "c2a2g", -1078.13f, -1488.88f,  -487.88f,  16.0f },
         { "c2a2h",  1654.38f,   258.38f,  -651.88f, 180.0f },
 
-        // --- Chapter 8: Surface Tension ---
         { "c2a3",  -1061.50f,  -824.75f,  1310.00f, -90.0f },
         { "c2a3a",   752.38f,   968.38f,  1269.00f, -90.0f },
         { "c2a3b",  1574.75f,  1777.00f,   848.00f, -54.0f },
@@ -410,7 +398,6 @@ static const KerotanEntry g_kerotanTable[] =
         { "c2a3d",   476.75f,  -715.00f,   836.00f,  90.0f },
         { "c2a3e", -2905.25f,   434.88f,   712.00f,   0.0f },
 
-        // --- Chapter 9: "Forget About Freeman!" (Interloper) ---
         { "c2a4",   -438.63f,   545.88f,   288.00f, -90.0f },
         { "c2a4a",  -594.13f,  1243.63f,     0.00f,  30.0f },
         { "c2a4b",  -982.75f,  -461.50f,  -799.88f,   0.0f },
@@ -420,7 +407,6 @@ static const KerotanEntry g_kerotanTable[] =
         { "c2a4f",  -173.00f,  -823.25f,   704.00f,-130.0f },
         { "c2a4g",  -577.88f,  -858.13f,   416.00f, -50.0f },
 
-        // --- Chapter 10: Interloper ---
         { "c2a5",  -1637.63f,   131.25f,   304.00f, -20.0f },
         { "c2a5a",   700.63f,   252.75f,  -367.88f, -70.0f },
         { "c2a5b", -1337.38f,   961.50f,   192.00f,   0.0f },
@@ -432,12 +418,10 @@ static const KerotanEntry g_kerotanTable[] =
         { "c2a5w", -1704.25f,  -778.63f,  1121.13f,  15.0f },
         { "c2a5x",   964.75f,   450.00f,   929.00f,-110.0f },
 
-        // --- Chapter 11: Gonarch's Lair ---
         { "c3a1",  -2232.75f,   732.50f,   448.00f, -90.0f },
         { "c3a1a", -3251.63f, -1210.50f,   376.00f,  90.0f },
         { "c3a1b",  -977.13f,   847.25f,   -95.88f, -90.0f },
 
-        // --- Chapter 12: Interloper (Xen) ---
         { "c3a2",   -464.13f,  1630.13f,   336.00f,  90.0f },
         { "c3a2a", -2296.13f,   301.50f,  -215.88f, 180.0f },
         { "c3a2b",  -109.63f,   494.63f,   640.00f, 141.0f },
@@ -446,7 +430,6 @@ static const KerotanEntry g_kerotanTable[] =
         { "c3a2e",  1776.50f,  1646.38f,  2143.00f,  90.0f },
         { "c3a2f",   -42.63f,  -672.50f, -1791.88f,  90.0f },
 
-        // --- Chapter 13: Nihilanth ---
         { "c4a1",   -319.50f, -1840.38f,  -241.25f, -90.0f },
         { "c4a1a",  1253.75f,  -382.75f,  -275.50f,-126.0f },
         { "c4a1b",  1595.75f, -1627.75f,   480.00f, 173.0f },
@@ -455,7 +438,6 @@ static const KerotanEntry g_kerotanTable[] =
         { "c4a1e",   756.13f, -1692.25f,    88.00f,-140.0f },
         { "c4a1f",  1831.88f, -2008.38f,   210.88f, -45.0f },
 
-        // --- Chapter 14: Endgame ---
         { "c4a2",   1445.38f,   460.88f,   240.00f,-140.0f },
         { "c4a2a", -1015.63f,   109.13f,  -255.88f, -90.0f },
         { "c4a2b",  -202.38f,   538.63f,  -479.88f,  40.0f },
@@ -464,7 +446,6 @@ static const KerotanEntry g_kerotanTable[] =
 
 #define NUM_KEROTANS ( (int)( sizeof( g_kerotanTable ) / sizeof( g_kerotanTable[0] ) ) )
 
-// Spawn the Kerotan for the current map (if one is defined and not yet present).
 static void HP_SpawnKerotan( void )
 {
         const char *szMap = STRING( gpGlobals->mapname );
@@ -483,9 +464,8 @@ static void HP_SpawnKerotan( void )
         }
 
         if( !entry )
-                return; // No kerotan on this map (e.g. c0a0 intro maps).
+                return;
 
-        // Guard: if a kerotan already exists (save/reload) don't spawn another.
         if( !FNullEnt( FIND_ENTITY_BY_CLASSNAME( ENT(0), "kerotan" ) ) )
                 return;
 
@@ -1047,7 +1027,6 @@ void ServerActivate( edict_t *pEdictList, int edictCount, int clientMax )
         // Link user messages here to make sure first client can get them...
         LinkUserMessages();
 
-        // Spawn per-map music cue and kerotan on every map load.
         HP_SendMapMusic();
         HP_SpawnKerotan();
 }
@@ -1359,14 +1338,12 @@ void ClientPrecache( void )
         PRECACHE_SOUND( "max/dumb_shoot/SHOOT_THING_21.wav" );
         PRECACHE_SOUND( "max/dumb_shoot/SHOOT_THING_22.wav" );
 
-        // Max Payne commentary / finale voice lines (c5a1 desperation system)
         PRECACHE_SOUND( "comment/onedowntwotogo.wav" );
         PRECACHE_SOUND( "comment/twodownonetogo.wav" );
         PRECACHE_SOUND( "comment/finalewon.wav" );
         PRECACHE_SOUND( "comment/execute.wav" );
         PRECACHE_SOUND( "comment/finalespeech.wav" );
 
-        // Map commentary sounds (from map_cfg/*.txt [max_commentary] sections)
         PRECACHE_SOUND( "comment/abouttentacle.wav" );
         PRECACHE_SOUND( "comment/aboutxen0.wav" );
         PRECACHE_SOUND( "comment/aboutxen1.wav" );

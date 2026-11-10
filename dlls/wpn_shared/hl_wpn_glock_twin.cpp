@@ -1,13 +1,3 @@
-/***
-*
-*       Twin 9mm Handgun (akimbo glock)
-*
-*       Companion to glock.cpp. Uses v_9mmhandgun_twin.mdl (56 sequences) and
-*       tracks two independent clips (right + left). Alternates fire between the
-*       two pistols and dispatches the correct animation variant for every
-*       combination of empty / loaded states on each gun.
-*
-****/
 
 #include "extdll.h"
 #include "util.h"
@@ -26,63 +16,63 @@ enum glock_twin_e
         GTWIN_IDLE_NOSHOT_LEFT,                      // idle_noshot_left              (left empty)
         GTWIN_IDLE_NOSHOT_RIGHT,                     // idle_noshot_right             (right empty)
 
-        GTWIN_SHOOT_RIGHT,                           // shoot_right
-        GTWIN_SHOOT_RIGHT_FAST,                      // shoot_right_fast
-        GTWIN_SHOOT_RIGHT_WHEN_LEFT_EMPTY,           // shoot_right_when_left_empty
-        GTWIN_SHOOT_RIGHT_WHEN_LEFT_EMPTY_FAST,      // shoot_right_when_left_empty_fast
-        GTWIN_SHOOT_RIGHT_THEN_EMPTY,                // shoot_right_then_empty
-        GTWIN_SHOOT_RIGHT_THEN_EMPTY_FAST,           // shoot_right_then_empty_fast
-        GTWIN_SHOOT_RIGHT_THEN_EMPTY_WHEN_LEFT,      // shoot_right_then_empty_when_left
-        GTWIN_SHOOT_RIGHT_THEN_EMPTY_WHEN_LEFT_FAST, // shoot_right_then_empty_when_left_fast
+        GTWIN_SHOOT_RIGHT,
+        GTWIN_SHOOT_RIGHT_FAST,
+        GTWIN_SHOOT_RIGHT_WHEN_LEFT_EMPTY,
+        GTWIN_SHOOT_RIGHT_WHEN_LEFT_EMPTY_FAST,
+        GTWIN_SHOOT_RIGHT_THEN_EMPTY,
+        GTWIN_SHOOT_RIGHT_THEN_EMPTY_FAST,
+        GTWIN_SHOOT_RIGHT_THEN_EMPTY_WHEN_LEFT,
+        GTWIN_SHOOT_RIGHT_THEN_EMPTY_WHEN_LEFT_FAST,
 
-        GTWIN_SHOOT_LEFT,                            // shoot_left
-        GTWIN_SHOOT_LEFT_FAST,                       // shoot_left_fast
-        GTWIN_SHOOT_LEFT_WHEN_RIGHT_EMPTY,           // shoot_left_when_right_empty
-        GTWIN_SHOOT_LEFT_WHEN_RIGHT_EMPTY_FAST,      // shoot_left_when_right_empty_fast
-        GTWIN_SHOOT_LEFT_THEN_EMPTY,                 // shoot_left_then_empty
-        GTWIN_SHOOT_LEFT_THEN_EMPTY_FAST,            // shoot_left_then_empty_fast
-        GTWIN_SHOOT_LEFT_THEN_EMPTY_WHEN_RIGHT,      // shoot_left_then_empty_when_right
-        GTWIN_SHOOT_LEFT_THEN_EMPTY_WHEN_RIGHT_FAST, // shoot_left_then_empty_when_right_fast
+        GTWIN_SHOOT_LEFT,
+        GTWIN_SHOOT_LEFT_FAST,
+        GTWIN_SHOOT_LEFT_WHEN_RIGHT_EMPTY,
+        GTWIN_SHOOT_LEFT_WHEN_RIGHT_EMPTY_FAST,
+        GTWIN_SHOOT_LEFT_THEN_EMPTY,
+        GTWIN_SHOOT_LEFT_THEN_EMPTY_FAST,
+        GTWIN_SHOOT_LEFT_THEN_EMPTY_WHEN_RIGHT,
+        GTWIN_SHOOT_LEFT_THEN_EMPTY_WHEN_RIGHT_FAST,
 
         GTWIN_RELOAD,                                // reload                        (full reload, both guns loaded)
-        GTWIN_RELOAD_FAST,                           // reload_fast
+        GTWIN_RELOAD_FAST,
         GTWIN_RELOAD_NOSHOT_BOTH,                    // reload_noshot_both            (both slides back)
-        GTWIN_RELOAD_NOSHOT_BOTH_FAST,               // reload_noshot_both_fast
-        GTWIN_RELOAD_NOSHOT_LEFT,                    // reload_noshot_left
-        GTWIN_RELOAD_NOSHOT_LEFT_FAST,               // reload_noshot_left_fast
-        GTWIN_RELOAD_NOSHOT_RIGHT,                   // reload_noshot_right
-        GTWIN_RELOAD_NOSHOT_RIGHT_FAST,              // reload_noshot_right_fast
+        GTWIN_RELOAD_NOSHOT_BOTH_FAST,
+        GTWIN_RELOAD_NOSHOT_LEFT,
+        GTWIN_RELOAD_NOSHOT_LEFT_FAST,
+        GTWIN_RELOAD_NOSHOT_RIGHT,
+        GTWIN_RELOAD_NOSHOT_RIGHT_FAST,
 
-        GTWIN_RELOAD_ONLY_LEFT,                      // reload_only_left
-        GTWIN_RELOAD_ONLY_LEFT_FAST,                 // reload_only_left_fast
-        GTWIN_RELOAD_ONLY_LEFT_NOSHOT,               // reload_only_left_noshot
-        GTWIN_RELOAD_ONLY_LEFT_NOSHOT_FAST,          // reload_only_left_noshot_fast
-        GTWIN_RELOAD_ONLY_LEFT_NOSHOT_BOTH,          // reload_only_left_noshot_both
-        GTWIN_RELOAD_ONLY_LEFT_NOSHOT_BOTH_FAST,     // reload_only_left_noshot_both_fast
-        GTWIN_RELOAD_ONLY_RIGHT,                     // reload_only_right
-        GTWIN_RELOAD_ONLY_RIGHT_FAST,                // reload_only_right_fast
-        GTWIN_RELOAD_ONLY_RIGHT_NOSHOT,              // reload_only_right_noshot
-        GTWIN_RELOAD_ONLY_RIGHT_NOSHOT_FAST,         // reload_only_right_noshot_fast
-        GTWIN_RELOAD_ONLY_RIGHT_NOSHOT_BOTH,         // reload_only_right_noshot_both
-        GTWIN_RELOAD_ONLY_RIGHT_NOSHOT_BOTH_FAST,    // reload_only_right_noshot_both_fast
+        GTWIN_RELOAD_ONLY_LEFT,
+        GTWIN_RELOAD_ONLY_LEFT_FAST,
+        GTWIN_RELOAD_ONLY_LEFT_NOSHOT,
+        GTWIN_RELOAD_ONLY_LEFT_NOSHOT_FAST,
+        GTWIN_RELOAD_ONLY_LEFT_NOSHOT_BOTH,
+        GTWIN_RELOAD_ONLY_LEFT_NOSHOT_BOTH_FAST,
+        GTWIN_RELOAD_ONLY_RIGHT,
+        GTWIN_RELOAD_ONLY_RIGHT_FAST,
+        GTWIN_RELOAD_ONLY_RIGHT_NOSHOT,
+        GTWIN_RELOAD_ONLY_RIGHT_NOSHOT_FAST,
+        GTWIN_RELOAD_ONLY_RIGHT_NOSHOT_BOTH,
+        GTWIN_RELOAD_ONLY_RIGHT_NOSHOT_BOTH_FAST,
 
         GTWIN_DRAW,                                  // draw
-        GTWIN_DRAW_FAST,                             // draw_fast
-        GTWIN_DRAW_NOSHOT_BOTH,                      // draw_noshot_both
-        GTWIN_DRAW_NOSHOT_BOTH_FAST,                 // draw_noshot_both_fast
-        GTWIN_DRAW_NOSHOT_LEFT,                      // draw_noshot_left
-        GTWIN_DRAW_NOSHOT_LEFT_FAST,                 // draw_noshot_left_fast
-        GTWIN_DRAW_NOSHOT_RIGHT,                     // draw_noshot_right
-        GTWIN_DRAW_NOSHOT_RIGHT_FAST,                // draw_noshot_right_fast
+        GTWIN_DRAW_FAST,
+        GTWIN_DRAW_NOSHOT_BOTH,
+        GTWIN_DRAW_NOSHOT_BOTH_FAST,
+        GTWIN_DRAW_NOSHOT_LEFT,
+        GTWIN_DRAW_NOSHOT_LEFT_FAST,
+        GTWIN_DRAW_NOSHOT_RIGHT,
+        GTWIN_DRAW_NOSHOT_RIGHT_FAST,
 
         GTWIN_DRAW_ONLY_LEFT,                        // draw_only_left                (right is already in hand from single)
-        GTWIN_DRAW_ONLY_LEFT_FAST,                   // draw_only_left_fast
-        GTWIN_DRAW_NOSHOT_BOTH_ONLY_LEFT,            // draw_noshot_both_only_left
-        GTWIN_DRAW_NOSHOT_BOTH_ONLY_LEFT_FAST,       // draw_noshot_both_only_left_fast
-        GTWIN_DRAW_NOSHOT_LEFT_ONLY_LEFT,            // draw_noshot_left_only_left
-        GTWIN_DRAW_NOSHOT_LEFT_ONLY_LEFT_FAST,       // draw_noshot_left_only_left_fast
-        GTWIN_DRAW_NOSHOT_RIGHT_ONLY_LEFT,           // draw_noshot_right_only_left
-        GTWIN_DRAW_NOSHOT_RIGHT_ONLY_LEFT_FAST       // draw_noshot_right_only_left_fast
+        GTWIN_DRAW_ONLY_LEFT_FAST,
+        GTWIN_DRAW_NOSHOT_BOTH_ONLY_LEFT,
+        GTWIN_DRAW_NOSHOT_BOTH_ONLY_LEFT_FAST,
+        GTWIN_DRAW_NOSHOT_LEFT_ONLY_LEFT,
+        GTWIN_DRAW_NOSHOT_LEFT_ONLY_LEFT_FAST,
+        GTWIN_DRAW_NOSHOT_RIGHT_ONLY_LEFT,
+        GTWIN_DRAW_NOSHOT_RIGHT_ONLY_LEFT_FAST
 };
 
 LINK_ENTITY_TO_CLASS( weapon_9mmhandgun_twin, CGlockTwin )
@@ -128,9 +118,9 @@ int CGlockTwin::GetItemInfo( ItemInfo *p )
         p->iMaxAmmo1 = _9MM_MAX_CARRY;
         p->pszAmmo2 = NULL;
         p->iMaxAmmo2 = -1;
-        p->iMaxClip = GLOCK_TWIN_MAX_CLIP;   // right-side clip; left tracked separately
+        p->iMaxClip = GLOCK_TWIN_MAX_CLIP;
         p->iSlot = 1;
-        p->iPosition = 2;                    // slot 1: glock(0), python(1), twin(2)
+        p->iPosition = 2;
         p->iFlags = 0;
         p->iId = m_iId = WEAPON_GLOCK_TWIN;
         p->iWeight = GLOCK_TWIN_WEIGHT;
@@ -191,10 +181,6 @@ void CGlockTwin::Holster( int skiplocal /* = 0 */ )
 {
         m_fInReload = FALSE;
 
-        // Match the single Glock holster time (0.8 s) so the engine doesn't
-        // try to deploy the next weapon before this one has fully switched out.
-        // Using 0.5 s here caused a timing race on slower machines where the
-        // client received a deploy event while the twin model was still active.
         m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.8f;
 
         m_flNextPrimaryAttack   = UTIL_WeaponTimeBase();
@@ -214,12 +200,12 @@ int CGlockTwin::PickIdleAnim( void )
 
 void CGlockTwin::PrimaryAttack( void )
 {
-        FireOne( 0.01f, 0.2f, /*fUseAutoAim*/ TRUE );
+        FireOne( 0.01f, 0.2f,  TRUE );
 }
 
 void CGlockTwin::SecondaryAttack( void )
 {
-        FireOne( 0.1f, 0.15f, /*fUseAutoAim*/ FALSE );
+        FireOne( 0.1f, 0.15f,  FALSE );
 }
 
 void CGlockTwin::FireOne( float flSpread, float flCycleTime, BOOL fUseAutoAim )
@@ -227,7 +213,6 @@ void CGlockTwin::FireOne( float flSpread, float flCycleTime, BOOL fUseAutoAim )
         const bool bRightHasAmmo = ( m_iClip      > 0 );
         const bool bLeftHasAmmo  = ( m_iClipLeft  > 0 );
 
-        // Both sides empty: click and bail.
         if( !bRightHasAmmo && !bLeftHasAmmo )
         {
                 if( m_fFireOnEmpty )
@@ -244,11 +229,10 @@ void CGlockTwin::FireOne( float flSpread, float flCycleTime, BOOL fUseAutoAim )
         else if( !m_bFireLeftNext && bRightHasAmmo )
                 bFireLeft = false;
         else
-                bFireLeft = bLeftHasAmmo;     // forced switch
+                bFireLeft = bLeftHasAmmo;
 
         m_bFireLeftNext = !bFireLeft;
 
-        // Decrement the firing side's clip and capture the post-shot state.
         int  iSide;            // 0 = right, 1 = left  (matches event bparam2)
         bool bThisSideEmpty;
         bool bOtherSideEmpty;
@@ -268,7 +252,6 @@ void CGlockTwin::FireOne( float flSpread, float flCycleTime, BOOL fUseAutoAim )
                 bOtherSideEmpty = ( m_iClipLeft == 0 );
         }
 
-        // Pick the matching v_model shoot variant.
         int iAnim;
         if( bFireLeft )
         {
@@ -312,7 +295,6 @@ void CGlockTwin::FireOne( float flSpread, float flCycleTime, BOOL fUseAutoAim )
                 0.0, g_vecZero, g_vecZero, vecDir.x, vecDir.y, 0, 0,
                 bThisSideEmpty ? 1 : 0, iSide );
 
-        // Drive the v_model animation manually.
         SendWeaponAnim( iAnim );
 
         m_flNextPrimaryAttack = m_flNextSecondaryAttack = GetNextAttackDelay( flCycleTime );
@@ -342,7 +324,6 @@ void CGlockTwin::Reload( void )
 
         if( iNeedRight > 0 && iNeedLeft > 0 )
         {
-                // Reloading BOTH guns: pick variant based on which slides are back.
                 if( bRightEmpty && bLeftEmpty )      iAnim = GTWIN_RELOAD_NOSHOT_BOTH;
                 else if( bLeftEmpty )                iAnim = GTWIN_RELOAD_NOSHOT_LEFT;
                 else if( bRightEmpty )               iAnim = GTWIN_RELOAD_NOSHOT_RIGHT;
@@ -351,7 +332,6 @@ void CGlockTwin::Reload( void )
         }
         else if( iNeedLeft > 0 )
         {
-                // Only LEFT needs reloading.
                 if( bLeftEmpty && bRightEmpty )      iAnim = GTWIN_RELOAD_ONLY_LEFT_NOSHOT_BOTH;
                 else if( bLeftEmpty )                iAnim = GTWIN_RELOAD_ONLY_LEFT_NOSHOT;
                 else                                 iAnim = GTWIN_RELOAD_ONLY_LEFT;
@@ -359,7 +339,6 @@ void CGlockTwin::Reload( void )
         }
         else
         {
-                // Only RIGHT needs reloading.
                 if( bRightEmpty && bLeftEmpty )      iAnim = GTWIN_RELOAD_ONLY_RIGHT_NOSHOT_BOTH;
                 else if( bRightEmpty )               iAnim = GTWIN_RELOAD_ONLY_RIGHT_NOSHOT;
                 else                                 iAnim = GTWIN_RELOAD_ONLY_RIGHT;
@@ -387,13 +366,8 @@ void CGlockTwin::ItemPostFrame( void )
 #ifndef CLIENT_DLL
         if( m_pPlayer )
         {
-                // Use m_iLastSentClipLeft (a per-instance member) instead of a
-                // static local. A static local is shared across every CGlockTwin
-                // instance on the server: in multiplayer, if two players both have
                 // m_iClipLeft == N, the second player's HUD never gets updated
-                // because the static already equals N from the first player's send.
                 // On respawn / weapon re-pickup the static also suppresses the
-                // initial sync, leaving the client HUD stale until the clip changes.
                 if( m_iClipLeft != m_iLastSentClipLeft && gmsgTwinClip )
                 {
                         m_iLastSentClipLeft = m_iClipLeft;

@@ -172,12 +172,11 @@ public:
         int                     painkillerEnergy;
         float                   nextPainkillerEffectTime;
 
-        // Slow-motion system (ported from Half-Payne GoldSrc)
 #define MAX_SLOWMOTION_CHARGE    100
 #define SLOWMOTION_DRAIN_TIME    0.0288f   // full charge drains in ~3 real seconds
 #define DIVING_SLOWMOTION_CHARGE_COST 10
 #define SLOWMOTION_RECHARGE_INTERVAL 0.5f  // passively regain charge every this many seconds
-#define SLOWMOTION_RECHARGE_AMOUNT   2     // charge points regained per interval while not in slow-mo
+#define SLOWMOTION_RECHARGE_AMOUNT   2
         bool                    slowMotionWasEnabled;
         int                     slowMotionCharge;
         float                   slowMotionUpdateTime;
@@ -200,7 +199,6 @@ public:
         void                    HandleSlowmotionFlags();
         void                    UpdateSlowMotion();     // called every frame from PostThink
 
-        // Max Payne voice commentary system (ported from Half-Payne GoldSRC)
 #define MAX_SOUND_QUEUE 16
         enum DESPERATION_TYPE {
                 DESPERATION_NO,
@@ -241,14 +239,12 @@ public:
         void ComplainAboutNoAmmo( bool weaponIsBulletBased );
         void OnBulletHit( CBaseEntity *hitEntity );
 
-        // Map commentary hook memory — tracks which entities have been hooked this session
 #define MAX_HOOKED_MODEL_INDEXES 512
         string_t                hookedModelIndexKeys[MAX_HOOKED_MODEL_INDEXES];
         int                     hookedModelIndexCount;
         bool                    ModelIndexHasBeenHooked( const char *key );
         void                    RememberHookedModelIndex( string_t key );
 
-        // Final-chapter desperation system (c5a1 map)
         float                   untilNextDesperation;
         int                     crystalsDestroyed;
 

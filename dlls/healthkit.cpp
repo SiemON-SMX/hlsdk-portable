@@ -129,7 +129,6 @@ void CWallHealth::Spawn()
 
         bool horizontallyPlaced = pev->size.x > pev->size.y;
 
-        // Corner of the brush at middle height — used for wall-side trace
         Vector beginPos = Vector( pev->mins.x, pev->mins.y, pev->mins.z + pev->size.z );
 
         TraceResult tr1, tr2;

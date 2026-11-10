@@ -404,7 +404,6 @@ private:
 };
 
 //-----------------------------------------------------
-// Slow-motion charge indicator (hourglass)
 //-----------------------------------------------------
 class CHudSlowMotion : public CHudBase
 {

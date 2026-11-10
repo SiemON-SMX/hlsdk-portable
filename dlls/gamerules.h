@@ -259,7 +259,6 @@ public:
         bool ended;
         float m_flMapStartTime;
 
-        // Map commentary hook system (ported from Half-Payne GoldSRC)
         bool m_bMapStartHookFired;
         virtual void HookModelIndex( edict_t *activator );
         virtual void HookModelIndex( int modelIndex, const char *className, const char *targetName );

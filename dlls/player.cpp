@@ -601,7 +601,6 @@ void CBasePlayer::OnKilledEntity( CBaseEntity *victim )
 
         const char *victimName = STRING( victim->pev->classname );
 
-        // G-Man kill on c5a1 triggers the revenge/finale sequence
         if( strcmp( victimName, "monster_gman" ) == 0 )
         {
                 if( desperation == DESPERATION_NO && FStrEq( STRING( gpGlobals->mapname ), "c5a1" ) )
@@ -611,14 +610,12 @@ void CBasePlayer::OnKilledEntity( CBaseEntity *victim )
                 }
         }
 
-        // Innocent NPC (barney/scientist) kill commentary
         if( strcmp( victimName, "monster_barney" ) == 0 ||
             strcmp( victimName, "monster_scientist" ) == 0 )
         {
                 ComplainAboutKillingInnocent();
         }
 
-        // Nihilanth crystal destruction commentary (any map except c4a1)
         if( victim->pev->target != 0 &&
             strstr( STRING( victim->pev->target ), "crystal" ) &&
             strcmp( STRING( gpGlobals->mapname ), "c4a1" ) != 0 )
@@ -750,7 +747,6 @@ void CBasePlayer::ThinkAboutFinalDesperation( void )
                 TakeDamage( pev, pev, 9999.9f, DMG_GENERIC );
         }
 
-        // Check if all aliens are dead — transition FIGHTING → RELIEF
         bool theyAreAlive = false;
         CBaseEntity *pEntity = NULL;
         while( ( pEntity = UTIL_FindEntityInSphere( pEntity, pev->origin, 4610.0f ) ) != NULL )
@@ -926,7 +922,6 @@ int CBasePlayer::TakeDamage( entvars_t *pevInflictor, entvars_t *pevAttacker, fl
         fmajor = ( m_lastDamageAmount > 25 );
         fcritical = ( pev->health < 30 );
 
-        // Max Payne pain voice reaction
         if( fTookDamage && pev->health > 0 )
         {
                 if( bitsDamageType & ( DMG_BULLET | DMG_BLAST | DMG_FALL | DMG_SHOCK | DMG_CLUB | DMG_CRUSH | DMG_ENERGYBEAM | DMG_SLASH | DMG_SONIC ) )
@@ -1417,7 +1412,6 @@ void CBasePlayer::Killed( entvars_t *pevAttacker, int iGib )
 
         pev->skin = 1; // DEATH FACE - embedded in model (ported from GoldSRC)
 
-        // Activate bullet-time slow-motion on death (matches GoldSRC behaviour).
         SetSlowMotion( true );
 
         SetThink( &CBasePlayer::PlayerDeathThink );
@@ -1756,7 +1750,6 @@ void CBasePlayer::PlayerDeathThink( void )
         if ( deathCameraYaw >= 360.0f )
                 deathCameraYaw = 0.0f;
         CVAR_SET_FLOAT( "cam_idealyaw", deathCameraYaw );
-        // ────────────────────────────────────────────────────────────────────────
 
         if( pev->modelindex && ( !m_fSequenceFinished ) && ( pev->deadflag == DEAD_DYING ))
         {
@@ -3451,7 +3444,6 @@ void CBasePlayer::Spawn( void )
         painkillerEnergy         = 0;
         nextPainkillerEffectTime = 0.0f;
 
-        // Max Payne voice commentary init
         desperation                    = DESPERATION_NO;
         ClearSoundQueue();
         hookedModelIndexCount          = 0;
@@ -3515,7 +3507,6 @@ void CBasePlayer::Spawn( void )
 
         m_flNextChatTime = gpGlobals->time;
 
-        // --- Slow-motion system: reset all state on every spawn ---
         slowMotionCharge             = MAX_SLOWMOTION_CHARGE;
         slowMotionUpdateTime         = 1.0f;
         slowMotionRechargeTime       = 0.0f;
@@ -3536,7 +3527,6 @@ void CBasePlayer::Spawn( void )
 
         g_pGameRules->PlayerSpawn( this );
 
-        // Clear any lingering subtitles on spawn / level transition
         if( gmsgSubtClear )
         {
                 MESSAGE_BEGIN( MSG_ONE, gmsgSubtClear, NULL, pev );
@@ -4071,7 +4061,6 @@ void CBasePlayer::ImpulseCommands()
                 }
                 break;
         case 22:
-                // toggle slow-motion (bullet time)
                 ToggleSlowMotion();
                 break;
         case 23:
@@ -4279,7 +4268,6 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
                 }
                 break;
         case 24:
-                // Toggle infinite slow-motion cheat
                 slowmotionInfiniteCheat = !slowmotionInfiniteCheat;
                 if ( slowmotionInfiniteCheat )
                         g_engfuncs.pfnServerPrint( "Infinite slowmotion ON\n" );
@@ -4784,7 +4772,6 @@ void CBasePlayer::UpdateClientData( void )
                 m_flNextSBarUpdateTime = gpGlobals->time + 0.2f;
         }
 
-        // --- Slow-motion: apply desired timescale only when it actually changed ---
         if ( using_sys_timescale && desiredTimeScale != m_flLastDesiredTimeScale )
         {
                 char com[256];
@@ -4793,7 +4780,6 @@ void CBasePlayer::UpdateClientData( void )
                 m_flLastDesiredTimeScale = desiredTimeScale;
         }
 
-        // Send slow-motion charge level to HUD every frame
         MESSAGE_BEGIN( MSG_ONE, gmsgSlowMotion, NULL, pev );
                 WRITE_BYTE( slowMotionCharge );
         MESSAGE_END();
@@ -5448,7 +5434,6 @@ void CBasePlayer::TakeSlowmotionCharge( int amount )
 
 void CBasePlayer::HandleSlowmotionFlags()
 {
-        // placeholder – no FL_DIVING in this port
 }
 
 void CBasePlayer::ToggleSlowMotion()
@@ -5461,7 +5446,6 @@ void CBasePlayer::ToggleSlowMotion()
         {
                 if ( ActivateSlowMotion() && slowMotionWasEnabled )
                 {
-                        // Black screen flash on manual slow-motion activation
                         UTIL_ScreenFade( this, Vector( 0, 0, 0 ), 0.1f, 0.0f, 120, FFADE_IN );
 
                         EMIT_SOUND( ENT( pev ), CHAN_AUTO, "slowmo/slowmo_start.wav", 1, ATTN_NORM );
@@ -5491,7 +5475,6 @@ bool CBasePlayer::DeactivateSlowMotion( bool smooth )
         if ( !slowMotionWasEnabled )
                 return false;
 
-        // Compensate m_flNextAttack for the time that was spent in slow-mo
         m_flNextAttack += nextAttackSlowmotionOffset;
         nextAttackSlowmotionOffset = 0.0f;
 
@@ -5524,7 +5507,6 @@ void CBasePlayer::SetSlowMotion( BOOL slowMotionEnabled )
 
 void CBasePlayer::UpdateSlowMotion()
 {
-        // --- Smooth timescale ramp-up after slow-mo ends ---
         if ( nextSmoothTimeScaleChange && nextSmoothTimeScaleChange <= gpGlobals->time )
         {
                 desiredTimeScale *= 1.08f;
@@ -5539,7 +5521,6 @@ void CBasePlayer::UpdateSlowMotion()
                 }
         }
 
-        // --- Drain the slow-motion charge while active ---
         if ( slowMotionUpdateTime && slowMotionUpdateTime <= gpGlobals->time && pev->deadflag == DEAD_NO )
         {
                 if ( slowMotionWasEnabled )
@@ -5564,7 +5545,6 @@ void CBasePlayer::UpdateSlowMotion()
                 }
         }
 
-        // --- Passively regain slow-motion charge over time while not in slow-mo ---
         if ( !slowMotionWasEnabled && pev->deadflag == DEAD_NO && slowMotionCharge < MAX_SLOWMOTION_CHARGE )
         {
                 if ( slowMotionRechargeTime <= gpGlobals->time )
@@ -5581,7 +5561,6 @@ void CBasePlayer::UpdateSlowMotion()
                 slowMotionRechargeTime = gpGlobals->time + SLOWMOTION_RECHARGE_INTERVAL;
         }
 
-        // --- Heartbeat sound while in slow-motion ---
         if ( slowMotionWasEnabled && pev->deadflag == DEAD_NO )
         {
                 if ( slowMotionNextHeartbeatSound <= gpGlobals->time )

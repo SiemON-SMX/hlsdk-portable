@@ -1,13 +1,3 @@
-/***
- *
- *      Kerotan — hidden Metal Gear frog figurine Easter egg.
- *
- *      One is hidden somewhere on every Half-Payne map (c1a0 onward).
- *      Shoot it with a bullet, blast, crowbar, or blade and it spins,
- *      wobbles, and ribbits in a degrading pitch until it finally breaks
- *      after 5 hits.  Ported from the GoldSRC Half-Payne source.
- *
- ***/
 
 #ifndef KEROTAN_H
 #define KEROTAN_H

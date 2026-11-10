@@ -555,7 +555,6 @@ int CBaseDoor::DoorActivate()
                 // play door unlock sounds
                 PlayLockSounds( pev, &m_ls, FALSE, FALSE );
 
-                // Commentary hook — fire when door first opens
                 HalfPayneHookModelIndex( ENT( pev ) );
 
                 DoorGoUp();

@@ -94,7 +94,6 @@ int CHudEndScreen::Draw( float flTime )
         // Black overlay
         gEngfuncs.pfnFillRGBABlend( 0, 0, ScreenWidth, ScreenHeight, 0, 0, 0, 255 );
 
-        // Title lines
         for( const auto &line : titleLines )
         {
                 DrawStringCentered( x, y, line.c_str(), r, g, b );
@@ -102,7 +101,6 @@ int CHudEndScreen::Draw( float flTime )
         }
         y += gHUD.m_scrinfo.iCharHeight;
 
-        // Time / score lines
         int lx = xOffset + CORNER_OFFSET + 60;
         int rx = ScreenWidth - xOffset - CORNER_OFFSET - 60;
         for( const auto &al : animLines )
@@ -112,7 +110,6 @@ int CHudEndScreen::Draw( float flTime )
                 y += gHUD.m_scrinfo.iCharHeight * 2;
         }
 
-        // Stat lines
         x = ScreenWidth / 2;
         for( const auto &sl : statLines )
         {
@@ -121,7 +118,6 @@ int CHudEndScreen::Draw( float flTime )
                 y += gHUD.m_scrinfo.iCharHeight - 2;
         }
 
-        // Bottom prompt
         y = ScreenHeight - yOffset - CORNER_OFFSET - gHUD.m_scrinfo.iCharHeight;
         DrawStringCentered( x, y, "PRESS ESC TO QUIT OR START THE NEW GAME", r, g, b );
 
@@ -154,8 +150,8 @@ int CHudEndScreen::MsgFunc_EndTime( const char *pszName, int iSize, void *pbuf )
         BEGIN_READ( pbuf, iSize );
         const char *msg = READ_STRING();
         float time   = (float)READ_LONG();
-        /*int record =*/ READ_LONG();
-        /*int   beaten =*/ READ_BYTE();
+ READ_LONG();
+ READ_BYTE();
 
         std::string label, right;
         SplitPipe( msg, label, right );
@@ -169,8 +165,8 @@ int CHudEndScreen::MsgFunc_EndScore( const char *pszName, int iSize, void *pbuf 
         BEGIN_READ( pbuf, iSize );
         const char *msg = READ_STRING();
         int score    = READ_LONG();
-        /*int record =*/ READ_LONG();
-        /*int beaten =*/ READ_BYTE();
+ READ_LONG();
+ READ_BYTE();
 
         std::string label, right;
         SplitPipe( msg, label, right );
