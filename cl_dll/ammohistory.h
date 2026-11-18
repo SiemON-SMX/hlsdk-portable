@@ -15,22 +15,20 @@
 //
 // ammohistory.h
 //
-#pragma once
-#if !defined(AMMOHISTORY_H)
-#define AMMOHISTORY_H
 
 // this is the max number of items in each bucket
 #define MAX_WEAPON_POSITIONS		MAX_WEAPON_SLOTS
+extern WEAPON *gpActiveSel;
 
 class WeaponsResource
 {
-private:
+public: // buz: made public to access from drawing code (valves idea about WR is suxx)
 	// Information about weapons & ammo
 	WEAPON		rgWeapons[MAX_WEAPONS];	// Weapons Array
 
 	// counts of weapons * ammo
-	WEAPON*		rgSlots[MAX_WEAPON_SLOTS + 1][MAX_WEAPON_POSITIONS + 1];	// The slots currently in use by weapons.  The value is a pointer to the weapon;  if it's NULL, no weapon is there
-	int			riAmmo[MAX_AMMO_TYPES];					// count of each ammo type
+	WEAPON*		rgSlots[MAX_WEAPON_SLOTS+1][MAX_WEAPON_POSITIONS+1];	// The slots currently in use by weapons.  The value is a pointer to the weapon;  if it's NULL, no weapon is there
+	int			riAmmo[MAX_AMMO_TYPES];							// count of each ammo type
 
 public:
 	void Init( void )
@@ -42,6 +40,7 @@ public:
 	void Reset( void )
 	{
 		iOldWeaponBits = 0;
+		m_iSelectedColumn = -1;
 		memset( rgSlots, 0, sizeof rgSlots );
 		memset( riAmmo, 0, sizeof riAmmo );
 	}
@@ -52,25 +51,29 @@ public:
 	WEAPON *GetWeapon( int iId ) { return &rgWeapons[iId]; }
 	void AddWeapon( WEAPON *wp ) 
 	{ 
-		rgWeapons[wp->iId] = *wp;	
-		LoadWeaponSprites( &rgWeapons[wp->iId] );
+		rgWeapons[ wp->iId ] = *wp;	
+		LoadWeaponSprites( &rgWeapons[ wp->iId ] );
 	}
 
 	void PickupWeapon( WEAPON *wp )
 	{
-		rgSlots[wp->iSlot][wp->iSlotPos] = wp;
+		rgSlots[ wp->iSlot ][ wp->iSlotPos ] = wp;
+		if ((m_iSelectedColumn == wp->iSlot) && !gpActiveSel) // buz: menu active, but no weapons in this category
+			gpActiveSel = wp;
 	}
 
 	void DropWeapon( WEAPON *wp )
 	{
-		rgSlots[wp->iSlot][wp->iSlotPos] = NULL;
+		rgSlots[ wp->iSlot ][ wp->iSlotPos ] = NULL;
+		if (wp == gpActiveSel) // buz: removed current weapon
+			gpActiveSel = GetFirstPos( wp->iSlot );
 	}
 
 	void DropAllWeapons( void )
 	{
-		for( int i = 0; i < MAX_WEAPONS; i++ )
+		for ( int i = 0; i < MAX_WEAPONS; i++ )
 		{
-			if( rgWeapons[i].iId )
+			if ( rgWeapons[i].iId )
 				DropWeapon( &rgWeapons[i] );
 		}
 	}
@@ -80,8 +83,10 @@ public:
 	void LoadWeaponSprites( WEAPON* wp );
 	void LoadAllWeaponSprites( void );
 	WEAPON* GetFirstPos( int iSlot );
+	WEAPON* GetLastPos( int iSlot ); // buz
 	void SelectSlot( int iSlot, int fAdvance, int iDirection );
 	WEAPON* GetNextActivePos( int iSlot, int iSlotPos );
+	WEAPON* GetPrevActivePos( int iSlot, int iSlotPos ); // buz
 
 	int HasAmmo( WEAPON *p );
 
@@ -93,16 +98,20 @@ public:
 	int CountAmmo( int iId );
 
 	HSPRITE* GetAmmoPicFromWeapon( int iAmmoId, wrect_t& rect );
+
+	int m_iSelectedColumn; // buz: -1 means menu inactive
+	float m_rgColumnSizes[MAX_WEAPON_SLOTS]; // buz
 };
 
 extern WeaponsResource gWR;
+
 
 #define MAX_HISTORY 12
 enum {
 	HISTSLOT_EMPTY,
 	HISTSLOT_AMMO,
 	HISTSLOT_WEAP,
-	HISTSLOT_ITEM
+	HISTSLOT_ITEM,
 };
 
 class HistoryResource
@@ -127,7 +136,6 @@ public:
 	void Reset( void )
 	{
 		memset( rgAmmoHistory, 0, sizeof rgAmmoHistory );
-		iCurrentHistorySlot = 0;
 	}
 
 	int iHistoryGap;
@@ -141,4 +149,6 @@ public:
 };
 
 extern HistoryResource gHR;
-#endif // AMMOHISTORY_H
+
+
+

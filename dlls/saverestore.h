@@ -13,8 +13,7 @@
 *
 ****/
 // Implementation in UTIL.CPP
-#pragma once
-#if !defined(SAVERESTORE_H)
+#ifndef SAVERESTORE_H
 #define SAVERESTORE_H
 
 class CBaseEntity;
@@ -24,7 +23,7 @@ class CSaveRestoreBuffer
 public:
 	CSaveRestoreBuffer( void );
 	CSaveRestoreBuffer( SAVERESTOREDATA *pdata );
-	virtual ~CSaveRestoreBuffer( void );
+	~CSaveRestoreBuffer( void );
 
 	int			EntityIndex( entvars_t *pevLookup );
 	int			EntityIndex( edict_t *pentLookup );
@@ -42,11 +41,8 @@ protected:
 	SAVERESTOREDATA		*m_pdata;
 	void		BufferRewind( int size );
 	unsigned int	HashString( const char *pszToken );
-private:
-	// effc++ rule 11
-	void operator = ( CSaveRestoreBuffer& );
-	CSaveRestoreBuffer( const CSaveRestoreBuffer& );
 };
+
 
 class CSave : public CSaveRestoreBuffer
 {
@@ -65,14 +61,18 @@ public:
 	void	WritePositionVector( const char *pname, const Vector &value );		// Offset for landmark if necessary
 	void	WritePositionVector( const char *pname, const float *value, int count );	// array of pos vectors
 	void	WriteFunction( const char *pname, void **value, int count );		// Save a function pointer
+	// Save a function pointer. (LRC- also pass the classname to allow better error messages)
+	void	WriteFunction( const char* cname, const char *pname, void **value, int count );
+
 	int		WriteEntVars( const char *pname, entvars_t *pev );		// Save entvars_t (entvars_t)
 	int		WriteFields( const char *pname, void *pBaseData, TYPEDESCRIPTION *pFields, int fieldCount );
+	int		WriteFields( const char *cname, const char *pname, void *pBaseData, TYPEDESCRIPTION *pFields, int fieldCount );
 
 private:
 	int		DataEmpty( const char *pdata, int size );
-	void	BufferField( const char *pname, int size, const char *pdata, int typesize = -1 );
+	void	BufferField( const char *pname, int size, const char *pdata );
 	void	BufferString( char *pdata, int len );
-	void	BufferData( const char *pdata, int size, int typesize = -1 );
+	void	BufferData( const char *pdata, int size );
 	void	BufferHeader( const char *pname, int size );
 };
 
@@ -86,7 +86,8 @@ typedef struct
 class CRestore : public CSaveRestoreBuffer
 {
 public:
-	CRestore( SAVERESTOREDATA *pdata ) : CSaveRestoreBuffer( pdata ), m_global(0), m_precache( TRUE ) { }
+	CRestore( SAVERESTOREDATA *pdata ) : CSaveRestoreBuffer( pdata ) { m_global = 0; m_precache = TRUE; }
+
 	int		ReadEntVars( const char *pname, entvars_t *pev );		// entvars_t
 	int		ReadFields( const char *pname, void *pBaseData, TYPEDESCRIPTION *pFields, int fieldCount );
 	int		ReadField( void *pBaseData, TYPEDESCRIPTION *pFields, int fieldCount, int startField, int size, char *pName, void *pData );
@@ -120,7 +121,10 @@ private:
 	{\
 		if ( !baseClass::Save(save) )\
 			return 0;\
-		return save.WriteFields( #derivedClass, this, m_SaveData, ARRAYSIZE(m_SaveData) );\
+		if (pev->targetname)\
+			return save.WriteFields( STRING(pev->targetname), #derivedClass, this, m_SaveData, ARRAYSIZE(m_SaveData) );\
+		else\
+			return save.WriteFields( STRING(pev->classname), #derivedClass, this, m_SaveData, ARRAYSIZE(m_SaveData) );\
 	}\
 	int derivedClass::Restore( CRestore &restore )\
 	{\
@@ -128,6 +132,7 @@ private:
 			return 0;\
 		return restore.ReadFields( #derivedClass, this, m_SaveData, ARRAYSIZE(m_SaveData) );\
 	}
+
 
 typedef enum { GLOBAL_OFF = 0, GLOBAL_ON = 1, GLOBAL_DEAD = 2 } GLOBALESTATE;
 
@@ -157,7 +162,7 @@ public:
 	int				Restore( CRestore &restore );
 	static TYPEDESCRIPTION m_SaveData[];
 
-//#if _DEBUG
+//#ifdef _DEBUG
 	void			DumpGlobals( void );
 //#endif
 
@@ -165,11 +170,8 @@ private:
 	globalentity_t	*Find( string_t globalname );
 	globalentity_t	*m_pList;
 	int				m_listCount;
-	// effc++ rule 11
-	void operator = ( CGlobalState& );
-	CGlobalState( const CGlobalState& );
 };
 
 extern CGlobalState gGlobalState;
 
-#endif //SAVERESTORE_H
+#endif		//SAVERESTORE_H

@@ -104,6 +104,10 @@ typedef float vec_t;				// needed before including progdefs.h
 // Shared header describing protocol between engine and DLLs
 #include "eiface.h"
 
+#if !defined(at_debug)
+#define at_debug at_console
+#endif
+
 // Shared header between the client DLL and the game DLLs
 #include "cdll_dll.h"
 #if !defined(Q_min)

@@ -13,19 +13,15 @@
 *
 ****/
 // Spectator.h
-#pragma once
-#if !defined(SPECTATOR_H)
-#define SPECTATOR_H
 
 class CBaseSpectator : public CBaseEntity 
 {
 public:
 	void Spawn();
-	void SpectatorConnect( void );
-	void SpectatorDisconnect( void );
-	void SpectatorThink( void );
+	void SpectatorConnect(void);
+	void SpectatorDisconnect(void);
+	void SpectatorThink(void);
 
 private:
-	void SpectatorImpulseCommand( void );
+	void SpectatorImpulseCommand(void);
 };
-#endif // SPECTATOR_H

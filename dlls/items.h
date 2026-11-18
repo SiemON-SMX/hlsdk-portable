@@ -12,20 +12,27 @@
 *   without written permission from Valve LLC.
 *
 ****/
-#pragma once
-#if !defined(ITEMS_H)
+#ifndef ITEMS_H
 #define ITEMS_H
+
 
 class CItem : public CBaseEntity
 {
 public:
-	void Spawn( void );
-	CBaseEntity *Respawn( void );
-	void EXPORT ItemTouch( CBaseEntity *pOther );
-	void EXPORT Materialize( void );
-	virtual BOOL MyTouch( CBasePlayer *pPlayer )
-	{
-		return FALSE;
-	};
+	void	Spawn( void );
+	CBaseEntity*	Respawn( void );
+
+	// Wargon: Переменные для юзабельных итемов.
+	virtual int Save( CSave &save );
+	virtual int Restore( CRestore &restore );
+	static TYPEDESCRIPTION m_SaveData[];
+	void EXPORT ItemUse( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value ) { ItemTouch( pActivator ); }
+	virtual int ObjectCaps( void ) { return m_iCurrCaps | FCAP_ACROSS_TRANSITION; }
+	int m_iCurrCaps;
+
+	void	EXPORT ItemTouch( CBaseEntity *pOther );
+	void	EXPORT Materialize( void );
+	virtual BOOL MyTouch( CBasePlayer *pPlayer ) { return FALSE; };
 };
+
 #endif // ITEMS_H

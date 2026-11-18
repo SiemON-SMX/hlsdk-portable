@@ -15,8 +15,8 @@
 //=========================================================
 // Scheduling 
 //=========================================================
-#pragma once
-#if !defined(SCHEDULE_H)
+
+#ifndef	SCHEDULE_H
 #define	SCHEDULE_H
 
 #define	TASKSTATUS_NEW				0			// Just started
@@ -24,6 +24,7 @@
 #define TASKSTATUS_RUNNING_MOVEMENT	2			// Just running movement
 #define TASKSTATUS_RUNNING_TASK		3			// Just running task
 #define TASKSTATUS_COMPLETE			4			// Completed, get next task
+
 
 //=========================================================
 // These are the schedule types
@@ -72,6 +73,7 @@ typedef enum
 		SCHED_BARNACLE_VICTIM_CHOMP,
 		SCHED_AISCRIPT,
 		SCHED_FAIL,
+		SCHED_RUSH_TARGET, // buz
 
 		LAST_COMMON_SCHEDULE			// Leave this at the bottom
 } SCHEDULE_TYPE;
@@ -86,15 +88,17 @@ typedef enum
 		TASK_WAIT_FACE_ENEMY,
 		TASK_WAIT_PVS,
 		TASK_SUGGEST_STATE,
-		TASK_WALK_TO_TARGET,
-		TASK_RUN_TO_TARGET,
+		TASK_WALK_TO_SCRIPT,
+		TASK_RUN_TO_SCRIPT,
 		TASK_MOVE_TO_TARGET_RANGE,
+		TASK_MOVE_TO_TARGET_RANGE2, // buz
 		TASK_GET_PATH_TO_ENEMY,
 		TASK_GET_PATH_TO_ENEMY_LKP,
 		TASK_GET_PATH_TO_ENEMY_CORPSE,
 		TASK_GET_PATH_TO_LEADER,
 		TASK_GET_PATH_TO_SPOT,
 		TASK_GET_PATH_TO_TARGET,
+		TASK_GET_PATH_TO_SCRIPT,
 		TASK_GET_PATH_TO_HINTNODE,
 		TASK_GET_PATH_TO_LASTPOSITION,
 		TASK_GET_PATH_TO_BESTSOUND,
@@ -163,6 +167,7 @@ typedef enum
 		TASK_ENABLE_SCRIPT,
 		TASK_PLANT_ON_SCRIPT,
 		TASK_FACE_SCRIPT,
+		TASK_END_SCRIPT, //LRC
 		TASK_WAIT_RANDOM,
 		TASK_WAIT_INDEFINITE,
 		TASK_STOP_MOVING,
@@ -171,7 +176,7 @@ typedef enum
 		TASK_REMEMBER,
 		TASK_FORGET,
 		TASK_WAIT_FOR_MOVEMENT,			// wait until MovementIsComplete()
-		LAST_COMMON_TASK // LEAVE THIS AT THE BOTTOM!! (sjb)
+		LAST_COMMON_TASK, // LEAVE THIS AT THE BOTTOM!! (sjb)
 } SHARED_TASKS;
 
 
@@ -179,7 +184,7 @@ typedef enum
 enum 
 {
 	TARGET_MOVE_NORMAL = 0,
-	TARGET_MOVE_SCRIPTED = 1
+	TARGET_MOVE_SCRIPTED = 1,
 };
 
 
@@ -193,7 +198,7 @@ enum
 	GOAL_MOVE,
 	GOAL_TAKE_COVER,
 	GOAL_MOVE_TARGET,
-	GOAL_EAT
+	GOAL_EAT,
 };
 
 // an array of tasks is a task list
@@ -207,10 +212,11 @@ struct Task_t
 
 struct Schedule_t
 {
+
 	Task_t	*pTasklist;
 	int		cTasks;	 
 	int		iInterruptMask;// a bit mask of conditions that can interrupt this schedule 
-
+	
 	// a more specific mask that indicates which TYPES of sounds will interrupt the schedule in the 
 	// event that the schedule is broken by COND_HEAR_SOUND
 	int		iSoundMask;
@@ -265,6 +271,7 @@ struct WayPoint_t
 #define bits_COND_CAN_RANGE_ATTACK2		( 1 << 12)
 #define bits_COND_CAN_MELEE_ATTACK2		( 1 << 13)
 // #define bits_COND_CAN_RANGE_ATTACK3		( 1 << 14)
+#define bits_COND_CROUCH_NOT_SAFE			( 1 << 14) // buz: monster will be not safe if he crouch
 #define bits_COND_PROVOKED				( 1 << 15)
 #define bits_COND_NEW_ENEMY				( 1 << 16)
 #define bits_COND_HEAR_SOUND			( 1 << 17) // there is an interesting sound
@@ -279,6 +286,7 @@ struct WayPoint_t
 
 #define bits_COND_TASK_FAILED			( 1 << 30)
 #define bits_COND_SCHEDULE_DONE			( 1 << 31)
+
 
 #define bits_COND_ALL_SPECIAL			(bits_COND_SPECIAL1 | bits_COND_SPECIAL2)
 

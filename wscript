@@ -170,6 +170,7 @@ def configure(conf):
 			'-Werror=packed-not-aligned',
 			'-Werror=parentheses',
 			'-Werror=return-type',
+			'-fsigned-char',
 			'-Werror=sequence-point',
 			'-Werror=sizeof-pointer-memaccess',
 			'-Werror=sizeof-array-div',

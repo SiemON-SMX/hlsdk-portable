@@ -5,6 +5,7 @@
 
 // shared between backends
 Vector dead_viewangles(0, 0, 0);
+int g_iVisibleMouse = 0;
 cvar_t      *sensitivity;
 cvar_t  *in_joystick;
 

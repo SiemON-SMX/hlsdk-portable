@@ -17,7 +17,7 @@
 //=============================================================================
 
 
-#include<VGUI_LineBorder.h>
+#include <VGUI_LineBorder.h>
 
 #include "hud.h"
 #include "cl_util.h"
@@ -26,10 +26,14 @@
 #include "cl_entity.h"
 #include "vgui_TeamFortressViewport.h"
 #include "vgui_ScorePanel.h"
-#include "vgui_helpers.h"
-#include "vgui_loadtga.h"
-#include "voice_status.h"
+#include "../game_shared/vgui_helpers.h"
+#include "../game_shared/vgui_loadtga.h"
 #include "vgui_SpectatorPanel.h"
+
+hud_player_info_t	 g_PlayerInfoList[MAX_PLAYERS+1];	   // player info from the engine
+extra_player_info_t  g_PlayerExtraInfo[MAX_PLAYERS+1];   // additional player info sent directly to the client dll
+team_info_t			 g_TeamInfo[MAX_TEAMS+1];
+int					 g_IsSpectator[MAX_PLAYERS+1];
 
 int HUD_IsGame( const char *game );
 int EV_TFC_IsAllyTeam( int iTeam1, int iTeam2 );
@@ -43,16 +47,16 @@ int EV_TFC_IsAllyTeam( int iTeam1, int iTeam2 );
 class SBColumnInfo
 {
 public:
-	const char		*m_pTitle;		// If null, ignore, if starts with #, it's localized, otherwise use the string directly.
-	int			 m_Width;		// Based on 640 width. Scaled to fit other resolutions.
-	Label::Alignment	 m_Alignment;	
+	char				*m_pTitle;		// If null, ignore, if starts with #, it's localized, otherwise use the string directly.
+	int					m_Width;		// Based on 640 width. Scaled to fit other resolutions.
+	Label::Alignment	m_Alignment;	
 };
 
 // grid size is marked out for 640x480 screen
 
 SBColumnInfo g_ColumnInfo[NUM_COLUMNS] =
 {
-	{NULL,			24,			Label::a_east},		// tracker column
+	{NULL,			24,			Label::a_east},
 	{NULL,			140,		Label::a_east},		// name
 	{NULL,			56,			Label::a_east},		// class
 	{"#SCORE",		40,			Label::a_east},
@@ -73,159 +77,161 @@ SBColumnInfo g_ColumnInfo[NUM_COLUMNS] =
 // ScorePanel::HitTestPanel.
 //-----------------------------------------------------------------------------
 
-void ScorePanel::HitTestPanel::internalMousePressed( MouseCode code )
+void ScorePanel::HitTestPanel::internalMousePressed(MouseCode code)
 {
-	for( int i = 0; i < _inputSignalDar.getCount(); i++ )
+	for(int i=0;i<_inputSignalDar.getCount();i++)
 	{
-		_inputSignalDar[i]->mousePressed( code, this );
+		_inputSignalDar[i]->mousePressed(code,this);
 	}
 }
+
+
 
 //-----------------------------------------------------------------------------
 // Purpose: Create the ScoreBoard panel
 //-----------------------------------------------------------------------------
-ScorePanel::ScorePanel( int x, int y, int wide, int tall ) : Panel( x, y, wide, tall )
+ScorePanel::ScorePanel(int x,int y,int wide,int tall) : Panel(x,y,wide,tall)
 {
 	CSchemeManager *pSchemes = gViewPort->GetSchemeManager();
-	SchemeHandle_t hTitleScheme = pSchemes->getSchemeHandle( "Scoreboard Title Text" );
-	SchemeHandle_t hSmallScheme = pSchemes->getSchemeHandle( "Scoreboard Small Text" );
-	Font *tfont = pSchemes->getFont( hTitleScheme );
-	Font *smallfont = pSchemes->getFont( hSmallScheme );
+	SchemeHandle_t hTitleScheme = pSchemes->getSchemeHandle("Scoreboard Title Text");
+	SchemeHandle_t hSmallScheme = pSchemes->getSchemeHandle("Scoreboard Small Text");
+	Font *tfont = pSchemes->getFont(hTitleScheme);
+	Font *smallfont = pSchemes->getFont(hSmallScheme);
 
-	setBgColor( 0, 0, 0, 96 );
+	setBgColor(0, 0, 0, 96);
 	m_pCurrentHighlightLabel = NULL;
 	m_iHighlightRow = -1;
 
-	//m_pTrackerIcon = vgui_LoadTGANoInvertAlpha("gfx/vgui/640_scoreboardtracker.tga");
-
 	// Initialize the top title.
-	m_TitleLabel.setFont( tfont );
-	m_TitleLabel.setText( "" );
+	m_TitleLabel.setFont(tfont);
+	m_TitleLabel.setText("");
 	m_TitleLabel.setBgColor( 0, 0, 0, 255 );
 	m_TitleLabel.setFgColor( Scheme::sc_primary1 );
 	m_TitleLabel.setContentAlignment( vgui::Label::a_west );
 
-	LineBorder *border = new LineBorder( Color( 60, 60, 60, 128 ) );
-	setBorder( border );
-	setPaintBorderEnabled( true );
+	LineBorder *border = new LineBorder(Color(60, 60, 60, 128));
+	setBorder(border);
+	setPaintBorderEnabled(true);
 
 	int xpos = g_ColumnInfo[0].m_Width + 3;
-	if( ScreenWidth >= 640 )
+	if (ScreenWidth >= 640)
 	{
 		// only expand column size for res greater than 640
-		xpos = XRES( xpos );
+		xpos = XRES(xpos);
 	}
-	m_TitleLabel.setBounds( xpos, 4, wide, SBOARD_TITLE_SIZE_Y );
-	m_TitleLabel.setContentFitted( false );
-	m_TitleLabel.setParent( this );
+	m_TitleLabel.setBounds(xpos, 4, wide, SBOARD_TITLE_SIZE_Y);
+	m_TitleLabel.setContentFitted(false);
+	m_TitleLabel.setParent(this);
 
 	// Setup the header (labels like "name", "class", etc..).
-	m_HeaderGrid.SetDimensions( NUM_COLUMNS, 1 );
-	m_HeaderGrid.SetSpacing( 0, 0 );
+	m_HeaderGrid.SetDimensions(NUM_COLUMNS, 1);
+	m_HeaderGrid.SetSpacing(0, 0);
 	
-	for( int i = 0; i < NUM_COLUMNS; i++ )
+	for(int i=0; i < NUM_COLUMNS; i++)
 	{
-		if( g_ColumnInfo[i].m_pTitle && g_ColumnInfo[i].m_pTitle[0] == '#' )
-			m_HeaderLabels[i].setText( CHudTextMessage::BufferedLocaliseTextString( g_ColumnInfo[i].m_pTitle ) );
-		else if( g_ColumnInfo[i].m_pTitle )
-			m_HeaderLabels[i].setText( g_ColumnInfo[i].m_pTitle );
+		if (g_ColumnInfo[i].m_pTitle && g_ColumnInfo[i].m_pTitle[0] == '#')
+			m_HeaderLabels[i].setText(CHudTextMessage::BufferedLocaliseTextString(g_ColumnInfo[i].m_pTitle));
+		else if(g_ColumnInfo[i].m_pTitle)
+			m_HeaderLabels[i].setText(g_ColumnInfo[i].m_pTitle);
 
 		int xwide = g_ColumnInfo[i].m_Width;
-		if( ScreenWidth >= 640 )
+		if (ScreenWidth >= 640)
 		{
-			xwide = XRES( xwide );
+			xwide = XRES(xwide);
 		}
-		else if( ScreenWidth == 400 )
+		else if (ScreenWidth == 400)
 		{
 			// hack to make 400x300 resolution scoreboard fit
-			if( i == 1 )
+			if (i == 1)
 			{
 				// reduces size of player name cell
 				xwide -= 28;
 			}
-			else if( i == 0 )
+			else if (i == 0)
 			{
-				// tracker icon cell
 				xwide -= 8;
 			}
 		}
 		
-		m_HeaderGrid.SetColumnWidth( i, xwide );
-		m_HeaderGrid.SetEntry( i, 0, &m_HeaderLabels[i] );
+		m_HeaderGrid.SetColumnWidth(i, xwide);
+		m_HeaderGrid.SetEntry(i, 0, &m_HeaderLabels[i]);
 
-		m_HeaderLabels[i].setBgColor( 0, 0, 0, 255 );
-		m_HeaderLabels[i].setFgColor( Scheme::sc_primary1 );
-		m_HeaderLabels[i].setFont( smallfont );
-		m_HeaderLabels[i].setContentAlignment( g_ColumnInfo[i].m_Alignment );
+		m_HeaderLabels[i].setBgColor(0,0,0,255);
+		m_HeaderLabels[i].setFgColor(Scheme::sc_primary1);
+		m_HeaderLabels[i].setFont(smallfont);
+		m_HeaderLabels[i].setContentAlignment(g_ColumnInfo[i].m_Alignment);
 
 		int yres = 12;
-		if( ScreenHeight >= 480 )
+		if (ScreenHeight >= 480)
 		{
-			yres = YRES( yres );
+			yres = YRES(yres);
 		}
-		m_HeaderLabels[i].setSize( 50, yres );
+		m_HeaderLabels[i].setSize(50, yres);
 	}
 
 	// Set the width of the last column to be the remaining space.
 	int ex, ey, ew, eh;
-
-	m_HeaderGrid.GetEntryBox( NUM_COLUMNS - 2, 0, ex, ey, ew, eh );
-	m_HeaderGrid.SetColumnWidth( NUM_COLUMNS - 1, ( wide - X_BORDER ) - ( ex + ew ) );
+	m_HeaderGrid.GetEntryBox(NUM_COLUMNS - 2, 0, ex, ey, ew, eh);
+	m_HeaderGrid.SetColumnWidth(NUM_COLUMNS - 1, (wide - X_BORDER) - (ex + ew));
 
 	m_HeaderGrid.AutoSetRowHeights();
-	m_HeaderGrid.setBounds( X_BORDER, SBOARD_TITLE_SIZE_Y, wide - X_BORDER * 2, m_HeaderGrid.GetRowHeight( 0 ) );
-	m_HeaderGrid.setParent( this );
-	m_HeaderGrid.setBgColor( 0, 0, 0, 255 );
+	m_HeaderGrid.setBounds(X_BORDER, SBOARD_TITLE_SIZE_Y, wide - X_BORDER*2, m_HeaderGrid.GetRowHeight(0));
+	m_HeaderGrid.setParent(this);
+	m_HeaderGrid.setBgColor(0,0,0,255);
+
 
 	// Now setup the listbox with the actual player data in it.
 	int headerX, headerY, headerWidth, headerHeight;
+	m_HeaderGrid.getBounds(headerX, headerY, headerWidth, headerHeight);
+	m_PlayerList.setBounds(headerX, headerY+headerHeight, headerWidth, tall - headerY - headerHeight - 6);
+	m_PlayerList.setBgColor(0,0,0,255);
+	m_PlayerList.setParent(this);
 
-	m_HeaderGrid.getBounds( headerX, headerY, headerWidth, headerHeight );
-	m_PlayerList.setBounds( headerX, headerY+headerHeight, headerWidth, tall - headerY - headerHeight - 6 );
-	m_PlayerList.setBgColor( 0, 0, 0, 255 );
-	m_PlayerList.setParent( this );
-
-	for( int row=0; row < NUM_ROWS; row++ )
+	for(int row=0; row < NUM_ROWS; row++)
 	{
 		CGrid *pGridRow = &m_PlayerGrids[row];
 
-		pGridRow->SetDimensions( NUM_COLUMNS, 1 );
-
-		for( int col = 0; col < NUM_COLUMNS; col++ )
+		pGridRow->SetDimensions(NUM_COLUMNS, 1);
+		
+		for(int col=0; col < NUM_COLUMNS; col++)
 		{
-			m_PlayerEntries[col][row].setContentFitted( false );
-			m_PlayerEntries[col][row].setRow( row );
-			m_PlayerEntries[col][row].addInputSignal( this );
+			m_PlayerEntries[col][row].setContentFitted(false);
+			m_PlayerEntries[col][row].setRow(row);
+			m_PlayerEntries[col][row].addInputSignal(this);
 			pGridRow->SetEntry(col, 0, &m_PlayerEntries[col][row]);
 		}
 
-		pGridRow->setBgColor( 0, 0, 0, 255 );
-		pGridRow->SetSpacing( 0, 0 );
-		pGridRow->CopyColumnWidths( &m_HeaderGrid );
+		pGridRow->setBgColor(0,0,0,255);
+//		pGridRow->SetSpacing(2, 0);
+		pGridRow->SetSpacing(0, 0);
+		pGridRow->CopyColumnWidths(&m_HeaderGrid);
 		pGridRow->AutoSetRowHeights();
-		pGridRow->setSize( PanelWidth( pGridRow ), pGridRow->CalcDrawHeight() );
+		pGridRow->setSize(PanelWidth(pGridRow), pGridRow->CalcDrawHeight());
 		pGridRow->RepositionContents();
 
-		m_PlayerList.AddItem( pGridRow );
+		m_PlayerList.AddItem(pGridRow);
 	}
 
-	// Add the hit test panel. It is invisible and traps mouse clicks so we can go into squelch mode.
-	m_HitTestPanel.setBgColor( 0, 0, 0, 255 );
-	m_HitTestPanel.setParent( this );
-	m_HitTestPanel.setBounds( 0, 0, wide, tall );
-	m_HitTestPanel.addInputSignal( this );
 
-	m_pCloseButton = new CommandButton( "x", wide - XRES( 12 + 4 ), YRES( 2 ), XRES( 12 ) , YRES( 12 ) );
+	// Add the hit test panel. It is invisible and traps mouse clicks so we can go into squelch mode.
+	m_HitTestPanel.setBgColor(0,0,0,255);
+	m_HitTestPanel.setParent(this);
+	m_HitTestPanel.setBounds(0, 0, wide, tall);
+	m_HitTestPanel.addInputSignal(this);
+
+	m_pCloseButton = new CommandButton( "x", wide-XRES(12 + 4), YRES(2), XRES( 12 ) , YRES( 12 ) );
 	m_pCloseButton->setParent( this );
 	m_pCloseButton->addActionSignal( new CMenuHandler_StringCommandWatch( "-showscores", true ) );
-	m_pCloseButton->setBgColor( 0, 0, 0, 255 );
+	m_pCloseButton->setBgColor(0,0,0,255);
 	m_pCloseButton->setFgColor( 255, 255, 255, 0 );
-	m_pCloseButton->setFont( tfont );
+	m_pCloseButton->setFont(tfont);
 	m_pCloseButton->setBoundKey( (char)255 );
-	m_pCloseButton->setContentAlignment( Label::a_center );
+	m_pCloseButton->setContentAlignment(Label::a_center);
+
 
 	Initialize();
 }
+
 
 //-----------------------------------------------------------------------------
 // Purpose: Called each time a new level is started.
@@ -233,13 +239,17 @@ ScorePanel::ScorePanel( int x, int y, int wide, int tall ) : Panel( x, y, wide, 
 void ScorePanel::Initialize( void )
 {
 	// Clear out scoreboard data
+	m_iLastKilledBy = 0;
+	m_fLastKillTime = 0;
+	m_iPlayerNum = 0;
+	m_iNumTeams = 0;
 	memset( g_PlayerExtraInfo, 0, sizeof g_PlayerExtraInfo );
 	memset( g_TeamInfo, 0, sizeof g_TeamInfo );
 }
 
 bool HACK_GetPlayerUniqueID( int iPlayer, char playerID[16] )
 {
-	return !!gEngfuncs.GetPlayerUniqueID( iPlayer, playerID ); // TODO remove after testing
+	return !!gEngfuncs.GetPlayerUniqueID( iPlayer, playerID );
 }
 		
 //-----------------------------------------------------------------------------
@@ -247,30 +257,29 @@ bool HACK_GetPlayerUniqueID( int iPlayer, char playerID[16] )
 //-----------------------------------------------------------------------------
 void ScorePanel::Update()
 {
-	int i;
-
 	// Set the title
-	if( gViewPort->m_szServerName[0] != '\0' )
+	if (gViewPort->m_szServerName)
 	{
-		m_TitleLabel.setText( gViewPort->m_szServerName );
+		char sz[MAX_SERVERNAME_LENGTH + 16];
+		sprintf(sz, "%s", gViewPort->m_szServerName );
+		m_TitleLabel.setText(sz);
 	}
 
 	m_iRows = 0;
-	gHUD.GetAllPlayersInfo();
+	gViewPort->GetAllPlayersInfo();
+
+	return;
 
 	// Clear out sorts
-	for (i = 0; i < NUM_ROWS; i++)
+	for (int i = 0; i < NUM_ROWS; i++)
 	{
 		m_iSortedRows[i] = 0;
 		m_iIsATeam[i] = TEAM_NO;
-	}
-	for (i = 0; i < MAX_PLAYERS; i++)
-	{
 		m_bHasBeenSorted[i] = false;
 	}
 
 	// If it's not teamplay, sort all the players. Otherwise, sort the teams.
-	if( !gHUD.m_Teamplay )
+	if ( !gHUD.m_Teamplay )
 		SortPlayers( 0, NULL );
 	else
 		SortTeams();
@@ -280,14 +289,14 @@ void ScorePanel::Update()
 
 	FillGrid();
 
-	if( gViewPort->m_pSpectatorPanel->m_menuVisible )
-	{
-		 m_pCloseButton->setVisible ( true );
-	}
-	else 
-	{
+//	if ( gViewPort->m_pSpectatorPanel->m_menuVisible )
+//	{
+//		 m_pCloseButton->setVisible ( true );
+//	}
+//	else 
+//	{
 		 m_pCloseButton->setVisible ( false );
-	}
+//	}
 }
 
 //-----------------------------------------------------------------------------
@@ -295,20 +304,93 @@ void ScorePanel::Update()
 //-----------------------------------------------------------------------------
 void ScorePanel::SortTeams()
 {
-	gHUD.m_Scoreboard.UpdateTeams();
+	int i, j;
+
+	// clear out team scores
+	for ( i = 1; i <= m_iNumTeams; i++ )
+	{
+		if ( !g_TeamInfo[i].scores_overriden )
+			g_TeamInfo[i].frags = g_TeamInfo[i].deaths = 0;
+		g_TeamInfo[i].ping = g_TeamInfo[i].packetloss = 0;
+	}
+
+	// recalc the team scores, then draw them
+	for ( i = 1; i < MAX_PLAYERS; i++ )
+	{
+		if ( g_PlayerInfoList[i].name == NULL )
+			continue; // empty player slot, skip
+
+		if ( g_PlayerExtraInfo[i].teamname[0] == 0 )
+			continue; // skip over players who are not in a team
+
+		// find what team this player is in
+		for ( j = 1; j <= m_iNumTeams; j++ )
+		{
+			if ( !stricmp( g_PlayerExtraInfo[i].teamname, g_TeamInfo[j].name ) )
+				break;
+		}
+		if ( j > m_iNumTeams )  // player is not in a team, skip to the next guy
+			continue;
+
+		if ( !g_TeamInfo[j].scores_overriden )
+		{
+			g_TeamInfo[j].frags += g_PlayerExtraInfo[i].frags;
+			g_TeamInfo[j].deaths += g_PlayerExtraInfo[i].deaths;
+		}
+
+		g_TeamInfo[j].ping += g_PlayerInfoList[i].ping;
+		g_TeamInfo[j].packetloss += g_PlayerInfoList[i].packetloss;
+
+		if ( g_PlayerInfoList[i].thisplayer )
+			g_TeamInfo[j].ownteam = TRUE;
+		else
+			g_TeamInfo[j].ownteam = FALSE;
+
+		// Set the team's number (used for team colors)
+		g_TeamInfo[j].teamnumber = g_PlayerExtraInfo[i].teamnumber;
+	}
+
+	// find team ping/packetloss averages
+	for ( i = 1; i <= m_iNumTeams; i++ )
+	{
+		g_TeamInfo[i].already_drawn = FALSE;
+
+		if ( g_TeamInfo[i].players > 0 )
+		{
+			g_TeamInfo[i].ping /= g_TeamInfo[i].players;  // use the average ping of all the players in the team as the teams ping
+			g_TeamInfo[i].packetloss /= g_TeamInfo[i].players;  // use the average ping of all the players in the team as the teams ping
+		}
+	}
 
 	// Draw the teams
-	while( 1 )
+	while ( 1 )
 	{
-		int best_team = gHUD.m_Scoreboard.BestTeam();
+		int highest_frags = -99999; int lowest_deaths = 99999;
+		int best_team = 0;
+
+		for ( i = 1; i <= m_iNumTeams; i++ )
+		{
+			if ( g_TeamInfo[i].players < 1 )
+				continue;
+
+			if ( !g_TeamInfo[i].already_drawn && g_TeamInfo[i].frags >= highest_frags )
+			{
+				if ( g_TeamInfo[i].frags > highest_frags || g_TeamInfo[i].deaths < lowest_deaths )
+				{
+					best_team = i;
+					lowest_deaths = g_TeamInfo[i].deaths;
+					highest_frags = g_TeamInfo[i].frags;
+				}
+			}
+		}
 
 		// draw the best team on the scoreboard
-		if( !best_team )
+		if ( !best_team )
 			break;
 
 		// Put this team in the sorted list
-		m_iSortedRows[m_iRows] = best_team;
-		m_iIsATeam[m_iRows] = TEAM_YES;
+		m_iSortedRows[ m_iRows ] = best_team;
+		m_iIsATeam[ m_iRows ] = TEAM_YES;
 		g_TeamInfo[best_team].already_drawn = TRUE;  // set the already_drawn to be TRUE, so this team won't get sorted again
 		m_iRows++;
 
@@ -378,6 +460,69 @@ void ScorePanel::SortPlayers( int iTeam, char *team )
 	}
 }
 
+//-----------------------------------------------------------------------------
+// Purpose: Recalculate the existing teams in the match
+//-----------------------------------------------------------------------------
+void ScorePanel::RebuildTeams()
+{
+	int i, j;
+
+	// clear out player counts from teams
+	for ( i = 1; i <= m_iNumTeams; i++ )
+	{
+		g_TeamInfo[i].players = 0;
+	}
+
+	// rebuild the team list
+	gViewPort->GetAllPlayersInfo();
+	m_iNumTeams = 0;
+	for ( i = 1; i < MAX_PLAYERS; i++ )
+	{
+		if ( g_PlayerInfoList[i].name == NULL )
+			continue;
+
+		if ( g_PlayerExtraInfo[i].teamname[0] == 0 )
+			continue; // skip over players who are not in a team
+
+		// is this player in an existing team?
+		for ( j = 1; j <= m_iNumTeams; j++ )
+		{
+			if ( g_TeamInfo[j].name[0] == '\0' )
+				break;
+
+			if ( !stricmp( g_PlayerExtraInfo[i].teamname, g_TeamInfo[j].name ) )
+				break;
+		}
+
+		if ( j > m_iNumTeams )
+		{ // they aren't in a listed team, so make a new one
+			// search through for an empty team slot
+			for ( int j = 1; j <= m_iNumTeams; j++ )
+			{
+				if ( g_TeamInfo[j].name[0] == '\0' )
+					break;
+			}
+			m_iNumTeams = Q_max( j, m_iNumTeams );
+
+			strncpy( g_TeamInfo[j].name, g_PlayerExtraInfo[i].teamname, MAX_TEAM_NAME );
+			g_TeamInfo[j].players = 0;
+		}
+
+		g_TeamInfo[j].players++;
+	}
+
+	// clear out any empty teams
+	for ( i = 1; i <= m_iNumTeams; i++ )
+	{
+		if ( g_TeamInfo[i].players < 1 )
+			memset( &g_TeamInfo[i], 0, sizeof(team_info_t) );
+	}
+
+	// Update the scoreboard
+	Update();
+}
+
+
 void ScorePanel::FillGrid()
 {
 	CSchemeManager *pSchemes = gViewPort->GetSchemeManager();
@@ -401,6 +546,7 @@ void ScorePanel::FillGrid()
 	}
 
 	bool bNextRowIsGap = false;
+
 	int row;
 	for(row=0; row < NUM_ROWS; row++)
 	{
@@ -519,10 +665,10 @@ void ScorePanel::FillGrid()
 										iTeamColors[ g_PlayerExtraInfo[ m_iSortedRows[row] ].teamnumber % iNumberOfTeamColors ][2],
 										196 );
 				}
-				else if ( m_iSortedRows[row] == gHUD.m_Scoreboard.m_iLastKilledBy && gHUD.m_Scoreboard.m_fLastKillTime && gHUD.m_Scoreboard.m_fLastKillTime > gHUD.m_flTime )
+				else if ( m_iSortedRows[row] == m_iLastKilledBy && m_fLastKillTime && m_fLastKillTime > gHUD.m_flTime )
 				{
 					// Killer's name
-					pLabel->setBgColor( 255,0,0, 255 - ((float)15 * (float)(gHUD.m_Scoreboard.m_fLastKillTime - gHUD.m_flTime)) );
+					pLabel->setBgColor( 255,0,0, 255 - ((float)15 * (float)(m_fLastKillTime - gHUD.m_flTime)) );
 				}
 			}				
 
@@ -541,7 +687,7 @@ void ScorePanel::FillGrid()
 			}
 
 			// Fill out with the correct data
-			sz[0] = '\0';
+			strcpy(sz, "");
 			if ( m_iIsATeam[row] )
 			{
 				char sz2[128];
@@ -551,11 +697,11 @@ void ScorePanel::FillGrid()
 				case COLUMN_NAME:
 					if ( m_iIsATeam[row] == TEAM_SPECTATORS )
 					{
-						strcpy( sz2, CHudTextMessage::BufferedLocaliseTextString( "#Spectators" ) );
+						sprintf( sz2, "%s", CHudTextMessage::BufferedLocaliseTextString( "#Spectators" ) );
 					}
 					else
 					{
-						strcpy( sz2, gViewPort->GetTeamName(team_info->teamnumber) );
+						sprintf( sz2, "%s", gViewPort->GetTeamName(team_info->teamnumber) );
 					}
 
 					strcpy(sz, sz2);
@@ -603,28 +749,15 @@ void ScorePanel::FillGrid()
 				switch (col)
 				{
 				case COLUMN_NAME:
-					/*
-					if (g_pTrackerUser)
-					{
-						int playerSlot = m_iSortedRows[row];
-						int trackerID = gEngfuncs.GetTrackerIDForPlayer(playerSlot);
-						const char *trackerName = g_pTrackerUser->GetUserName(trackerID);
-						if (trackerName && *trackerName)
-						{
-							sprintf(sz, "   (%s)", trackerName);
-							pLabel->setText2(sz);
-						}
-					}
-					*/
 					sprintf(sz, "%s  ", pl_info->name);
 					break;
 				case COLUMN_VOICE:
 					sz[0] = 0;
 					// in HLTV mode allow spectator to turn on/off commentator voice
-					//if (!pl_info->thisplayer || gEngfuncs.IsSpectateOnly() )
-					//{
+					if (!pl_info->thisplayer || gEngfuncs.IsSpectateOnly() )
+					{
 						GetClientVoiceMgr()->UpdateSpeakerImage(pLabel, m_iSortedRows[row]);
-					//}
+					}
 					break;
 				case COLUMN_CLASS:
 					// No class for other team's members (unless allied or spectator)
@@ -645,31 +778,17 @@ void ScorePanel::FillGrid()
 						}
 
 						if (bNoClass)
-							sz[0] = '\0';
+							sprintf(sz, "");
 						else
-							strcpy( sz, CHudTextMessage::BufferedLocaliseTextString( sLocalisedClasses[ g_PlayerExtraInfo[ m_iSortedRows[row] ].playerclass ] ) );
+							sprintf( sz, "%s", CHudTextMessage::BufferedLocaliseTextString( sLocalisedClasses[ g_PlayerExtraInfo[ m_iSortedRows[row] ].playerclass ] ) );
 					}
 					else
 					{
-						sz[0] = '\0';
+						strcpy(sz, "");
 					}
 					break;
 
 				case COLUMN_TRACKER:
-					/*
-					if (g_pTrackerUser)
-					{
-						int playerSlot = m_iSortedRows[row];
-						int trackerID = gEngfuncs.GetTrackerIDForPlayer(playerSlot);
-
-						if (g_pTrackerUser->IsFriend(trackerID) && trackerID != g_pTrackerUser->GetTrackerID())
-						{
-							pLabel->setImage(m_pTrackerIcon);
-							pLabel->setFgColorAsImageColor(false);
-							m_pTrackerIcon->setColor(Color(255, 255, 255, 0));
-						}
-					}
-					*/
 					break;
 				case COLUMN_KILLS:
 					sprintf(sz, "%d",  g_PlayerExtraInfo[ m_iSortedRows[row] ].frags );
@@ -703,9 +822,27 @@ void ScorePanel::FillGrid()
 	m_PlayerList.setSize(x, y);
 }
 
+
+//-----------------------------------------------------------------------------
+// Purpose: Setup highlights for player names in scoreboard
+//-----------------------------------------------------------------------------
+void ScorePanel::DeathMsg( int killer, int victim )
+{
+	// if we were the one killed,  or the world killed us, set the scoreboard to indicate suicide
+	if ( victim == m_iPlayerNum || killer == 0 )
+	{
+		m_iLastKilledBy = killer ? killer : m_iPlayerNum;
+		m_fLastKillTime = gHUD.m_flTime + 10;	// display who we were killed by for 10 seconds
+
+		if ( killer == m_iPlayerNum )
+			m_iLastKilledBy = m_iPlayerNum;
+	}
+}
+
+
 void ScorePanel::Open( void )
 {
-	gHUD.m_Scoreboard.RebuildTeams();
+	RebuildTeams();
 	setVisible(true);
 	m_HitTestPanel.setVisible(true);
 }
@@ -733,30 +870,32 @@ void ScorePanel::mousePressed(MouseCode code, Panel* panel)
 			if (pl_info && pl_info->name && pl_info->name[0])
 			{
 				char string[256];
-				char string1[1024];
-				int len;
 				if (GetClientVoiceMgr()->IsPlayerBlocked(iPlayer))
 				{
-					// remove mute
-					GetClientVoiceMgr()->SetPlayerBlockedState( iPlayer, false );
+					char string1[1024];
 
-					safe_snprintf( string1, sizeof( string1 ), CHudTextMessage::BufferedLocaliseTextString( "#Unmuted" ), pl_info->name );
-					len = safe_snprintf( string, sizeof( string ), "%c** %s\n", HUD_PRINTTALK, string1 );
+					// remove mute
+					GetClientVoiceMgr()->SetPlayerBlockedState(iPlayer, false);
+
+					sprintf( string1, CHudTextMessage::BufferedLocaliseTextString( "#Unmuted" ), pl_info->name );
+					sprintf( string, "%c** %s\n", HUD_PRINTTALK, string1 );
+
+					gHUD.m_TextMessage.MsgFunc_TextMsg(NULL, strlen(string)+1, string );
 				}
 				else
 				{
-					// mute the player
-					GetClientVoiceMgr()->SetPlayerBlockedState( iPlayer, true );
+					char string1[1024];
+					char string2[1024];
 
-					safe_snprintf( string1, sizeof( string1 ), CHudTextMessage::BufferedLocaliseTextString( "#Muted" ), pl_info->name );
-					len = safe_snprintf( string, sizeof( string ), "%c** %s %s\n", HUD_PRINTTALK, string1, CHudTextMessage::BufferedLocaliseTextString( "#No_longer_hear_that_player" ) );
+					// mute the player
+					GetClientVoiceMgr()->SetPlayerBlockedState(iPlayer, true);
+
+					sprintf( string1, CHudTextMessage::BufferedLocaliseTextString( "#Muted" ), pl_info->name );
+					sprintf( string2, "%s", CHudTextMessage::BufferedLocaliseTextString( "#No_longer_hear_that_player" ) );
+					sprintf( string, "%c** %s %s\n", HUD_PRINTTALK, string1, string2 );
+
+					gHUD.m_TextMessage.MsgFunc_TextMsg(NULL, strlen(string)+1, string );
 				}
-				if( len < 0 )
-				{
-					len = sizeof( string ) - 1;
-					strcpy( &string[sizeof( string ) - 2], "\n" );
-				}
-				gHUD.m_TextMessage.MsgFunc_TextMsg(NULL, len + 1, string );
 			}
 		}
 	}

@@ -1,4 +1,4 @@
-//========= Copyright (c) 1996-2002, Valve LLC, All rights reserved. ============
+//========= Copyright © 1996-2002, Valve LLC, All rights reserved. ============
 //
 // Purpose: 
 //
@@ -18,12 +18,16 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <memory.h>
+#include <math.h>
 
 #include "studio_util.h"
 #include "r_studioint.h"
 
 #include "StudioModelRenderer.h"
 #include "GameStudioModelRenderer.h"
+
+#include "gl_renderer.h"
 
 //
 // Override the StudioModelRender virtual member functions here to implement custom bone
@@ -57,6 +61,7 @@ R_StudioDrawPlayer
 */
 int R_StudioDrawPlayer( int flags, entity_state_t *pplayer )
 {
+	RendererDrawNormal(); // buz: make shure that world draws before any studiomodel
 	return g_StudioRenderer.StudioDrawPlayer( flags, pplayer );
 }
 
@@ -68,6 +73,8 @@ R_StudioDrawModel
 */
 int R_StudioDrawModel( int flags )
 {
+	if (IEngineStudio.GetCurrentEntity() != IEngineStudio.GetViewEntity() && IEngineStudio.GetCurrentEntity()->curstate.renderfx != 161)
+		RendererDrawNormal(); // buz: make shure that world draws before any studiomodel
 	return g_StudioRenderer.StudioDrawModel( flags );
 }
 
@@ -97,6 +104,7 @@ HUD_GetStudioModelInterface
 Export this function for the engine to use the studio renderer class to render objects.
 ====================
 */
+#include "exportdef.h"
 extern "C" int DLLEXPORT HUD_GetStudioModelInterface( int version, struct r_studio_interface_s **ppinterface, struct engine_studio_api_s *pstudio )
 {
 	if ( version != STUDIO_INTERFACE_VERSION )
@@ -113,4 +121,14 @@ extern "C" int DLLEXPORT HUD_GetStudioModelInterface( int version, struct r_stud
 
 	// Success
 	return 1;
+}
+
+void ExtDrawShield( void ) // buz test
+{
+	g_StudioRenderer.StudioDrawHeadShield( );
+}
+
+void DrawCustomEntModel(cl_entity_t *ent, int amb, int shade) // buz
+{
+	g_StudioRenderer.StudioDrawCustomEntity(ent, amb, shade);
 }

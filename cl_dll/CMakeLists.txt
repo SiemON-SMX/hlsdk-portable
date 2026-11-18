@@ -57,85 +57,144 @@ if (USE_STATIC_FREEVGUI)
 endif()
 
 set (CLDLL_SOURCES
-	../dlls/crossbow.cpp
-	../dlls/crowbar.cpp
-	../dlls/egon.cpp
-	../dlls/gauss.cpp
-	../dlls/handgrenade.cpp
-	../dlls/hornetgun.cpp
-	../dlls/mp5.cpp
-	../dlls/python.cpp
-	../dlls/rpg.cpp
-	../dlls/satchel.cpp
-	../dlls/shotgun.cpp
-	../dlls/squeakgrenade.cpp
-	../dlls/tripmine.cpp
-	../dlls/glock.cpp
-	ev_hldm.cpp
-	hl/hl_baseentity.cpp
-	hl/hl_events.cpp
-	hl/hl_objects.cpp
-	hl/hl_weapons.cpp
 	ammo.cpp
 	ammo_secondary.cpp
 	ammohistory.cpp
+	ammoinventory.cpp
+	animalstatue.cpp
 	battery.cpp
+	blackbar.cpp
+	blur.cpp
+	bookmenu.cpp
+	bossbar.cpp
 	cdll_int.cpp
+	cgcontext.cpp
+	cgwater.cpp
+	clothesmenu.cpp
+	cg.cpp
+	client_port.cpp
+	image.cpp
+	irrklang.cpp
+	wavfix.cpp
 	com_weapons.cpp
+	computer.cpp
+	coopstats.cpp
+	credits.cpp
+	cutsceneskip.cpp
 	death.cpp
 	demo.cpp
+	difficulty.cpp
+	documents.cpp
 	entity.cpp
 	ev_common.cpp
+	ev_hldm.cpp
 	events.cpp
+	exception.cpp
 	flashlight.cpp
+	gamemenu.cpp
+	gameover.cpp
 	GameStudioModelRenderer.cpp
 	geiger.cpp
+	gl_debug.cpp
+	gl_decals.cpp
+	gl_light_dynamic.cpp
+	gl_lightmap.cpp
+	gl_model.cpp
+	gl_postprocess.cpp
+	gl_renderer.cpp
+	gl_rsurf.cpp
+	gl_sky.cpp
+	gl_studiomodel.cpp
+	gl_texloader.cpp
+	glmanager.cpp
+	glows.cpp
+	grass.cpp
 	health.cpp
 	hud.cpp
 	hud_msg.cpp
 	hud_redraw.cpp
+	hud_servers.cpp
 	hud_spectator.cpp
 	hud_update.cpp
+	hudcontrol.cpp
 	in_camera.cpp
 	input.cpp
 	input_goldsource.cpp
 	input_mouse.cpp
 	input_xash3d.cpp
-	interpolation.cpp
+	keypad.cpp
+	language.cpp
+	lensflare.cpp
+	log.cpp
 	menu.cpp
 	message.cpp
-	MOTD.cpp
+	miniparticles.cpp
+	mp3.cpp
+	MP3FileInfo.cpp
+	neffect.cpp
+	notedocument.cpp
+	padlock.cpp
 	parsemsg.cpp
-	../pm_shared/pm_debug.c
-	../pm_shared/pm_math.c
-	../pm_shared/pm_shared.c
+	particlemgr.cpp
+	particlemsg.cpp
+	particlesys.cpp
+	phone.cpp
+	puzzlebar.cpp
+	quake_bsp.cpp
+	rain.cpp
+	recbinventory.cpp
+	save.cpp
+	saveload.cpp
 	saytext.cpp
-	scoreboard.cpp
+	scope.cpp
 	status_icons.cpp
 	statusbar.cpp
 	studio_util.cpp
 	StudioModelRenderer.cpp
+	telephone.cpp
 	text_message.cpp
+	texturemanager.cpp
+	tgaloader.cpp
 	train.cpp
 	tri.cpp
+	triapiobjects.cpp
+	tvframe.cpp
+	unlockables.cpp
+	userdocument.cpp
 	util.cpp
-	view.cpp
-	../public/safe_snprintf.c
-)
-
-list(APPEND CLDLL_SOURCES
-	vgui_int.cpp
 	vgui_ClassMenu.cpp
 	vgui_ConsolePanel.cpp
 	vgui_ControlConfigPanel.cpp
 	vgui_CustomObjects.cpp
+	vgui_gamma.cpp
+	vgui_hud.cpp
+	vgui_int.cpp
 	vgui_MOTDWindow.cpp
+	vgui_paranoiatext.cpp
+	vgui_radio.cpp
 	vgui_SchemeManager.cpp
 	vgui_ScorePanel.cpp
-	vgui_TeamFortressViewport.cpp
+	vgui_ServerBrowser.cpp
 	vgui_SpectatorPanel.cpp
+	vgui_subtitles.cpp
+	vgui_tabpanel.cpp
+	vgui_TeamFortressViewport.cpp
 	vgui_teammenu.cpp
-	voice_status.cpp
+	vgui_tips.cpp
+	vguibillboard.cpp
+	vguiextramenu.cpp
+	view.cpp
+	yesno.cpp
+	hl/hl_events.cpp
+	hl/hl_objects.cpp
+	hl/hl_weapons.cpp
+	../pm_shared/pm_debug.c
+	../pm_shared/pm_math.c
+	../pm_shared/pm_shared.c
+	../public/safe_snprintf.c
+)
+
+list(APPEND CLDLL_SOURCES
 	../game_shared/vgui_checkbutton2.cpp
 	../game_shared/vgui_grid.cpp
 	../game_shared/vgui_helpers.cpp
@@ -144,6 +203,7 @@ list(APPEND CLDLL_SOURCES
 	../game_shared/vgui_scrollbar2.cpp
 	../game_shared/vgui_slider2.cpp
 	../game_shared/voice_banmgr.cpp
+	../game_shared/voice_status.cpp
 )
 
 if (HAVE_STRLCPY)
@@ -160,7 +220,7 @@ else()
 		../external/openbsd/strlcat.c)
 endif()
 
-include_directories (. hl/ ../dlls ../dlls/wpn_shared ../common ../engine ../pm_shared ../game_shared ../public)
+include_directories (. hl/ ../dlls ../dlls/wpn_shared ../common ../engine ../pm_shared ../game_shared ../public ../external)
 
 if (GOLDSOURCE_SUPPORT)
 	include_directories (../external/)
@@ -177,6 +237,10 @@ if (GOLDSOURCE_SUPPORT)
 endif()
 
 target_link_libraries(${CLDLL_LIBRARY} vgui)
+
+if(NOT WIN32)
+	target_link_libraries( ${CLDLL_LIBRARY} ${CMAKE_DL_LIBS} )
+endif()
 
 if(WIN32)
 	target_link_libraries( ${CLDLL_LIBRARY} user32.lib )

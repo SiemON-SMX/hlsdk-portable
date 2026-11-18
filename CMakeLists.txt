@@ -180,6 +180,8 @@ endif()
 if(NOT MSVC)
 	#add_compile_options(-Wempty-body) # GCC/Clang flag
 	add_compile_options(-Wreturn-type) # GCC/Clang flag
+	# the original game was built with msvc where char is signed, arm makes it unsigned
+	add_compile_options(-fsigned-char)
 else()
 	add_definitions(-D_CRT_SILENCE_NONCONFORMING_TGMATH_H)
 endif()

@@ -1515,12 +1515,12 @@ void CTestHull::Spawn( entvars_t *pevMasterNode )
 	{
 		// graph loaded from disk, so we don't need the test hull
 		SetThink( &CBaseEntity::SUB_Remove );
-		pev->nextthink = gpGlobals->time;
+		SetNextThink( 0 );
 	}
 	else
 	{
 		SetThink( &CTestHull::DropDelay );
-		pev->nextthink = gpGlobals->time + 1.0f;
+		SetNextThink( 1.0 );
 	}
 
 	// Make this invisible
@@ -1537,11 +1537,11 @@ void CTestHull::DropDelay( void )
 {
 	UTIL_CenterPrintAll( "Node Graph out of Date. Rebuilding..." );
 
-	UTIL_SetOrigin( VARS( pev ), WorldGraph.m_pNodes[0].m_vecOrigin );
+	UTIL_SetOrigin( this, WorldGraph.m_pNodes[0].m_vecOrigin );
 
 	SetThink( &CTestHull::CallBuildNodeGraph );
 
-	pev->nextthink = gpGlobals->time + 1.0f;
+	SetNextThink( 1.0 );
 }
 
 //=========================================================
@@ -1628,7 +1628,7 @@ void CTestHull::ShowBadNode( void )
 	UTIL_ParticleEffect( pev->origin + gpGlobals->v_right * 64, g_vecZero, 255, 25 );
 	UTIL_ParticleEffect( pev->origin - gpGlobals->v_right * 64, g_vecZero, 255, 25 );
 
-	pev->nextthink = gpGlobals->time + 0.1f;
+	SetNextThink( 0.1 );
 }
 
 extern BOOL gTouchDisabled;
@@ -1692,7 +1692,7 @@ void CTestHull::BuildNodeGraph( void )
 	int step;
 
 	SetThink( &CBaseEntity::SUB_Remove );// no matter what happens, the hull gets rid of itself.
-	pev->nextthink = gpGlobals->time;
+	SetNextThink( 0 );
 
 	//malloc a swollen temporary connection pool that we trim down after we know exactly how many connections there are.
 	pTempPool = (CLink *)calloc( sizeof(CLink), ( WorldGraph.m_cNodes * MAX_NODE_INITIAL_LINKS ) );
@@ -1865,7 +1865,7 @@ void CTestHull::BuildNodeGraph( void )
 					break;
 				}
 
-				UTIL_SetOrigin( pev, pSrcNode->m_vecOrigin );// place the hull on the node
+				UTIL_SetOrigin( this, pSrcNode->m_vecOrigin );// place the hull on the node
 
 				if( !FBitSet( pev->flags, FL_ONGROUND ) )
 				{
@@ -3775,7 +3775,7 @@ void CNodeViewer::Spawn()
 
 	m_iDraw = 0;
 	SetThink( &CNodeViewer::DrawThink );
-	pev->nextthink = gpGlobals->time;
+	SetNextThink( 0 );
 }
 
 void CNodeViewer::FindNodeConnections( int iNode )
@@ -3814,7 +3814,7 @@ void CNodeViewer::AddNode( int iFrom, int iTo )
 
 void CNodeViewer::DrawThink( void )
 {
-	pev->nextthink = gpGlobals->time;
+	SetNextThink( 0 );
 
 	for( int i = 0; i < 10; i++ )
 	{

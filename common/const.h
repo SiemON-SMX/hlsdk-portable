@@ -610,6 +610,9 @@
 #define CONTENT_FLYFIELD		-17
 #define CONTENT_GRAVITY_FLYFIELD	-18
 #define CONTENT_FOG			-19
+#define CONTENT_SPECIAL1		-20
+#define CONTENT_SPECIAL2		-21
+#define CONTENT_SPECIAL3		-22
 
 #define CONTENT_EMPTY		-1
 #define CONTENT_SOLID		-2
@@ -731,7 +734,8 @@ enum
 	kRenderFxExplode,			// Scale up really big!
 	kRenderFxGlowShell,			// Glowing Shell
 	kRenderFxClampMinScale,		// Keep this sprite from getting very small (SPRITES only!)
-	kRenderFxLightMultiplier	//CTM !!!CZERO added to tell the studiorender that the value in iuser2 is a lightmultiplier
+	kRenderFxLightMultiplier,	//CTM !!!CZERO added to tell the studiorender that the value in iuser2 is a lightmultiplier
+	kRenderFxReflection = kRenderFxLightMultiplier
 };
 
 typedef unsigned int		func_t;

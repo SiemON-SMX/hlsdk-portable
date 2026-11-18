@@ -1,4 +1,4 @@
-//========= Copyright (c) 1996-2002, Valve LLC, All rights reserved. ============
+//========= Copyright © 1996-2002, Valve LLC, All rights reserved. ============
 //
 // Purpose: 
 //
@@ -7,11 +7,15 @@
 
 #include <VGUI_Font.h>
 
+#define MAX_SCHEMES 64
+
 // handle to an individual scheme
 typedef int SchemeHandle_t;
 
+
 // Register console variables, etc..
 void Scheme_Init();
+
 
 //-----------------------------------------------------------------------------
 // Purpose: Handles the loading of text scheme description from disk
@@ -38,13 +42,38 @@ public:
 	void getBorderColor( SchemeHandle_t schemeHandle, int &r, int &g, int &b, int &a );
 
 private:
-	class CScheme;
-	CScheme *m_pSchemeList;
+
+	class CScheme
+	{
+	public:
+		enum { 
+			SCHEME_NAME_LENGTH = 32,
+		};
+		
+		// name
+		char schemeName[SCHEME_NAME_LENGTH];
+		vgui::Font *font;
+
+		// construction/destruction
+		CScheme()
+		{
+			schemeName[0] = 0;
+			font = NULL;
+		}
+
+		~CScheme()
+		{
+			delete font;
+		}
+	};
+
+	CScheme m_Schemes[MAX_SCHEMES];
 	int m_iNumSchemes;
 
 	// Resolution we were initted at.
 	int		m_xRes;
-
 	CScheme *getSafeScheme( SchemeHandle_t schemeHandle );
+	SchemeHandle_t LoadScheme( const char *schemeName );
 };
+
 

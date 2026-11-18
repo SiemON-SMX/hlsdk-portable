@@ -45,106 +45,160 @@ else()
 endif()
 
 set (SVDLL_SOURCES
-	agrunt.cpp
-	airtank.cpp
-	aflock.cpp
+	AI_BaseNPC_Schedule.cpp
+	alias.cpp
 	animating.cpp
 	animation.cpp
-	apache.cpp
-	barnacle.cpp
-	barney.cpp
-	bigmomma.cpp
-	bloater.cpp
 	bmodels.cpp
-	bullsquid.cpp
 	buttons.cpp
 	cbase.cpp
 	client.cpp
+	3DKeypad.cpp
+	Action.cpp
+	AnimatedCamera.cpp
+	Axe.cpp
+	BarShoot.cpp
+	Boat.cpp
+	BookLaser.cpp
+	BookSimonSledgehammer.cpp
+	bowlingball.cpp
+	Branch.cpp
+	wheelchair.cpp
+	Camera.cpp
+	ChainsawBoss.cpp
+	CheckBrush.cpp
+	CoopButtonPress.cpp
+	CoopLevelChangeManager.cpp
+	Crab.cpp
+	CutsceneModel.cpp
+	DeveloperCommentary.cpp
+	DoctorBoss.cpp
+	DoctorBossShoot.cpp
+	Door_Prop_View.cpp
+	dualweapon.cpp
+	DualPistol.cpp
+	Faceless.cpp
+	FacelessValve.cpp
+	FAMAS.cpp
+	Faster.cpp
+	Flare.cpp
+	Flashlight.cpp
+	Flygare.cpp
+	FuncValve.cpp
+	G43.cpp
+	Glock.cpp
+	InterDoor.cpp
+	InterDoorCoop.cpp
+	KeyItem.cpp
+	keys.cpp
+	Ladder.cpp
+	Lantern.cpp
+	M16.cpp
+	MobilePhone.cpp
+	MonsterBaby.cpp
+	MonsterChild.cpp
+	MonsterCrazyBitch.cpp
+	MonsterCustom.cpp
+	MonsterKrypande.cpp
+	MonsterSewmo.cpp
+	MonsterSlower3.cpp
+	mp5.cpp
+	NiceCamera.cpp
+	NightStick.cpp
+	NumeralPlate.cpp
+	P345.cpp
+	PhoneCall.cpp
+	PushableVan.cpp
+	PuzzleBars.cpp
+	PuzzleBarsButton.cpp
+	Radio.cpp
+	Revolver.cpp
+	Rifle.cpp
+	RoofBoss.cpp
+	RunningCrazy.cpp
+	SawCrazy.cpp
+	SawRunner.cpp
+	SewerBoss.cpp
+	Shotgun.cpp
+	SickSimon.cpp
+	Sledgehammer.cpp
+	Slower.cpp
+	SlowerTentacled.cpp
+	Spitter.cpp
+	Statues.cpp
+	StatueUse.cpp
+	Stranger.cpp
+	Strangle.cpp
+	SubtitleChange.cpp
+	SubtitleMain.cpp
+	SubwayBrickWall.cpp
+	Suicider.cpp
+	Switchblade.cpp
+	Syringe.cpp
+	Taller.cpp
+	TapeRecorder.cpp
+	Telephone.cpp
+	Telescope.cpp
+	ThirdPersonInteraction.cpp
+	TMP.cpp
+	Twitcher.cpp
+	Twitcher2.cpp
+	Twitcher3.cpp
+	Twitcher4.cpp
+	UserPasswordNote.cpp
+	VP70.cpp
+	Watro.cpp
+	WheelchairPlayer.cpp
 	combat.cpp
-	controller.cpp
-	crossbow.cpp
-	crowbar.cpp
 	defaultai.cpp
 	doors.cpp
 	effects.cpp
-	egon.cpp
 	explode.cpp
 	flyingmonster.cpp
 	func_break.cpp
-	func_tank.cpp
 	game.cpp
 	gamerules.cpp
-	gargantua.cpp
-	gauss.cpp
 	genericmonster.cpp
 	ggrenade.cpp
 	globals.cpp
-	glock.cpp
-	gman.cpp
 	h_ai.cpp
 	h_battery.cpp
 	h_cine.cpp
 	h_cycler.cpp
 	h_export.cpp
-	handgrenade.cpp
-	hassassin.cpp
-	headcrab.cpp
-	healthkit.cpp
-	hgrunt.cpp
-	hornet.cpp
-	hornetgun.cpp
-	houndeye.cpp
-	ichthyosaur.cpp
-	islave.cpp
+	item_padlock.cpp
 	items.cpp
-	leech.cpp
 	lights.cpp
+	locus.cpp
 	maprules.cpp
+	monster_ruben.cpp
 	monstermaker.cpp
 	monsters.cpp
 	monsterstate.cpp
 	mortar.cpp
-	mp5.cpp
+	movewith.cpp
 	multiplay_gamerules.cpp
-	nihilanth.cpp
 	nodes.cpp
-	observer.cpp
-	osprey.cpp
+	paranoia_wpn.cpp
 	pathcorner.cpp
 	plane.cpp
 	plats.cpp
 	player.cpp
-	playermonster.cpp
-	python.cpp
-	rat.cpp
-	roach.cpp
-	rpg.cpp
-	satchel.cpp
-	schedule.cpp
-	scientist.cpp
 	scripted.cpp
-	shotgun.cpp
 	singleplay_gamerules.cpp
 	skill.cpp
 	sound.cpp
 	soundent.cpp
 	spectator.cpp
 	squadmonster.cpp
-	squeakgrenade.cpp
 	subs.cpp
+	Subtitle_Multiple.cpp
 	talkmonster.cpp
 	teamplay_gamerules.cpp
-	tempmonster.cpp
-	tentacle.cpp
 	triggers.cpp
-	tripmine.cpp
-	turret.cpp
 	util.cpp
-	vehicle.cpp
 	weapons.cpp
 	world.cpp
-	xen.cpp
-	zombie.cpp
 	../game_shared/voice_gamemgr.cpp
 	../pm_shared/pm_debug.c
 	../pm_shared/pm_math.c

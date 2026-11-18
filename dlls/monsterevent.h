@@ -12,15 +12,14 @@
 *   without written permission from Valve LLC.
 *
 ****/
-#pragma once
-#if !defined(MONSTEREVENT_H)
+#ifndef MONSTEREVENT_H
 #define MONSTEREVENT_H
 
 typedef struct
 {
-	int event;
-	char *options;
-}MonsterEvent_t;
+	int			event;
+	char		*options;
+} MonsterEvent_t;
 
 #define EVENT_SPECIFIC			0
 #define EVENT_SCRIPTED			1000
@@ -30,5 +29,6 @@ typedef struct
 #define MONSTER_EVENT_BODYDROP_LIGHT	2001
 #define MONSTER_EVENT_BODYDROP_HEAVY	2002
 
-#define MONSTER_EVENT_SWISHSOUND	2010
-#endif //MONSTEREVENT_H
+#define MONSTER_EVENT_SWISHSOUND		2010
+
+#endif		// MONSTEREVENT_H

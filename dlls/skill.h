@@ -15,135 +15,128 @@
 //=========================================================
 // skill.h - skill level concerns
 //=========================================================
-#pragma once
-#if !defined(SKILL_H)
-#define SKILL_H
 
 struct skilldata_t
 {
+
 	int iSkillLevel; // game skill level
-
-	// Monster Health & Damage
-	float agruntHealth;
-	float agruntDmgPunch;
-
-	float apacheHealth;
-
-	float barneyHealth;
-
-	float bigmommaHealthFactor;		// Multiply each node's health by this
-	float bigmommaDmgSlash;			// melee attack damage
-	float bigmommaDmgBlast;			// mortar attack damage
-	float bigmommaRadiusBlast;		// mortar attack radius
-
-	float bullsquidHealth;
-	float bullsquidDmgBite;
-	float bullsquidDmgWhip;
-	float bullsquidDmgSpit;
-
-	float gargantuaHealth;
-	float gargantuaDmgSlash;
-	float gargantuaDmgFire;
-	float gargantuaDmgStomp;
-
-	float hassassinHealth;
-
-	float headcrabHealth;
-	float headcrabDmgBite;
-
-	float hgruntHealth;
-	float hgruntDmgKick;
-	float hgruntShotgunPellets;
-	float hgruntGrenadeSpeed;
-
-	float houndeyeHealth;
-	float houndeyeDmgBlast;
-
-	float slaveHealth;
-	float slaveDmgClaw;
-	float slaveDmgClawrake;
-	float slaveDmgZap;
-
-	float ichthyosaurHealth;
-	float ichthyosaurDmgShake;
-
-	float leechHealth;
-	float leechDmgBite;
-
-	float controllerHealth;
-	float controllerDmgZap;
-	float controllerSpeedBall;
-	float controllerDmgBall;
-
-	float nihilanthHealth;
-	float nihilanthZap;
-
-	float scientistHealth;
-
-	float snarkHealth;
-	float snarkDmgBite;
-	float snarkDmgPop;
+	float syringeHeal;
+	float flareBurnTime;
+	float chainsawbossHealth;
+	float spitterHealth;
+	float aomPills;
+	float DmgAxe;
+	float twitcherHealth;
+	float twitcherDmgOneSlash;
+	float twitcherDmgBothSlash;
+	float twitcher2Health;
+	float twitcher2DmgOneSlash;
+	float twitcher2DmgBothSlash;
+	float twitcher3Health;
+	float twitcher3DmgOneSlash;
+	float twitcher3DmgBothSlash;
+	float twitcher4Health;
+	float twitcher4DmgOneSlash;
+	float twitcher4DmgBothSlash;
+	float sewmoHealth;
+	float sewmoDmgOneSlash;
+	float sewmoDmgBothSlash;
+	float slower3Health;
+	float slower3DmgOneSlash;
+	float slower3DmgBothSlash;
+	float sewerbossHealth;
+	float sewerbossMelee;
+	float roofbossHealth;
+	float roofbossHeadHit;
+	float roofbossHeadHealth;
+	float roofbossAttackTime;
+	float suiciderHealth;
+	float suiciderBullet;
+	float suiciderSuicide;
 
 	float zombieHealth;
 	float zombieDmgOneSlash;
 	float zombieDmgBothSlash;
+	float tallerHealth;
+	float tallerDmgPunch;
+	float flygareAcid;
+	float flygareHealth;
+	float flygareMelee;
+	float doctorHealth;
+	float doctorP345;
+	float doctorRevolver;
+	float rcrazyHealth;
+	float rcrazyDmgOneSlash;
+	float rcrazyDmgBothSlash;
+	float facelessHealth;
+	float facelessDmgOneSlash;
+	float facelessDmgBothSlash;
+	float childHealth;
+	float childDmgOneSlash;
+	float childDmgBothSlash;
+	float sawrunnerHealth;
+	float sawrunnerDmgOneSlash;
+	float sawrunnerDmgBothSlash;
+	float fasterHealth;
+	float fasterDmgOneSlash;
+	float fasterDmgBothSlash;
+	float krypandeHealth;
+	float krypandeDmgOneSlash;
+	float krypandeDmgBothSlash;
+	float babyHealth;
+	float babyDmg;
+	float strangerHealth;
+	float strangerDmg;
+	float DmgWeaponMelee;
+	float DmgNightstick;
+	float DmgSwitchblade;
+	float DmgSwitchblade2;
+	float DmgPunch;
+	float DmgBranch;
+	float DmgSledgehammer;
+	float DmgGlock;
+	float DmgM16;
+	float DmgVP70;
+	float DmgShotgun;
+	float DmgP345;
+	float DmgRifle;
+	float DmgRevolver;
+	float DmgG43;
 
-	float turretHealth;
-	float miniturretHealth;
-	float sentryHealth;
-
-	// Player Weapons
-	float plrDmgCrowbar;
-	float plrDmg9MM;
-	float plrDmg357;
-	float plrDmgMP5;
-	float plrDmgM203Grenade;
-	float plrDmgBuckshot;
-	float plrDmgCrossbowClient;
-	float plrDmgCrossbowMonster;
-	float plrDmgRPG;
-	float plrDmgGauss;
-	float plrDmgEgonNarrow;
-	float plrDmgEgonWide;
-	float plrDmgHornet;
-	float plrDmgHandGrenade;
-	float plrDmgSatchel;
-	float plrDmgTripmine;
-	
-	// weapons shared by monsters
-	float monDmg9MM;
-	float monDmgMP5;
-	float monDmg12MM;
-	float monDmgHornet;
-
-	// health/suit charge
+// health/suit charge
 	float suitchargerCapacity;
 	float batteryCapacity;
 	float healthchargerCapacity;
 	float healthkitCapacity;
-	float scientistHeal;
+	float flashlightCharge;
 
-	// monster damage adj
+// monster damage adj
 	float monHead;
 	float monChest;
 	float monStomach;
 	float monLeg;
 	float monArm;
 
-	// player damage adj
+// player damage adj
 	float plrHead;
 	float plrChest;
 	float plrStomach;
 	float plrLeg;
 	float plrArm;
+	float plrDmgBuckshot; // used in paranoia
+
+// buz: maxspeeds
+	float plrPrimaryMaxSpeed;	// in primary weapon mode
+	float plrSecondaryMaxSpeed;	// in secondary weapon mode
+	float plrSprintMaxSpeed;
+	float plrStairMaxSpeed;
 };
 
 extern	DLL_GLOBAL	skilldata_t	gSkillData;
-float GetSkillCvar( const char *pName );
+float GetSkillCvar( char *pName );
 
 extern DLL_GLOBAL int		g_iSkillLevel;
 
 #define SKILL_EASY		1
 #define SKILL_MEDIUM	2
 #define SKILL_HARD		3
-#endif // SKILL_H
