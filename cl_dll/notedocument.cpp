@@ -156,10 +156,10 @@ void CNoteDocument::Initialize()
 	strncpy( m_szImage3, "", 16 );
 	strncpy( m_szImage4, "", 16 );
 	strncpy( m_szSound, "", 48 );
-	strncpy( m_szText1, "", 16 );
-	strncpy( m_szText2, "", 16 );
-	strncpy( m_szText3, "", 16 );
-	strncpy( m_szText4, "", 16 );
+	strncpy( m_szText1, "", 64 );
+	strncpy( m_szText2, "", 64 );
+	strncpy( m_szText3, "", 64 );
+	strncpy( m_szText4, "", 64 );
 	strncpy( m_szLine, "", 128 );
 
 	m_bTitle = false;

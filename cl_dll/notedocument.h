@@ -47,10 +47,10 @@ public:
 	char	m_szImage3[16];
 	char	m_szImage4[16];
 	char	m_szSound[48];
-	char	m_szText1[16];
-	char	m_szText2[16];
-	char	m_szText3[16];
-	char	m_szText4[16];
+	char	m_szText1[64];
+	char	m_szText2[64];
+	char	m_szText3[64];
+	char	m_szText4[64];
 	char	m_szLine[128];
 	bool	m_bTitle;
 	Label	*m_pLineLabel;
