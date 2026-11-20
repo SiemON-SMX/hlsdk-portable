@@ -1280,6 +1280,8 @@ void RendererVidInit()
 	ResetLightmaps();
 	reloaded = 1;
 	framecount = 0;
+	numrenderents = 0;
+	numskyents = 0;
 //	maxmsgnum = -1;
 //	addedents = 0;
 
