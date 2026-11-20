@@ -110,9 +110,46 @@ static void __CmdFunc_CoFTap( void )
 	}
 }
 
+static void CoFKeyCommand( int down )
+{
+	char szCmd[64];
+	int vk;
+
+	if( gEngfuncs.Cmd_Argc() < 2 )
+		return;
+
+	vk = atoi( gEngfuncs.Cmd_Argv( 1 ) );
+
+	if( vk < 0 || vk > 255 )
+		return;
+
+	if( g_bCoFClientKeyDown[vk] == down )
+		return;
+
+	g_bCoFClientKeyDown[vk] = down;
+
+	if( IsServerKey( vk ) )
+	{
+		sprintf( szCmd, "cof_key %d %d", vk, down );
+		gEngfuncs.pfnServerCmd( szCmd );
+	}
+}
+
+static void __CmdFunc_CoFKeyDown( void )
+{
+	CoFKeyCommand( 1 );
+}
+
+static void __CmdFunc_CoFKeyUp( void )
+{
+	CoFKeyCommand( 0 );
+}
+
 void InitClientKeys( void )
 {
 	gEngfuncs.pfnAddCommand( "cof_tap", __CmdFunc_CoFTap );
+	gEngfuncs.pfnAddCommand( "+cof_tap", __CmdFunc_CoFKeyDown );
+	gEngfuncs.pfnAddCommand( "-cof_tap", __CmdFunc_CoFKeyUp );
 
 	if( gEngfuncs.pfnGetCvarPointer( "sv_savepoints_only" ))
 		gEngfuncs.Cvar_SetValue( "sv_savepoints_only", 1 );
