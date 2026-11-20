@@ -251,7 +251,7 @@ bool CTextureManager::IsHardware( void )
 
 void CTextureManager::LevelInit( void )
 {
-	if ( IsHardware() )
+	if ( IsHardware() && gl.glGetString )
 	{
 		ilInit();
 		CheckMipmapSupport();
