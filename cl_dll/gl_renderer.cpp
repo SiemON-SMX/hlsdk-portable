@@ -1317,7 +1317,7 @@ void RendererInit()
 	cv_gl4es_brushents = gEngfuncs.pfnRegisterVariable( "gl4es_brushents","0", FCVAR_ARCHIVE );
 	cv_clipplanes = gEngfuncs.pfnRegisterVariable( "gl_clipplanes","0", 0 );
 	cv_showplane = gEngfuncs.pfnRegisterVariable( "gl_showplane","0", 0 );
-	cv_screenblur = gEngfuncs.pfnRegisterVariable( "gl_screenblur","1", FCVAR_ARCHIVE );
+	cv_screenblur = gEngfuncs.pfnRegisterVariable( "gl_screenblur","0", FCVAR_ARCHIVE );
 	cv_blurstepsx = gEngfuncs.pfnRegisterVariable( "gl_blurstepsx","32", FCVAR_ARCHIVE );
 	cv_blurstepsy = gEngfuncs.pfnRegisterVariable( "gl_blurstepsy","24", FCVAR_ARCHIVE );
 	cv_opacity = gEngfuncs.pfnRegisterVariable( "gl_opacity","0.5", FCVAR_ARCHIVE );

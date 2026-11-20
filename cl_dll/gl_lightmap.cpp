@@ -432,6 +432,7 @@ void UpdateLightmaps()
 
 	const char* curmapname = gEngfuncs.pfnGetLevelName();
 	lightmaps_initialized = 1;
+	if (cv_contrast->value < 1) gEngfuncs.Cvar_SetValue("gl_contrast", 1);
 	if (cv_contrast->value > 2) gEngfuncs.Cvar_SetValue("gl_contrast", 2);
 	if (cv_brightness->value > 0.3) gEngfuncs.Cvar_SetValue("gl_brightness", 0.3);
 	current_contrast = cv_contrast->value;

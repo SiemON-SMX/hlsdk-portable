@@ -141,6 +141,7 @@ cvar_t	*cg_water;
 cvar_t	*r_weather;
 cvar_t	*cl_ripples;
 cvar_t	*fps_current;
+cvar_t	*cof_speed_reset;
 cvar_t	*cl_noiseeffect;
 cvar_t	*cl_noiseamount;
 cvar_t	*cl_subtitles;
@@ -1138,6 +1139,14 @@ void DLLEXPORT CL_CreateMove ( float frametime, struct usercmd_s *cmd, int activ
 
 	if ( active )
 	{
+		if ( cof_speed_reset && cof_speed_reset->value < 1 )
+		{
+			gEngfuncs.Cvar_SetValue( "cl_forwardspeed", 230 );
+			gEngfuncs.Cvar_SetValue( "cl_backspeed", 200 );
+			gEngfuncs.Cvar_SetValue( "cl_sidespeed", 210 );
+			gEngfuncs.Cvar_SetValue( "cof_speed_reset", 1 );
+		}
+
 		//memset( viewangles, 0, sizeof( vec3_t ) );
 		//viewangles[ 0 ] = viewangles[ 1 ] = viewangles[ 2 ] = 0.0;
 		gEngfuncs.GetViewAngles( (float *)viewangles );
@@ -1511,9 +1520,10 @@ void InitInput (void)
 	cl_subtitles		= gEngfuncs.pfnRegisterVariable ( "cl_subtitles", "1", FCVAR_ARCHIVE );
 	r_weather			= gEngfuncs.pfnRegisterVariable ( "r_weather", "1", FCVAR_ARCHIVE );
 	fps_current			= gEngfuncs.pfnRegisterVariable ( "fps_current", "1", 0 );
+	cof_speed_reset		= gEngfuncs.pfnRegisterVariable ( "cof_speed_reset", "0", FCVAR_ARCHIVE );
 	cl_noiseeffect		= gEngfuncs.pfnRegisterVariable ( "cl_noiseeffect", "0", FCVAR_ARCHIVE );
 	cl_noiseamount		= gEngfuncs.pfnRegisterVariable ( "cl_noiseamount", "0.5", FCVAR_ARCHIVE );
-	cl_vignette			= gEngfuncs.pfnRegisterVariable ( "cl_vignette", "1", FCVAR_ARCHIVE );
+	cl_vignette			= gEngfuncs.pfnRegisterVariable ( "cl_vignette", "0", FCVAR_ARCHIVE );
 	cl_fovmultiplier	= gEngfuncs.pfnRegisterVariable ( "cl_fovmultiplier", "1", FCVAR_ARCHIVE );
 
 	m_pitch			    = gEngfuncs.pfnRegisterVariable ( "m_pitch","0.022", FCVAR_ARCHIVE );
@@ -1623,8 +1633,11 @@ void InitInput (void)
 			iDonator = 4;
 	}
 
-	iMenuMode = 1;
-	gEngfuncs.pfnClientCmd( "map c_game_menu1" );
+	if ( !gEngfuncs.CheckParm( "-no3dmenu", NULL ) )
+	{
+		iMenuMode = 1;
+		gEngfuncs.pfnClientCmd( "map c_game_menu1" );
+	}
 }
 
 /*

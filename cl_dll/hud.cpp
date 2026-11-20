@@ -639,6 +639,9 @@ void __CmdFunc_To3DMenu( void )
 
 void __CmdFunc_ReturnMenu( void )
 {
+	if ( gEngfuncs.CheckParm( "-no3dmenu", NULL ) )
+		iMenuMode = 0;
+
 	gEngfuncs.pfnClientCmd( "disconnect;maxplayers 1;deathmatch 0" );
 }
 
@@ -1042,7 +1045,8 @@ void CHud :: VidInit( void )
 	g_bCoFMainMenu = false;
 	SetTouchMenuMode( false );
 
-	iMenuMode = 1;
+	if ( !gEngfuncs.CheckParm( "-no3dmenu", NULL ) || iMenuMode == 2 )
+		iMenuMode = 1;
 	m_flDamageTime = 0;
 	m_bSaveHack = false;
 	m_flSaveHackTime = 0;

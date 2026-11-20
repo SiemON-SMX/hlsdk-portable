@@ -1868,6 +1868,7 @@ void CStudioModelRenderer::GL_DrawPoints ( )
 		{
 			gl.glEnable(GL_BLEND);
 			gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+			gl.glDepthMask(GL_FALSE);
 		}
 
 		if (ptex->flags & STUDIO_NF_ALPHATEST && !useblending)	// buz
@@ -2115,6 +2116,7 @@ void CStudioModelRenderer::GL_DrawPoints ( )
 		if (ptex->flags & STUDIO_NF_ADDITIVE && !useblending)	// buz
 		{
 			gl.glDisable(GL_BLEND);
+			gl.glDepthMask(GL_TRUE);
 		}
 
 		if (ptex->flags & STUDIO_NF_ALPHATEST && !useblending)	// buz
