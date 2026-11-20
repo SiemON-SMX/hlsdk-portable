@@ -516,8 +516,7 @@ static void SetupTouchDefaults( void )
 	gMobileEngfuncs->pfnTouchAddDefaultButton( "flashlight", "touch_default/flash_light_filled", "impulse 100", 0.920000, 0.000000, 1.000000, 0.151486, color, 2, 1, 0 );
 	gMobileEngfuncs->pfnTouchAddDefaultButton( "scores", "touch_default/map", "+showscores", 0.760000, 0.000000, 0.840000, 0.142222, color, 2, 1, 8 );
 	gMobileEngfuncs->pfnTouchAddDefaultButton( "inventory", "touch_default/inventory", "+inventory", 0.600000, 0.000000, 0.680000, 0.142222, color, 2, 1, 0 );
-	gMobileEngfuncs->pfnTouchAddDefaultButton( "sprint", "touch_default/sprint", "+sprint", 0.680000, 0.000000, 0.760000, 0.142222, color, 2, 1, 0 );
-	gMobileEngfuncs->pfnTouchAddDefaultButton( "show_numbers", "touch_default/show_weapons", "exec touch_default/numbers.cfg", 0.440000, 0.833171, 0.520000, 0.984656, color, 2, 1, 0 );
+	gMobileEngfuncs->pfnTouchAddDefaultButton( "sprint", "touch_default/sprint", "+sprint", 0.200000, 0.318000, 0.280000, 0.500000, color, 2, 1, 0 );
 	gMobileEngfuncs->pfnTouchAddDefaultButton( "duck", "touch_default/crouch", "+duck", 0.880000, 0.757428, 1.000000, 0.984656, color, 2, 1, 0 );
 	gMobileEngfuncs->pfnTouchAddDefaultButton( "tduck", "touch_default/tduck", ";+duck", 0.560000, 0.833171, 0.620000, 0.946785, color, 2, 1, 0 );
 	gMobileEngfuncs->pfnTouchAddDefaultButton( "edit", "touch_default/settings", "touch_enableedit", 0.420000, 0.000000, 0.500000, 0.151486, color, 2, 1, 32 );
