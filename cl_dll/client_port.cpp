@@ -55,7 +55,9 @@ int ClientKeyState( int vk )
 	if( vk < 0 || vk > 255 )
 		return 0;
 
-	if( g_bCoFClientKeyDown[vk] || g_flCoFClientKeyTapEnd[vk] > gEngfuncs.GetClientTime() )
+	float flLeft = g_flCoFClientKeyTapEnd[vk] - gEngfuncs.GetClientTime();
+
+	if( g_bCoFClientKeyDown[vk] || ( flLeft > 0 && flLeft <= 0.1f ))
 		return 0x8000;
 
 	return 0;
