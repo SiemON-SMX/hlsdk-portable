@@ -195,6 +195,22 @@ void CCgWater::Init( void )
 	else
 		gEngfuncs.Con_Printf( "Error on fragment\n" );
 
+	m_pFastWaterVP = m_pFastWaterFP = NULL;
+	m_pFastTexOffset = m_pFastScreenInfo = m_pFastModelViewProj = NULL;
+#if defined( __ANDROID__ ) || defined( __APPLE__ )
+	m_pFastWaterVP = g_CgContext.AddProgram( "fastwater_vp.cg", CGTYPE_VERTEX );
+	m_pFastWaterFP = g_CgContext.AddProgram( "fastwater_fp.cg", CGTYPE_FRAGMENT );
+
+	if ( m_pFastWaterVP )
+		m_pFastModelViewProj = cgGetNamedParameter( m_pFastWaterVP->program, "ModelViewProj" );
+
+	if ( m_pFastWaterFP )
+	{
+		m_pFastTexOffset = cgGetNamedParameter( m_pFastWaterFP->program, "TexOffset" );
+		m_pFastScreenInfo = cgGetNamedParameter( m_pFastWaterFP->program, "ScreenInfo" );
+	}
+#endif
+
 	glActiveTextureARB( GL_TEXTURE0_ARB );
 }
 
@@ -328,6 +344,12 @@ void CCgWater::RenderWater( void )
 		Init();
 		if ( !m_bEnabled )
 			return;
+	}
+
+	if ( m_pFastWaterVP && m_pFastWaterFP && m_pFastTexOffset && m_pFastScreenInfo && m_pFastModelViewProj )
+	{
+		RenderFastWater();
+		return;
 	}
 
 	glGetIntegerv( GL_TEXTURE_BINDING_2D, &g_iWaterOldTexture );
@@ -548,6 +570,80 @@ void CCgWater::RenderWater( void )
 	glEnable( GL_DEPTH_TEST );
 	glEnable( GL_CULL_FACE );
 	glDisable( GL_BLEND );
+	glBindTexture( GL_TEXTURE_2D, g_iWaterOldTexture );
+}
+
+// single pass water, one screen copy
+void CCgWater::RenderFastWater( void )
+{
+	glGetIntegerv( GL_TEXTURE_BINDING_2D, &g_iWaterOldTexture );
+
+	glDisable( GL_BLEND );
+
+	glActiveTextureARB( GL_TEXTURE1_ARB );
+	glEnable( GL_TEXTURE_2D );
+	glBindTexture( GL_TEXTURE_2D, m_iSceneTexture );
+	glCopyTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, WATER_X, WATER_Y, WATER_W, WATER_H );
+
+	glActiveTextureARB( GL_TEXTURE0_ARB );
+	glEnable( GL_TEXTURE_2D );
+	glBindTexture( GL_TEXTURE_2D, m_iNoiseTexture );
+
+	g_CgContext.EnableVertexProfile();
+	g_CgContext.EnableFragmentProfile();
+	g_CgContext.BindProgram( m_pFastWaterVP );
+	g_CgContext.BindProgram( m_pFastWaterFP );
+
+	float offset[4] = { 0, 0.05f, 0, 0.05f };
+	float screen[4] = { 1.0f / m_flTexWidth, 1.0f / m_flTexHeight, (float)WATER_X, (float)WATER_Y };
+	cgGLSetParameter4fv( m_pFastTexOffset, offset );
+	cgGLSetParameter4fv( m_pFastScreenInfo, screen );
+	cgGLSetStateMatrixParameter( m_pFastModelViewProj, CG_GL_MODELVIEW_PROJECTION_MATRIX, CG_GL_MATRIX_IDENTITY );
+
+	glEnable( GL_DEPTH_TEST );
+	glDisable( GL_CULL_FACE );
+	glDepthMask( GL_FALSE );
+	glColor4f( 1, 1, 1, 1 );
+
+	float speedx = gEngfuncs.pfnGetCvarFloat( "cl_waterspeed_x" );
+	float speedy = gEngfuncs.pfnGetCvarFloat( "cl_waterspeed_y" );
+	float time = gEngfuncs.GetClientTime();
+	float s = time / speedx;
+	float t = cos( time ) / speedy;
+
+	for ( int i = 0; i < 1024; i++ )
+	{
+		cl_entity_t *ent = gEngfuncs.GetEntityByIndex( i );
+
+		if ( !ent || ent->curstate.skin != CONTENTS_WATER )
+			continue;
+
+		vec3_t mins = ent->curstate.mins;
+		vec3_t maxs = ent->curstate.maxs;
+		float s1 = ( maxs[0] - mins[0] ) * ( 1.0f / 128 ) + s;
+		float t1 = ( maxs[1] - mins[1] ) * ( 1.0f / 128 ) + t;
+
+		glBegin( GL_QUADS );
+		glTexCoord2f( s, t );
+		glVertex3f( mins[0], mins[1], maxs[2] );
+		glTexCoord2f( s, t1 );
+		glVertex3f( mins[0], maxs[1], maxs[2] );
+		glTexCoord2f( s1, t1 );
+		glVertex3f( maxs[0], maxs[1], maxs[2] );
+		glTexCoord2f( s1, t );
+		glVertex3f( maxs[0], mins[1], maxs[2] );
+		glEnd();
+	}
+
+	g_CgContext.DisableFragmentProfile();
+	g_CgContext.DisableVertexProfile();
+
+	glActiveTextureARB( GL_TEXTURE1_ARB );
+	glDisable( GL_TEXTURE_2D );
+	glActiveTextureARB( GL_TEXTURE0_ARB );
+
+	glEnable( GL_CULL_FACE );
+	glDepthMask( GL_TRUE );
 	glBindTexture( GL_TEXTURE_2D, g_iWaterOldTexture );
 }
 

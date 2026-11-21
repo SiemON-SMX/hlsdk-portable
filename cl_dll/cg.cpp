@@ -314,9 +314,33 @@ static const char *s_szBlackFP =
 	"	gl_FragColor = vec4( vec3( 0.2 - flColor1 ), 1.0 );\n"
 	"}\n";
 
+static const char *s_szFastWaterVP =
+	"uniform mat4 ModelViewProj;\n"
+	"varying vec4 flTexCoord0;\n"
+	"void main()\n"
+	"{\n"
+	"	flTexCoord0 = gl_MultiTexCoord0;\n"
+	"	gl_Position = ModelViewProj * gl_Vertex;\n"
+	"}\n";
+
+static const char *s_szFastWaterFP =
+	"uniform sampler2D NoiseTex;\n"
+	"uniform sampler2D SceneTex;\n"
+	"uniform vec4 TexOffset;\n"
+	"uniform vec4 ScreenInfo;\n"
+	"varying vec4 flTexCoord0;\n"
+	"void main()\n"
+	"{\n"
+	"	vec4 flColor = texture2D( NoiseTex, flTexCoord0.xy );\n"
+	"	vec2 flTex = ( gl_FragCoord.xy - ScreenInfo.zw ) * ScreenInfo.xy;\n"
+	"	flTex = flTex + TexOffset.xy * flColor.xx + TexOffset.zw * flColor.yy;\n"
+	"	gl_FragColor = vec4( texture2D( SceneTex, flTex ).rgb, 1.0 );\n"
+	"}\n";
+
 // the TEXUNITn bindings from the .cg files
 static const char *s_szWaterSamplers[] = { "OffsetTex", "Identity", "DecalTex", "MaskTex", NULL };
 static const char *s_szBlackSamplers[] = { "DecalTex", NULL };
+static const char *s_szFastWaterSamplers[] = { "NoiseTex", "SceneTex", NULL };
 
 #define CG_MAX_PARAMS 4
 
@@ -353,7 +377,7 @@ static struct _CGprogram *s_pBoundFP;
 static bool s_bVertexOn;
 static bool s_bFragmentOn;
 static CGerror s_iError;
-static struct _CGprogram *s_pCompiled[4];
+static struct _CGprogram *s_pCompiled[6];
 
 template <typename T>
 static void SlProc( T &pfn, const char *name, const char *alt )
@@ -541,6 +565,10 @@ CGprogram cgCreateProgramFromFile( CGcontext ctx, CGenum program_type, const cha
 		src = s_szBlackVP, vertex = 1;
 	else if( !stricmp( name, "black_fp.cg" ) )
 		src = s_szBlackFP, samplers = s_szBlackSamplers;
+	else if( !stricmp( name, "fastwater_vp.cg" ) )
+		src = s_szFastWaterVP, vertex = 1;
+	else if( !stricmp( name, "fastwater_fp.cg" ) )
+		src = s_szFastWaterFP, samplers = s_szFastWaterSamplers;
 
 	if( !src )
 	{
@@ -548,7 +576,7 @@ CGprogram cgCreateProgramFromFile( CGcontext ctx, CGenum program_type, const cha
 		return NULL;
 	}
 
-	int slot = src == s_szWaterVP ? 0 : src == s_szWaterFP ? 1 : src == s_szBlackVP ? 2 : 3;
+	int slot = src == s_szWaterVP ? 0 : src == s_szWaterFP ? 1 : src == s_szBlackVP ? 2 : src == s_szBlackFP ? 3 : src == s_szFastWaterVP ? 4 : 5;
 	if( s_pCompiled[slot] )
 		return s_pCompiled[slot];
 

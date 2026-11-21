@@ -16,6 +16,7 @@ public:
 	void PreDraw( void );
 	void Render( void );
 	void RenderWater( void );
+	void RenderFastWater( void );
 	void ScreenQuad( void );
 	void SetBlackShader( void );
 	void UpdateEntities( void );
@@ -40,6 +41,11 @@ public:
 	CGparameter	m_pModelViewProj;
 	CGparameter	m_pTexOffset;
 	CGparameter	m_pScreen;
+	cgprogram_t *m_pFastWaterFP;
+	cgprogram_t *m_pFastWaterVP;
+	CGparameter	m_pFastTexOffset;
+	CGparameter	m_pFastScreenInfo;
+	CGparameter	m_pFastModelViewProj;
 	GLint	m_iSavedTexture1;
 	GLint	m_iSavedTexture2;
 };
