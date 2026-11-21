@@ -114,12 +114,6 @@ void CMp5::StopSuicide( void )
 	m_flNextPrimaryAttack = m_flNextSecondaryAttack = m_flTimeWeaponIdle = gpGlobals->time + 1;
 }
 
-void CMp5::SendInitMessage( CBasePlayer *player )
-{
-	if ( player && !player->IsDeveloper() && player->m_iNew16a != 2 && player->m_iNew16a != 3 && player->m_iNew16a != 4 && g_pGameRules && !g_pGameRules->IsMultiplayer() )
-		UTIL_Remove( this );
-}
-
 void CMp5::Spawn( )
 {
 	pev->classname = MAKE_STRING( "weapon_mp5" );
@@ -156,6 +150,12 @@ void CMp5::Spawn( )
 	pev->renderfx = 99;
 	m_bCanSuicide = true;
 	strwmodel = MAKE_STRING( "models/weapons/mp5/w_mp5.mdl" );
+
+	if ( FStrEq( STRING( gpGlobals->mapname ), "c_start" ) && pev->origin == Vector( 839, -2517, -815 ) )
+	{
+		pev->origin = Vector( 1145, -1386, -736 );
+		pev->angles = Vector( 0, 315, 0 );
+	}
 
 	FallInit();// get ready to fall down.
 }
@@ -659,15 +659,6 @@ class CMP5Ammo : public CBasePlayerAmmo
 		Precache( );
 		SET_MODEL( ENT( pev ), "models/ammo/ammo_mp5.mdl" );
 		CBasePlayerAmmo::Spawn( );
-	}
-	void SendInitMessage( CBasePlayer *player )
-	{
-		if ( player && player->m_iNew16a != 2 && player->m_iNew16a != 3 && player->m_iNew16a != 4 )
-		{
-			CBaseEntity *pAmmo = CBaseEntity::Create( "ammo_glock", pev->origin, pev->angles, NULL );
-			if ( pAmmo )
-				UTIL_Remove( this );
-		}
 	}
 	void Precache( void )
 	{

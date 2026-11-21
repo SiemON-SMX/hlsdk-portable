@@ -7716,12 +7716,6 @@ void CBasePlayer::GiveNamedItem( const char *pszName, bool deletewhendropped, bo
 			return;
 	}
 
-	if ( pszName && !strcmp( pszName, "weapon_mp5" ) )
-	{
-		if ( !IsDeveloper() && m_iNew16a != 2 && m_iNew16a != 3 && m_iNew16a != 4 )
-			return;
-	}
-
 	edict_t	*pent;
 
 	int istr = MAKE_STRING(pszName);

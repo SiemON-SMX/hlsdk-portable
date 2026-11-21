@@ -828,15 +828,6 @@ void CBasePlayerItem::DefaultTouch( CBaseEntity *pOther )
 		}
 	}
 
-	if ( pPlayer && !strcmp( STRING( pev->classname ), "weapon_mp5" ) )
-	{
-		if ( !pPlayer->IsDeveloper() && pPlayer->m_iNew16a != 2 && pPlayer->m_iNew16a != 3 && pPlayer->m_iNew16a != 4 )
-		{
-			UTIL_ProMessage( pPlayer, "This is for mappers only.", 5, false );
-			return;
-		}
-	}
-
 	if ( !strcmp( STRING( pev->classname ), "weapon_lantern" ) )
 	{
 		if ( pPlayer->HasNamedPlayerItem( "weapon_lantern" ) )

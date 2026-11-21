@@ -1127,7 +1127,6 @@ public:
 	virtual int GetItemInfo( ItemInfo *p );
 	virtual void IronsightsTo( void );
 	virtual void IronsightsFrom( void );
-	virtual void SendInitMessage( CBasePlayer *player );
 	virtual void PrimaryAttack( void );
 	virtual void SecondaryAttack( void );
 	virtual void TertiaryAttack( void );
