@@ -513,7 +513,6 @@ static void SetupTouchDefaults( void )
 	gMobileEngfuncs->pfnTouchAddDefaultButton( "messagemode", "touch_default/keyboard", "messagemode", 0.840000, 0.000000, 0.920000, 0.142222, color, 2, 1, 8 );
 	gMobileEngfuncs->pfnTouchAddDefaultButton( "reload", "touch_default/reload", "+reload", 0.000000, 0.302971, 0.120000, 0.530200, color, 2, 1, 0 );
 	gMobileEngfuncs->pfnTouchAddDefaultButton( "weapontoggle", "touch_default/weapontoggle", "weapontoggle", 0.000000, 0.075742, 0.120000, 0.302971, color, 2, 1, 0 );
-	gMobileEngfuncs->pfnTouchAddDefaultButton( "flashlight", "touch_default/flash_light_filled", "impulse 100", 0.920000, 0.000000, 1.000000, 0.151486, color, 2, 1, 0 );
 	gMobileEngfuncs->pfnTouchAddDefaultButton( "scores", "touch_default/map", "+showscores", 0.760000, 0.000000, 0.840000, 0.142222, color, 2, 1, 8 );
 	gMobileEngfuncs->pfnTouchAddDefaultButton( "inventory", "touch_default/inventory", "+inventory", 0.600000, 0.000000, 0.680000, 0.142222, color, 2, 1, 0 );
 	gMobileEngfuncs->pfnTouchAddDefaultButton( "sprint", "touch_default/sprint", "+sprint", 0.200000, 0.318000, 0.280000, 0.500000, color, 2, 1, 0 );

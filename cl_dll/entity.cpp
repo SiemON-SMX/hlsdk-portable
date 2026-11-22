@@ -993,7 +993,15 @@ void DLLEXPORT HUD_StudioEvent( const struct mstudioevent_s *event, const struct
 			}
 		}
 
-		if ( bCS )
+		if ( !strncmp( pszOptions, "krypande/", 9 ) )
+		{
+			char szSound[128];
+
+			strcpy( szSound, "slower/" );
+			strcat( szSound, pszOptions + 9 );
+			gEngfuncs.pfnPlaySoundByNameAtLocation( szSound, 1.0, (float *)&entity->attachment[0] );
+		}
+		else if ( bCS )
 		{
 			char szSound[128];
 
